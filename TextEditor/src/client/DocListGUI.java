@@ -38,4 +38,8 @@ public class DocListGUI extends JFrame{
 			}
 		});
 	}
+	
+	public static void main(String[] arg){
+		new DocListGUI();
+	}
 }
