@@ -20,7 +20,7 @@ public class DocListGUI extends JFrame{
 		docList = new JTable();
 		docList.setName("Document List");
 		
-		newDocument = new JButton();
+		newDocument = new JButton("New Document");
 		newDocument.setName("New Document");
 		newDocument.addActionListener(new ActionListener(){
 			@Override
@@ -37,9 +37,40 @@ public class DocListGUI extends JFrame{
 				
 			}
 		});
+		
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		
+		GroupLayout space = new GroupLayout(this.getContentPane());
+		space.setAutoCreateGaps(true);
+        space.setAutoCreateContainerGaps(true);
+        this.getContentPane().setLayout(space);
+        
+        space.setHorizontalGroup(
+        		space.createParallelGroup(GroupLayout.Alignment.LEADING)
+        			.addGroup(space.createSequentialGroup()
+        					.addComponent(newDocument)
+	    					.addComponent(newDocumentName, 100, GroupLayout.PREFERRED_SIZE, 100000))
+        			.addGroup(space.createSequentialGroup()
+        					.addComponent(label, 400, 400, 400))
+        			.addComponent(docList));
+        
+        space.setVerticalGroup(
+        		space.createSequentialGroup()
+	    			.addGroup(space.createParallelGroup(GroupLayout.Alignment.CENTER)
+	    					.addComponent(newDocument)
+	    					.addComponent(newDocumentName, 30, 30, 30))
+        			.addGroup(space.createParallelGroup(GroupLayout.Alignment.CENTER)
+        					.addComponent(label, 30, 30, 30))
+        			.addComponent(docList));
 	}
 	
 	public static void main(String[] arg){
-		new DocListGUI();
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				DocListGUI main = new DocListGUI();
+				main.setSize(500,500);
+				main.setVisible(true);
+			}
+		});
 	}
 }
