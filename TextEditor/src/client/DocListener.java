@@ -1,5 +1,7 @@
 package client;
 
+import java.util.ArrayList;
+
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
@@ -14,10 +16,19 @@ public class DocListener{
     textArea = new JTextArea();
     textArea.getDocument().addDocumentListener(new MyDocumentListener());
     textArea.getDocument().putProperty("name", "Text Area");
+}
+
+
 
 class MyDocumentListener implements DocumentListener {
+    
+
     String newline = "\n";
  
+    /*
+     * handles character inserts by user.
+     * @param 
+     */
     public void insertUpdate(DocumentEvent e) {
         updateLog(e, "inserted into");
     }
@@ -37,5 +48,17 @@ class MyDocumentListener implements DocumentListener {
             action + doc.getProperty("name") + "." + newline +
             "  Text length = " + doc.getLength() + newline);
     }
+    
+    /*
+     * sends parsed event to server.
+     * @param updateLog, an array of updates. 
+     *
+     */
+    public void sendUpdatesToServer(ArrayList<<String, Integer>> updateLog){
+        throw new NotImplementedException();
+    }
+    
+    
+    
     
 }
