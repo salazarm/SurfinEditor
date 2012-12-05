@@ -8,17 +8,21 @@ import javax.swing.*;
 public class DocListGUI extends JFrame{
 	
 	private JLabel label;
-	private JTable docList;
+	private JTable docTable;
 	private JButton newDocument;
 	private JTextField newDocumentName;
+	private JButton help;
+	
+	private String docList;
 	
 	public DocListGUI() {
+		
 		label = new JLabel();
 		label.setName("Label");
 		label.setText("List of Existing Document");
 		
-		docList = new JTable();
-		docList.setName("Document List");
+		docTable = new JTable();
+		docTable.setName("Document List");
 		
 		newDocument = new JButton("New Document");
 		newDocument.setName("New Document");
@@ -52,7 +56,7 @@ public class DocListGUI extends JFrame{
 	    					.addComponent(newDocumentName, 100, GroupLayout.PREFERRED_SIZE, 100000))
         			.addGroup(space.createSequentialGroup()
         					.addComponent(label, 400, 400, 400))
-        			.addComponent(docList));
+        			.addComponent(docTable));
         
         space.setVerticalGroup(
         		space.createSequentialGroup()
@@ -61,7 +65,7 @@ public class DocListGUI extends JFrame{
 	    					.addComponent(newDocumentName, 30, 30, 30))
         			.addGroup(space.createParallelGroup(GroupLayout.Alignment.CENTER)
         					.addComponent(label, 30, 30, 30))
-        			.addComponent(docList));
+        			.addComponent(docTable));
 	}
 	
 	public static void main(String[] arg){
