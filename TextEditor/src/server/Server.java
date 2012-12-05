@@ -69,7 +69,6 @@ public class Server {
 			documentize(tokens[0], tokens[1]);
 		}
 		fileIn.close();
-
 	}
 
 	private void documentize(String title, String location) throws IOException {
@@ -162,10 +161,11 @@ public class Server {
 	 * NEW ::= "NEW" NAME 
 	 * NAME ::= [.]+ 
 	 * DELETE ::= "DELETE" ID INDEX 
-	 * INSERT ::= "INSERT" ID INDEX 
+	 * INSERT ::= "INSERT" ID INDEX LETTER
 	 * GET ::= "GET" ID 
 	 * ID ::= [0-9]+ 
 	 * INDEX ::= [0-9]+ 
+	 * LETTER ::= [.]
 	 * CONNECT ::= "CONNECT"
 	 * 
 	 * @param command
@@ -229,8 +229,12 @@ public class Server {
 	 * design decision). Also if files are being added then it is okay that we
 	 * are in the middle of iterating over because we want that file to be sent
 	 * as well (Doesn't hurt). This sends a message of all of the documents to
-	 * the client in a string using the following Grammar: MESSAGE ::= (ID
-	 * TITLE)* ID ::= \\d+ TITLE ::= [.]+
+	 * the client in a string using the following 
+	 * 
+	 * Grammar: 
+	 * MESSAGE ::= (ID TITLE)* 
+	 * ID ::= \\d+ 
+	 * TITLE ::= [.]+
 	 * 
 	 * @return all the documents as a string.
 	 */

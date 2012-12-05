@@ -19,6 +19,39 @@ public class Document {
 	public Document(String title, CopyOnWriteArrayList<Character> docModel) {
 		this.docModel = docModel;
 		this.name = title;
+		/* Starts up command listener for document*/
+		Thread t = new Thread(new Runnable(){
+
+			@Override
+			public void run() {
+				while(true){
+					if(!commandsQueue.isEmpty()){
+						String[] currCommand = commandsQueue.remove();
+						if (currCommand[0].equals("insert")){
+							insert(currCommand[1],currCommand[2]);
+						}else if(currCommand[0].equals("remove")){
+							remove(currCommand[1]);
+						}
+					}
+				}
+				
+			}
+		
+		});
+		t.start();
+	}
+	/**
+	 * Synchronized for good measure 
+	 * @param string
+	 */
+	protected synchronized void remove(String string) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	protected synchronized void insert(String string, String string2) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	/**
