@@ -1,24 +1,24 @@
 package server;
 
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Document {
-	private CopyOnWriteArrayList<PrintWriter> activeClients = new CopyOnWriteArrayList<PrintWriter>();
+	private CopyOnWriteArrayList<Socket> activeClients = new CopyOnWriteArrayList<Socket>();
 	private final CopyOnWriteArrayList<Character> docModel;
 	private final ConcurrentLinkedQueue<String[]> commandsQueue = new ConcurrentLinkedQueue<String[]>();
 	private final String name;
-
+	
 	/**
 	 * Constructor that makes document with Document Model docModel and Title title.
 	 * @param title the Title of the document
 	 * @param docModel the model for the document.
 	 */
-	public Document(String title, CopyOnWriteArrayList<Character> docModel) {
+	public Document(String title, CopyOnWriteArrayList<Character> docModel, String location) {
 		this.docModel = docModel;
 		this.name = title;
+		
 		/* Starts up command listener for document*/
 		Thread t = new Thread(new Runnable(){
 
@@ -27,11 +27,13 @@ public class Document {
 				while(true){
 					if(!commandsQueue.isEmpty()){
 						String[] currCommand = commandsQueue.remove();
+						System.out.print("Handling: "+ currCommand);
 						if (currCommand[0].equals("insert")){
-							insert(currCommand[1],currCommand[2]);
+							insert(Integer.parseInt(currCommand[1]),currCommand[2]);
 						}else if(currCommand[0].equals("remove")){
-							remove(currCommand[1]);
+							remove(Integer.parseInt(currCommand[1]));
 						}
+						updateActiveUsers();
 					}
 				}
 				
@@ -42,16 +44,15 @@ public class Document {
 	}
 	/**
 	 * Synchronized for good measure 
-	 * @param string
+	 * @param index
 	 */
-	protected synchronized void remove(String string) {
-		// TODO Auto-generated method stub
+	protected synchronized void remove(int index) {
+		docModel.remove(index);
 		
 	}
 
-	protected synchronized void insert(String string, String string2) {
-		// TODO Auto-generated method stub
-		
+	protected synchronized void insert(int index, String charToAdd) {
+		docModel.add(index,charToAdd.charAt(0));
 	}
 
 	/**
@@ -59,7 +60,7 @@ public class Document {
 	 * @param socket the socket of the user to be added.
 	 */
 	public void addActiveUser(Socket socket) {
-		activeClients.add(Server.outs.get(socket));
+		activeClients.add(socket);
 	}
 	
 	/**
@@ -67,8 +68,8 @@ public class Document {
 	 */
 	public void updateActiveUsers(){
 		String currentDoc = this.toString();
-		for (PrintWriter out: activeClients){
-			out.print(currentDoc);
+		for (Socket socket: activeClients){
+			Server.outs.get(socket).println(currentDoc);
 		}
 	}
 

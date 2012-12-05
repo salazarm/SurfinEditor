@@ -17,10 +17,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Server {
 	private final CopyOnWriteArrayList<Document> docs = new CopyOnWriteArrayList<Document>();
-	private final String regex = "(NEW [.]+)|(\\d+ (DELETE|INSERT) \\d+)|(GET \\d+)|(CONNECT)";
+	private final String regex = "(NEW [\\s\\S]+)|(DELETE \\d+)|(INSERT \\d+ \\d+ [\\s\\S]+)|(GET \\d+)|(CONNECT)";
 	private final ServerSocket serverSocket;
 	private Map<Socket, BufferedReader> ins = new ConcurrentHashMap<Socket, BufferedReader>();
-	protected static Map<Socket, PrintWriter> outs = new ConcurrentHashMap<Socket, PrintWriter>();
+	public static Map<Socket, PrintWriter> outs = new ConcurrentHashMap<Socket, PrintWriter>();
 	private List<Socket> sockets = new ArrayList<Socket>();
 	private static Random randomGenerator = new Random();
 
@@ -44,7 +44,8 @@ public class Server {
 	/**
 	 * Reads the location of current existing documents on the server. Files are
 	 * saved line by line in a serverDocs.cfg. Each line has the location of the
-	 * localFile.
+	 * localFile. This rebuilds the server everytime the server starts, so the server
+	 * being off does not result in loss of data.
 	 * 
 	 * The grammar for the File is as follows: 
 	 * 
@@ -85,7 +86,7 @@ public class Server {
 				docModel.add('\n');
 			}
 			fileIn.close();
-			docs.add(new Document(title, docModel));
+			docs.add(new Document(title, docModel, location));
 		}
 	}
 
@@ -142,9 +143,8 @@ public class Server {
 			}
 			BufferedReader in = ins.get(socket);
 			try {
-				for (String line = in.readLine(); line != null; line = in
-						.readLine()) {
-					handleRequest(line, socket);
+					for (String line = in.readLine(); line != null; line = in.readLine()) {
+						handleRequest(line, socket);
 				}
 			} finally {
 				if (socket.isClosed()) {
@@ -173,11 +173,11 @@ public class Server {
 	 */
 	private String handleRequest(String command, Socket socket) {
 		if (!command.matches(regex))
-			return null; // Design Decision: Ignore invalid commands
+			return ""; // Design Decision: Ignore invalid commands
 		String[] tokens = command.split(" ");
 		if (tokens[0].equals("NEW")) {
 			makeNewDoc(tokens[1]);
-			return "";
+			return "MADE";
 		} else if (tokens[0].equals("GET")) {
 			return getDoc(Integer.parseInt(tokens[1]), socket);
 		} else if (tokens[0].equals("CONNECT")) {
@@ -204,10 +204,18 @@ public class Server {
 	 */
 	private void makeNewDoc(String title) {
 		File f = new File("%"); // Should never exist
-		while (!f.exists())
-			/* Design Decision* Only 200000 documents can have the same title. */
-			f = new File(title + randomGenerator.nextInt(200000));
-		docs.add(new Document(title, new CopyOnWriteArrayList<Character>()));
+		String lc;
+		do{
+			/* Design Decision* Only 2000^2 documents can have the same title. */
+			lc = randomGenerator.nextInt(2000)+ title + randomGenerator.nextInt(2000);
+			f = new File(lc);
+		}while (f.exists());
+		try {
+			f.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		docs.add(new Document(title, new CopyOnWriteArrayList<Character>(), lc));
 		updateUsersDocList(); // Updates all users of the new file being added.
 	}
 
@@ -219,7 +227,7 @@ public class Server {
 	private synchronized void updateUsersDocList() {
 		String docsString = getDocList();
 		for (Socket socket : sockets) {
-			outs.get(socket).print(docsString);
+			outs.get(socket).println(docsString);
 		}
 
 	}
@@ -243,7 +251,7 @@ public class Server {
 		for (int i = 0; i < docs.size(); i++) {
 			/* Design Decision* : Files cannot have '%' in their name */
 
-			documentsString.append("ID" + "%" + docs.get(i).getName() + "%");
+			documentsString.append(i + "%" + docs.get(i).getName() + "%");
 		}
 		return documentsString.toString();
 	}
