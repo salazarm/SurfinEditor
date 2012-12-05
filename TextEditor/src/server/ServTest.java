@@ -83,6 +83,9 @@ public class ServTest {
         //check CommandQueue
         p2.println("DELETE " + "1 " + "1");
         
+        s1.close();
+        s2.close();
+        s3.close();
         
     }
     
