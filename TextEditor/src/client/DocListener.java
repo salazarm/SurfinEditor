@@ -7,7 +7,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 
-public class DocListener{
+public class DocListener {
     //where initialization occurs:
     textField = new JTextField(20);
     textField.addActionListener(new MyTextActionListener());
@@ -20,7 +20,9 @@ public class DocListener{
 }
 
 
-
+/*
+ * This is our DocumentListener for our particular model.
+ */
 class MyDocumentListener implements DocumentListener {
     
     public class Pair<L,R> {
@@ -44,7 +46,14 @@ class MyDocumentListener implements DocumentListener {
      * 
      */
     public void insertUpdate(DocumentEvent e) {
-        updateUpdateLog(e, "inserted into");
+        int index=0;
+        String curr_char;
+        String insert_string = "insert";
+        String final_string;
+        
+        final_string = insert_string + " " + curr_char;
+        Pair<String, Integer> currpair = new Pair<String, Integer>(final_string, index);
+        updateUpdateLog(currpair);
     }
     
     /*
@@ -53,24 +62,33 @@ class MyDocumentListener implements DocumentListener {
      * 
      */
     public void removeUpdate(DocumentEvent e) {
-        updateUpdateLog(e, "removed from");
+        int index=0;
+        String curr_char;
+        String remove_string = "remove";
+        String final_string;
+        
+        final_string = remove_string + " " + curr_char;
+        Pair<String, Integer> currpair = new Pair<String, Integer>(final_string, index);
+        updateUpdateLog(currpair);
     }
     
     /*
-     * handles other types of updates
+     * handles other types of updates.Actually though, it isn't included in our design, but exists in the DocumentListener class.
      * @param e, DocumentEvent e
      */
     public void changedUpdate(DocumentEvent e) {
-        //Plain text components do not fire these events
+        //does not happen
     }
 
     /*
      * updates the updateLog by appending events to it
      */
-    public void updateUpdateLog(DocumentEvent e, String action) {
+    public void updateUpdateLog(Pair<String, Integer> action) {
+        updateLog.add(action);
+        /*
         Document doc = (Document)e.getDocument();
         int changeLength = e.getLength();
-        /*
+        
         displayArea.append(
             changeLength + " character" +
             ((changeLength == 1) ? " " : "s ") +
@@ -81,6 +99,7 @@ class MyDocumentListener implements DocumentListener {
     
     /*
      * gets the updateLog
+     * @return List<Pair<String, Integer>> updateLog
      */
     public List<Pair<String, Integer>> getUpdateLog(){
         return updateLog;
@@ -88,10 +107,11 @@ class MyDocumentListener implements DocumentListener {
     
     /*
      * sends parsed event to server.
-     * @param updateLog, an array of updates. 
+     * @param updateLog, an array of updates.
+     * @param docID, document ID 
      *
      */
-    public void sendUpdatesToServer(List<Pair<String, Integer>> updateLog){
+    public void sendUpdatesToServer(List<Pair<String, Integer>> updateLog, Integer docID){
         
     }
     
