@@ -27,7 +27,6 @@ public class Document {
 				while(true){
 					if(!commandsQueue.isEmpty()){
 						String[] currCommand = commandsQueue.remove();
-						System.out.print("Handling: "+ currCommand);
 						if (currCommand[0].equals("insert")){
 							insert(Integer.parseInt(currCommand[1]),currCommand[2]);
 						}else if(currCommand[0].equals("remove")){
@@ -47,12 +46,14 @@ public class Document {
 	 * @param index
 	 */
 	protected synchronized void remove(int index) {
-		docModel.remove(index);
-		
+		if (index >= 0 && index <docModel.size())
+			docModel.remove(index);
 	}
 
 	protected synchronized void insert(int index, String charToAdd) {
-		docModel.add(index,charToAdd.charAt(0));
+		if (index >= 0 && index <docModel.size()+1)
+			System.out.println(charToAdd);
+			docModel.add(index,charToAdd.charAt(0));
 	}
 
 	/**
@@ -69,7 +70,8 @@ public class Document {
 	public void updateActiveUsers(){
 		String currentDoc = this.toString();
 		for (Socket socket: activeClients){
-			Server.outs.get(socket).println(currentDoc);
+			if (!socket.isClosed())
+				Server.outs.get(socket).println(currentDoc);
 		}
 	}
 

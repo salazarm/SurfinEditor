@@ -17,7 +17,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Server {
 	private final CopyOnWriteArrayList<Document> docs = new CopyOnWriteArrayList<Document>();
-	private final String regex = "(NEW [\\s\\S]+)|(DELETE \\d+)|(INSERT \\d+ \\d+ [\\s\\S]+)|(GET \\d+)|(CONNECT)";
+	private final String regex = "(NEW [\\s\\S]+)|(DELETE \\d+ \\d+)|(INSERT \\d+ \\d+ [\\s\\S]+)|(GET \\d+)|(CONNECT)";
 	private final ServerSocket serverSocket;
 	private Map<Socket, BufferedReader> ins = new ConcurrentHashMap<Socket, BufferedReader>();
 	public static Map<Socket, PrintWriter> outs = new ConcurrentHashMap<Socket, PrintWriter>();
@@ -56,7 +56,7 @@ public class Server {
 	 * 
 	 * @throws IOException
 	 */
-	private void build() throws IOException {
+	public void build() throws IOException {
 		File f;
 		f = new File("serverDocs.cfg");
 		if (!f.exists()) {
@@ -90,7 +90,7 @@ public class Server {
 		}
 	}
 
-	private void serve() throws IOException {
+	public void serve() throws IOException {
 		while (true) {
 			final Socket socket = serverSocket.accept();
 			sockets.add(socket);

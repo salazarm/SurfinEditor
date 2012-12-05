@@ -18,6 +18,24 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+/**
+ * ######### HOW TO USE ##################################################################################
+ * This will test our server.
+ * Whenever someone makes a new file all users will be updated; to test this type in NEW filename.txt
+ * GRAMMER: ID%FILENAME%ID%FILENAME%ID%FILENAME, FILENAME corresponds to the ID preceeding it.
+ *  ###IMPORTANT###: 
+ *  It is vital that you send GET ID (where ID is the ID of the document) 
+ *  before you insert/remove from a document.  
+ * 		###
+ *  Then following our grammar rules feel free to call INSERT 0 0 A, or whichever you feel like.
+ *  NOTE: I have not implemented checks to see if things are out of bounds yet so please don't break it :(
+ *  
+ *  Currently I am not writing to the files yet to save space for now but I will add that in (I am however creating the files,
+ *  though they always remain empty.)
+ *  
+ * @author Marco Salazar
+ *#########################################################################################################
+ */
 public class textClientDemo {
 	private final static JTextArea clientLog = new JTextArea();
 	private final static JTextField field = new JTextField();
