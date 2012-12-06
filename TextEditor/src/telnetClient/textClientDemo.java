@@ -13,6 +13,7 @@ import java.net.UnknownHostException;
 
 import javax.swing.GroupLayout;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -54,8 +55,11 @@ public class textClientDemo {
 			socket = new Socket(InetAddress.getByName("127.0.0.1"), 1337);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Could not connect to "+socket, "Error", JOptionPane.ERROR_MESSAGE);
+			System.exit(-1);
 		} catch (IOException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Could not connect to "+socket, "Error", JOptionPane.ERROR_MESSAGE);
+			System.exit(-1);
 		}
 		try {
 			if (socket != null) {

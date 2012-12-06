@@ -19,6 +19,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.GroupLayout;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -81,7 +82,10 @@ public class Server {
 		server.makeGUI();
 		server.build();
 		server.serve();
-		}catch(IOException e){e.printStackTrace();}
+		}catch(IOException e){
+			JOptionPane.showMessageDialog(null, "Port "+ port+" already in use", "Error", JOptionPane.ERROR_MESSAGE);
+			System.exit(-1);
+			}
 	}
 
 	/**
