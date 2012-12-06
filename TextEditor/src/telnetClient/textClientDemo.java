@@ -36,6 +36,7 @@ import javax.swing.JTextField;
  * @author Marco Salazar
  *#########################################################################################################
  */
+
 public class textClientDemo {
 	private final static JTextArea clientLog = new JTextArea();
 	private final static JTextField field = new JTextField();

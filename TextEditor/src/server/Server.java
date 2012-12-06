@@ -3,6 +3,7 @@ package server;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -28,9 +29,9 @@ public class Server {
 		this.serverSocket = serverSocket;
 	}
 
-	private String getDoc(int ID, Socket socket) {
+	private void getDoc(int ID, Socket socket) {
 		docs.get(ID).addActiveUser(socket);
-		return docs.get(ID).toString();
+		outs.get(socket).println(docs.get(ID).toString());
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -63,33 +64,29 @@ public class Server {
 			f.createNewFile();
 		}
 		BufferedReader fileIn = new BufferedReader(new FileReader(f));
-
-		for (String line = fileIn.readLine(); line != null; line = fileIn
+		for (String line = fileIn.readLine(); line != null && line.split(" ").length == 2; line = fileIn
 				.readLine()) {
 			String[] tokens = line.split(" ");
 			documentize(tokens[0], tokens[1]);
 		}
+		f.setWritable(true);
 		fileIn.close();
 	}
-
 	private void documentize(String title, String location) throws IOException {
 		File f;
 		f = new File(location);
 		if (f.exists()) {
 			CopyOnWriteArrayList<Character> docModel = new CopyOnWriteArrayList<Character>();
 			BufferedReader fileIn = new BufferedReader(new FileReader(f));
-			for (String line = fileIn.readLine(); line != null; line = fileIn
-					.readLine()) {
-				for (int i = 0; i < line.length(); i++) {
+			for (String line = fileIn.readLine(); line != null; line = fileIn.readLine()) {
+				for(int i=0; i<line.length(); i++)
 					docModel.add(line.charAt(i));
-				}
 				docModel.add('\n');
 			}
 			fileIn.close();
 			docs.add(new Document(title, docModel, location));
 		}
 	}
-
 	public void serve() throws IOException {
 		while (true) {
 			final Socket socket = serverSocket.accept();
@@ -171,28 +168,25 @@ public class Server {
 	 * @param command
 	 *            the command to be parsed
 	 */
-	private String handleRequest(String command, Socket socket) {
-		if (!command.matches(regex))
-			return ""; // Design Decision: Ignore invalid commands
-		String[] tokens = command.split(" ");
-		if (tokens[0].equals("NEW")) {
-			makeNewDoc(tokens[1]);
-			return "MADE";
-		} else if (tokens[0].equals("GET")) {
-			return getDoc(Integer.parseInt(tokens[1]), socket);
-		} else if (tokens[0].equals("CONNECT")) {
-			return getDocList();
-		} else if (tokens[0].equals("INSERT")) {
-			docs.get(Integer.parseInt(tokens[1])).insertChar(
-					Integer.parseInt(tokens[2]), tokens[3]);
-			return "";
-		} else if (tokens[0].equals("DELETE")) {
-			docs.get(Integer.parseInt(tokens[1])).removeChar(
-					Integer.parseInt(tokens[2]));
-			return "";
-		} else {
-			/* should not reach here */
-			throw new UnsupportedOperationException();
+	private void handleRequest(String command, Socket socket) {
+		if (command.matches(regex)){
+			String[] tokens = command.split(" ");
+			if (tokens[0].equals("NEW")) {
+				makeNewDoc(tokens[1]);
+			} else if (tokens[0].equals("GET")) {
+				getDoc(Integer.parseInt(tokens[1]), socket);
+			} else if (tokens[0].equals("CONNECT")) {
+				outs.get(socket).println(getDocList());
+			} else if (tokens[0].equals("INSERT")) {
+				docs.get(Integer.parseInt(tokens[1])).insertChar(
+						Integer.parseInt(tokens[2]), tokens[3]);
+			} else if (tokens[0].equals("DELETE")) {
+				docs.get(Integer.parseInt(tokens[1])).removeChar(
+						Integer.parseInt(tokens[2]));
+			} else {
+				/* should not reach here */
+				throw new UnsupportedOperationException();
+			}
 		}
 	}
 
@@ -212,6 +206,10 @@ public class Server {
 		}while (f.exists());
 		try {
 			f.createNewFile();
+			File f2 = new File("serverDocs.cfg");
+			PrintWriter fileOut = new PrintWriter(new FileWriter(f2));
+			fileOut.println("\n"+title +" "+ lc);
+			fileOut.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

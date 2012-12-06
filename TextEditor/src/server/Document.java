@@ -1,5 +1,9 @@
 package server;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -9,6 +13,7 @@ public class Document {
 	private final CopyOnWriteArrayList<Character> docModel;
 	private final ConcurrentLinkedQueue<String[]> commandsQueue = new ConcurrentLinkedQueue<String[]>();
 	private final String name;
+	private final String location;
 	
 	/**
 	 * Constructor that makes document with Document Model docModel and Title title.
@@ -18,6 +23,7 @@ public class Document {
 	public Document(String title, CopyOnWriteArrayList<Character> docModel, String location) {
 		this.docModel = docModel;
 		this.name = title;
+		this.location = location;
 		
 		/* Starts up command listener for document*/
 		Thread t = new Thread(new Runnable(){
@@ -61,7 +67,8 @@ public class Document {
 	 * @param socket the socket of the user to be added.
 	 */
 	public void addActiveUser(Socket socket) {
-		activeClients.add(socket);
+		if (!activeClients.contains(socket))
+			activeClients.add(socket);
 	}
 	
 	/**
@@ -103,6 +110,7 @@ public class Document {
 	}
 	
 	/**
+	 * Also updates the file.
 	 * @return String representationg of document (concats all the characters in the document model).
 	 */
 	@Override
@@ -111,7 +119,20 @@ public class Document {
 		for(char c: docModel){
 			docAsString.append(c);
 		}
-		return docAsString.toString();
+		String newFile = docAsString.toString();
+		updateFile(newFile);
+		return newFile;
 	}
-
+	private void updateFile(String doc){
+		File f = new File(location);
+		try {
+			f.delete();
+			f.createNewFile();
+			PrintWriter fileOut = new PrintWriter(new FileWriter(f));
+			fileOut.println(doc);
+			fileOut.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }
