@@ -33,13 +33,18 @@ public class Server {
 		docs.get(ID).addActiveUser(socket);
 		outs.get(socket).println(docs.get(ID).toString());
 	}
-
-	public static void main(String[] args) throws IOException {
+	/**
+	 * Starts a server for our concurrent text editor
+	 * @param args
+	 */
+	public static void main(String[] args){
 		final int port = 1337;
+		try{
 		ServerSocket serverSocket = new ServerSocket(port);
 		Server server = new Server(serverSocket);
 		server.build();
 		server.serve();
+		}catch(IOException e){e.printStackTrace();}
 	}
 
 	/**
@@ -64,10 +69,11 @@ public class Server {
 			f.createNewFile();
 		}
 		BufferedReader fileIn = new BufferedReader(new FileReader(f));
-		for (String line = fileIn.readLine(); line != null && line.split(" ").length == 2; line = fileIn
+		for (String line = fileIn.readLine(); line != null; line = fileIn
 				.readLine()) {
 			String[] tokens = line.split(" ");
-			documentize(tokens[0], tokens[1]);
+			if (tokens.length == 2)
+				documentize(tokens[0], tokens[1]);
 		}
 		f.setWritable(true);
 		fileIn.close();
@@ -87,6 +93,10 @@ public class Server {
 			docs.add(new Document(title, docModel, location));
 		}
 	}
+	/**
+	 * Starts up the server and listens for new connections
+	 * @throws IOException
+	 */
 	public void serve() throws IOException {
 		while (true) {
 			final Socket socket = serverSocket.accept();

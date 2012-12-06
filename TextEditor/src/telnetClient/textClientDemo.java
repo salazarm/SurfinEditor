@@ -109,10 +109,12 @@ public class textClientDemo {
 		clientWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		clientWindow.setTitle("TextClient for Concurrent TextEditor");
 	}
-	public static void main(String[] args) throws UnknownHostException, IOException{
+	public static void main(String[] args){
+		try{
 		textClientDemo n = new textClientDemo();
 		n.makeGUI();
 		n.connect();
+		}catch(Exception e){e.printStackTrace();};
 	}
 	private void connect() throws UnknownHostException, IOException {
 		clientLog.setText("Connected to"+socket.toString());
