@@ -124,10 +124,8 @@ public class textClientDemo {
 			public void run(){
 				try{
 					while(true){
-						System.out.println("waiting");
-					for (String line = in.readLine(); line != null; line = in.readLine()){
-						clientLog.setText(clientLog.getText() +"\n"+ line);
-						}
+						for (String line = in.readLine(); line != null; line = in.readLine())
+							clientLog.setText(clientLog.getText() +"\n"+ line);
 					}
 				}catch(Exception e){e.printStackTrace();}finally{}
 			}

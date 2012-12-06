@@ -1,5 +1,6 @@
 package server;
 
+import java.awt.Dimension;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -16,6 +17,12 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.swing.GroupLayout;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
 public class Server {
 	private final CopyOnWriteArrayList<Document> docs = new CopyOnWriteArrayList<Document>();
 	private final String regex = "(NEW [\\s\\S]+)|(DELETE \\d+ \\d+)|(INSERT \\d+ \\d+ [\\s\\S]+)|(GET \\d+)|(CONNECT)";
@@ -24,9 +31,38 @@ public class Server {
 	public static Map<Socket, PrintWriter> outs = new ConcurrentHashMap<Socket, PrintWriter>();
 	private List<Socket> sockets = new ArrayList<Socket>();
 	private static Random randomGenerator = new Random();
+	private JTextArea serverLog = new JTextArea();
+	private JScrollPane scroll = new JScrollPane(serverLog);
+	private JPanel serverPanel = new JPanel();
+	private JFrame serverWindow = new JFrame();
 
 	public Server(ServerSocket serverSocket) {
 		this.serverSocket = serverSocket;
+	}
+	
+	private void makeGUI() {
+		serverLog.setText("Server started on " + serverSocket);
+		serverLog.setLineWrap(true);
+		serverLog.setWrapStyleWord(true);
+		serverLog.setEditable(false);
+		scroll.setPreferredSize(new Dimension(500, 300));
+		scroll.setAutoscrolls(true);
+
+		GroupLayout mainlayout = new GroupLayout(serverPanel);
+		serverPanel.setLayout(mainlayout);
+		mainlayout.setAutoCreateGaps(true);
+		mainlayout.setAutoCreateContainerGaps(true);
+
+		mainlayout.setHorizontalGroup(mainlayout.createSequentialGroup()
+				.addComponent(scroll));
+		mainlayout.setVerticalGroup(mainlayout.createSequentialGroup()
+				.addComponent(scroll));
+
+		serverWindow.add(serverPanel);
+		serverWindow.pack();
+		serverWindow.setVisible(true);
+		serverWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		serverWindow.setTitle("Concurrent Text Editor Server");
 	}
 
 	private void getDoc(int ID, Socket socket) {
@@ -42,6 +78,7 @@ public class Server {
 		try{
 		ServerSocket serverSocket = new ServerSocket(port);
 		Server server = new Server(serverSocket);
+		server.makeGUI();
 		server.build();
 		server.serve();
 		}catch(IOException e){e.printStackTrace();}
@@ -63,10 +100,14 @@ public class Server {
 	 * @throws IOException
 	 */
 	public void build() throws IOException {
+		serverLog.setText(serverLog.getText()+"\n Building server document models...");
 		File f;
 		f = new File("serverDocs.cfg");
 		if (!f.exists()) {
 			f.createNewFile();
+			PrintWriter fwriter = new PrintWriter(new FileWriter(f));
+			fwriter.println("##STARTSERVER.CFG");
+			fwriter.close();
 		}
 		BufferedReader fileIn = new BufferedReader(new FileReader(f));
 		for (String line = fileIn.readLine(); line != null; line = fileIn
@@ -77,6 +118,7 @@ public class Server {
 		}
 		f.setWritable(true);
 		fileIn.close();
+		serverLog.setText(serverLog.getText()+"\n Server document models built...");
 	}
 	private void documentize(String title, String location) throws IOException {
 		File f;
@@ -151,6 +193,7 @@ public class Server {
 			BufferedReader in = ins.get(socket);
 			try {
 					for (String line = in.readLine(); line != null; line = in.readLine()) {
+						serverLog.setText(serverLog.getText() +"\n"+socket+" : "+ line);
 						handleRequest(line, socket);
 				}
 			} finally {
@@ -217,8 +260,8 @@ public class Server {
 		try {
 			f.createNewFile();
 			File f2 = new File("serverDocs.cfg");
-			PrintWriter fileOut = new PrintWriter(new FileWriter(f2));
-			fileOut.println("\n"+title +" "+ lc);
+			PrintWriter fileOut = new PrintWriter(new FileWriter(f2, true));
+			fileOut.println(title +" "+ lc);
 			fileOut.close();
 		} catch (IOException e) {
 			e.printStackTrace();
