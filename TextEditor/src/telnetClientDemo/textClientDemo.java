@@ -21,7 +21,6 @@ import javax.swing.JTextField;
 
 /**
  * ######### HOW TO USE ##################################################################################
-<<<<<<< HEAD
  * 
  * This is for manually tesing our server and is a quick hack so might not display useful error messages (in fact
  * it will only tell you what the server responds and won't try to process anything).
