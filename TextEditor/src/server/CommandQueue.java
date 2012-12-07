@@ -10,7 +10,7 @@ import java.util.Queue;
  * @author Marco Salazar
  *
  */
-public class CommandQueue implements Queue{
+public class CommandQueue implements Queue<Object>{
 	private final ArrayList<Command> queue = new ArrayList<Command>();
 	
 	/**
@@ -58,7 +58,7 @@ public class CommandQueue implements Queue{
 	public boolean isEmpty() {
 		return queue.isEmpty();
 	}
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Iterator iterator() {
 		throw new UnsupportedOperationException();
@@ -88,6 +88,7 @@ public class CommandQueue implements Queue{
 	public Object[] toArray() {
 		throw new UnsupportedOperationException();
 	}
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object[] toArray(Object[] arg0) {
 		throw new UnsupportedOperationException();
@@ -114,13 +115,13 @@ public class CommandQueue implements Queue{
 		return add(o);
 	}
 	@Override
-	public Object peek() {
+	public Command peek() {
 		if (!queue.isEmpty())
 			return queue.get(0);
 		return null;
 	}
 	@Override
-	public Object poll() {
+	public Command poll() {
 		if (!queue.isEmpty()){
 			Command head = queue.get(0);
 			queue.remove(0);

@@ -15,9 +15,17 @@ public class Command {
 	public final CommandType command;
 	public final int index;
 	public char characterToInsert;
-
-	public enum CommandType {
-		INSERT, DELETE;
+	private boolean isInsert = false; //for debugging
+	
+	/**
+	 * INSERT for insert
+	 * DELTE for delete
+	 * RETAIN for retain (currently not being used).
+	 * @author Marco Salazar
+	 *
+	 */
+	public static enum CommandType {
+		INSERT, DELETE, RETAIN;
 	}
 
 	Command(String[] command) {
@@ -34,6 +42,11 @@ public class Command {
 				/* Should never reach this code */
 				throw new IllegalStateException();
 			this.characterToInsert = command[2].charAt(0);
+			this.isInsert = true;
 		}
+	}
+	@Override
+	public String toString(){
+		return ""+this.command+" "+this.index+" "+((isInsert)? this.characterToInsert : "");
 	}
 }
