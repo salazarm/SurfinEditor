@@ -1,4 +1,4 @@
-package telnetClient;
+package telnetClientDemo;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -21,18 +21,18 @@ import javax.swing.JTextField;
 
 /**
  * ######### HOW TO USE ##################################################################################
- * This will test our server.
- * Whenever someone makes a new file all users will be updated; to test this type in NEW filename.txt
+ * 
+ * This is for manually tesing our server and is a quick hack so might not display useful error messages (in fact
+ * it will only tell you what the server responds and won't try to process anything).
+ * 
+ * Whenever someone makes a new file all users will be updated; to test this type in NEW filename.filextension
+ * 
  * GRAMMER: ID%FILENAME%ID%FILENAME%ID%FILENAME, FILENAME corresponds to the ID preceeding it.
+ * 
  *  ###IMPORTANT###: 
  *  It is vital that you send GET ID (where ID is the ID of the document) 
- *  before you insert/remove from a document.  
- * 		###
+ *  before you insert/remove from a document (if you want to receive updates from that document).
  *  Then following our grammar rules feel free to call INSERT 0 0 A, or whichever you feel like.
- *  NOTE: I have not implemented checks to see if things are out of bounds yet so please don't break it :(
- *  
- *  Currently I am not writing to the files yet to save space for now but I will add that in (I am however creating the files,
- *  though they always remain empty.)
  *  
  * @author Marco Salazar
  *#########################################################################################################

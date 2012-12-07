@@ -259,13 +259,14 @@ public class Server {
 		do{
 			/* Design Decision* Only 2000^2 documents can have the same title. */
 			lc = randomGenerator.nextInt(2000)+ title + randomGenerator.nextInt(2000);
-			f = new File(lc);
+			File dir = new File("documents");
+			f = new File(dir,lc);
 		}while (f.exists());
 		try {
 			f.createNewFile();
 			File f2 = new File("serverDocs.cfg");
 			PrintWriter fileOut = new PrintWriter(new FileWriter(f2, true));
-			fileOut.println(title +" "+ lc);
+			fileOut.println(title +" documents\\"+ lc);
 			fileOut.close();
 		} catch (IOException e) {
 			e.printStackTrace();
