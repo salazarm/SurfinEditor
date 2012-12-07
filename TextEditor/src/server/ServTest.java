@@ -1,8 +1,6 @@
 package server;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -33,7 +31,6 @@ import org.junit.Test;
  */
 public class ServTest {
 
-    @SuppressWarnings("deprecation")
     @Test(timeout=20000)
     public void launchTest() throws IOException, InterruptedException {
     	
@@ -50,7 +47,6 @@ public class ServTest {
                 }
         });
         serv.start();
-        
         
         // client 1 connect
         Socket s1 = new Socket("localhost", 1337);
@@ -70,6 +66,9 @@ public class ServTest {
                 s3.getInputStream()));
         PrintWriter p3 = new PrintWriter(s3.getOutputStream(), true);
         
+        p1.println("CONNECT");
+        p2.println("CONNECT");
+        p3.println("CONNECT");
         
         //client 1 makes a new Document
         p1.println("NEW sampleDoc");
@@ -82,12 +81,12 @@ public class ServTest {
         	o2 = br2.readLine();
         while (o3 == null)
         	o3 = br3.readLine();
+        System.out.println(o1+o2+o3);
         assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals("0%sampleDoc%"));
-        
+
         p1.println("GET 0");
         p2.println("GET 0");
         p3.println("GET 0");
-        
         
         //check Insert command
         p1.println("INSERT 0 0 a");
@@ -100,7 +99,6 @@ public class ServTest {
         	o3 = br3.readLine();
         assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals("a"));
         
-
         p2.println("INSERT 0 1 B");
         o1 = null; o2 = null; o3 = null;
         while (o1 == null)
@@ -109,11 +107,6 @@ public class ServTest {
         	o2 = br2.readLine();
         while (o3 == null)
         	o3 = br3.readLine();
-        assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals("aB"));
-        
-        
+        assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals("aB"));   
     }
-    
-    
-    
 }

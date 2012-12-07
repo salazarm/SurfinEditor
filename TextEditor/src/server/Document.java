@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Document {
-	private CopyOnWriteArrayList<Socket> activeClients = new CopyOnWriteArrayList<Socket>();
+	private final CopyOnWriteArrayList<Socket> activeClients = new CopyOnWriteArrayList<Socket>();
 	private final CopyOnWriteArrayList<Character> docModel;
 	private final ConcurrentLinkedQueue<String[]> commandsQueue = new ConcurrentLinkedQueue<String[]>();
 	private final String name;
@@ -51,12 +51,12 @@ public class Document {
 	 * Synchronized for good measure 
 	 * @param index
 	 */
-	protected synchronized void remove(int index) {
+	private synchronized void remove(int index) {
 		if (index >= 0 && index <docModel.size())
 			docModel.remove(index);
 	}
 
-	protected synchronized void insert(int index, String charToAdd) {
+	private synchronized void insert(int index, String charToAdd) {
 		if (index >= 0 && index <docModel.size())
 			System.out.println(charToAdd);
 			docModel.add(index,charToAdd.charAt(0));
@@ -113,6 +113,7 @@ public class Document {
 	 * Also updates the file.
 	 * @return String representationg of document (concats all the characters in the document model).
 	 */
+	
 	@Override
 	public String toString(){
 		StringBuilder docAsString = new StringBuilder();
@@ -123,6 +124,7 @@ public class Document {
 		updateFile(newFile);
 		return newFile;
 	}
+	
 	private void updateFile(String doc){
 		File f = new File(location);
 		try {
