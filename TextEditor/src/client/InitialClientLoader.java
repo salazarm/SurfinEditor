@@ -17,6 +17,10 @@ import javax.swing.JTextField;
 public class InitialClientLoader {
 	private JFrame mainFrame = new JFrame();
 	
+	InitialClientLoader(){
+		this.makeGUI();
+	}
+	
 	private void makeGUI(){
 		JPanel mainPanel = new JPanel();
 		mainFrame.add(mainPanel);
@@ -39,6 +43,9 @@ public class InitialClientLoader {
 		JButton loginButton = new JButton();
 		loginButton.addActionListener(new ActionListener(){
 			@Override
+			/**
+			 * Uses the input from the host and port field to open the file choosing window.
+			 */
 			public void actionPerformed(ActionEvent e) {
 				if (hostField.getText()!="" && portField.getText()!=""){
 					String host = hostField.getText();
@@ -127,8 +134,12 @@ public class InitialClientLoader {
 		mainFrame.setResizable(false);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
+	/**
+	 * Starts the program and opens the main frame where user can submit host and port information.
+	 * @param args
+	 */
 	public static void main(String args[]){
-		InitialClientLoader a = new InitialClientLoader();
-		a.makeGUI();
+		
+		new InitialClientLoader();
 	}
 }

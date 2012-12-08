@@ -7,9 +7,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -23,6 +26,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 import javax.swing.text.DefaultEditorKit;
 
 public class TextEditor extends JFrame {
@@ -32,8 +36,14 @@ public class TextEditor extends JFrame {
 	private JFileChooser dialog = new JFileChooser(System.getProperty("user.dir"));
 	private String currentFile = "Untitled";
 	private boolean changed = false;
+	private int id;
+	private final BufferedReader in;
+	private final PrintWriter out;
 	
-	public TextEditor(){
+	public TextEditor(final PrintWriter out, final BufferedReader in, int id){
+		this.out = out;
+		this.in = in;
+		this.id =id;
 		document.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		
 		JScrollPane scroll = new JScrollPane(document,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -75,6 +85,28 @@ public class TextEditor extends JFrame {
 		document.addKeyListener(keyPressed);
 		setTitle(currentFile);
 		setVisible(true);
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				while (true) {
+					String line = null;
+					while (line == null) {
+						try {
+							line = in.readLine();
+						} catch (IOException e) {
+							JOptionPane.showMessageDialog(null,"Connection Lost", "Error", JOptionPane.ERROR_MESSAGE);
+							System.exit(-1);
+						}
+					}
+					final String string = line;
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							document.setText(string);
+						}
+					});
+				}
+			}
+		});
+		t.start();
 	}
 	private KeyListener keyPressed = new KeyAdapter(){
 		
@@ -157,8 +189,5 @@ public class TextEditor extends JFrame {
 			JOptionPane.showMessageDialog(this, "An error has occurred. Your document may not have been saved");
 		}
 	} 
-	public static void main(String[] arg){
-		new TextEditor();
-	}
 }
 

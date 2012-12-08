@@ -15,6 +15,11 @@ import java.net.Socket;
 import javax.swing.*;
 
 @SuppressWarnings("unused")
+/**
+ * Opens the file picking window.
+ * @author Marco Salazar
+ *
+ */
 public class ServerDocumentListLoader {
 	private JLabel existingDocsLabel = new JLabel();
 	private JButton newDocumentButton = new JButton();
@@ -63,15 +68,15 @@ public class ServerDocumentListLoader {
 		makeGUI();
 	}
 
-	public void makeGUI() {
+	private void makeGUI() {
 		mainFrame.add(mainPanel);
 
 		MouseListener mouseListener = new MouseAdapter() {
 		    public void mouseClicked(MouseEvent e) {
 		        if (e.getClickCount() == 2) {
 		           int id = docList.getSelectedIndex();
-//		           Socket printWriter BufferedReader id
-		           
+		           new TextEditor(out, in, id);
+		           mainFrame.setVisible(false);
 		         }
 		    }
 		};
@@ -137,18 +142,4 @@ public class ServerDocumentListLoader {
 		mainFrame.setVisible(true);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-
-	// public static void main(String[] arg) {
-	// SwingUtilities.invokeLater(new Runnable() {
-	// public void run() {
-	// ServerDocumentListLoader main;
-	// try {
-	// Socket socket = new Socket(InetAddress.getByName("127.0.0.1"), 1337);
-	// main = new ServerDocumentListLoader(socket);
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// });
-	// }
 }
