@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -18,6 +19,7 @@ import javax.swing.UIManager;
 
 public class InitialClientLoader {
 	private JFrame mainFrame = new JFrame();
+	private final ImageIcon logo = new ImageIcon("surfinEditor.png");
 
 	private void makeGUI() {
 		JPanel mainPanel = new JPanel();
@@ -27,9 +29,10 @@ public class InitialClientLoader {
 		JPanel hostPanel = new JPanel();
 		JPanel portPanel = new JPanel();
 		JPanel loginPanel = new JPanel();
+		JLabel copyright = new JLabel("Marco S, Eric E, Mengshaun P © 2012");
 
-		JLabel banner = new JLabel();
-		banner.setText("Surfin' Editor");
+		JLabel banner = new JLabel(logo);
+		headerPanel.add(banner);
 		final JTextField hostField = new JTextField();
 		hostField.setText("127.0.0.1");
 		JLabel hostLabel = new JLabel();
@@ -120,18 +123,16 @@ public class InitialClientLoader {
 		mainLayout.setAutoCreateContainerGaps(true);
 		mainLayout.setAutoCreateGaps(true);
 
-		mainLayout.setHorizontalGroup(mainLayout.createSequentialGroup()
-				.addGroup(
-						mainLayout
-								.createParallelGroup(
+		mainLayout.setHorizontalGroup(mainLayout.createParallelGroup(
 										GroupLayout.Alignment.CENTER, false)
 								.addComponent(headerPanel)
 								.addComponent(hostPanel)
 								.addComponent(portPanel)
-								.addComponent(loginPanel)));
+								.addComponent(loginPanel)
+								.addComponent(copyright));
 		mainLayout.setVerticalGroup(mainLayout.createSequentialGroup()
 				.addComponent(headerPanel).addComponent(hostPanel)
-				.addComponent(portPanel).addComponent(loginPanel));
+				.addComponent(portPanel).addComponent(loginPanel).addComponent(copyright));
 		mainFrame.pack();
 		mainFrame.setLocationRelativeTo(null);
 		mainFrame.setTitle("Surfin' Editor");

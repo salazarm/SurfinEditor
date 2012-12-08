@@ -144,6 +144,7 @@ public class ServerDocumentListLoader {
 		mainFrame.setSize(500, 500);
 		mainFrame.setResizable(false);
 		mainFrame.setLocationRelativeTo(null);
+		mainFrame.setTitle("File Selection Window");
 		mainFrame.setVisible(true);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
