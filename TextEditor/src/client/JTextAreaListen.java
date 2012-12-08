@@ -30,7 +30,9 @@ public class JTextAreaListen extends JFrame
 
     private JTextArea textArea;
      
-
+    protected final PrintWriter out;
+    protected final int id;
+    protected final BufferedReader breader;
     private static int caretPos;
     private static int cMark;
     protected static boolean text_selected;
@@ -59,7 +61,6 @@ out.print("message"); to send something to the server.
         textArea.getCaretListeners();
         InputMap im = textArea.getInputMap();
         ActionMap am = textArea.getActionMap();
-
 
     }
      
