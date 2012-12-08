@@ -115,6 +115,7 @@ public class TextEditor extends JFrame {
 						}
 					}while (line == null);
 					document.setText(line);
+					
 				}
 			}
 		});

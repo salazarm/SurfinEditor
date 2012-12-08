@@ -235,10 +235,14 @@ public class Server {
 			} else if (tokens[0].equals("CONNECT")) {
 				outs.get(socket).println(getDocList());
 			} else if (tokens[0].equals("INSERT")) {
-				docs.get(Integer.parseInt(tokens[1])).insertChar(
-						Integer.parseInt(tokens[2]), tokens[3]);
+				int id = Integer.parseInt(tokens[1]);
+				if (id < docs.size())
+					docs.get(Integer.parseInt(tokens[1])).insertChar(
+							Integer.parseInt(tokens[2]), tokens[3]);
 			} else if (tokens[0].equals("DELETE")) {
-				docs.get(Integer.parseInt(tokens[1])).removeChar(
+				int id = Integer.parseInt(tokens[1]);
+				if (id < docs.size())
+					docs.get(id).removeChar(
 						Integer.parseInt(tokens[2]));
 			} else {
 				/* should not reach here */
