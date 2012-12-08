@@ -16,7 +16,6 @@ import javax.swing.*;
 
 @SuppressWarnings("unused")
 public class ServerDocumentListLoader {
-
 	private JLabel existingDocsLabel = new JLabel();
 	private JButton newDocumentButton = new JButton();
 	private JTextField newDocumentField = new JTextField();
