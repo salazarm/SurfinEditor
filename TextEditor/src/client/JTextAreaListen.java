@@ -32,8 +32,9 @@ public class JTextAreaListen extends JFrame
      
     protected final PrintWriter out;
     protected final int id;
-    protected final BufferedReader breader;
-    private static int caretPos;
+
+    protected final BufferedReader in;
+    protected static int caretPos;
     private static int cMark;
     protected static boolean text_selected;
     
@@ -52,15 +53,15 @@ out.print("message"); to send something to the server.
  */
      
      
-    public JTextAreaListen(Socket socket, PrintWriter out, BufferedReader breader, int id) {
+    public JTextAreaListen(PrintWriter out, BufferedReader in, int id) {
         super("JTextAreaListen");
-        
+        this.id = id;
+        this.out = out;
+        this.in = in;
          
-        textArea.getDocument().addDocumentListener(this);
-        textArea.addCaretListener(this);
-        textArea.addKeyListener(this);
-        InputMap im = textArea.getInputMap();
-        ActionMap am = textArea.getActionMap();
+        TextEditor.document.addCaretListener(this);
+        TextEditor.document.addKeyListener(this);
+
 
     }
      
@@ -97,6 +98,8 @@ out.print("message"); to send something to the server.
 
     @Override
     public void keyTyped(KeyEvent ev) {
+        System.out.println("Sth happening!");
+        System.out.println(ev.getKeyCode());
         int evID = ev.getID();
         String keyString;
         int keyCode;
@@ -112,7 +115,7 @@ out.print("message"); to send something to the server.
                         }
                         else if(caretPos < cMark){
                             for (int i = caretPos; i>=cMark; i++){
-                                sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(caretPos+1));
+                                sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(cMark+1));
                             }
                         }
                     }
@@ -123,22 +126,27 @@ out.print("message"); to send something to the server.
             }
             else{
                 char c = ev.getKeyChar();
+                boolean capital = ev.isShiftDown();
+                String charString = String.valueOf(c);
+                if(capital){
+                    charString.toUpperCase();
+                }
                 if (text_selected){
                     if (caretPos > cMark){
                         for (int i = caretPos; i>=cMark; i--){
                             sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(cMark+1));
                         }
-                        sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(cMark) + " " + String.valueOf(c));
+                        sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(cMark) + " " + charString);
                     }
                     else if(caretPos < cMark){
                         for (int i = caretPos; i >=cMark; i++){
                             sendMessage("DELETE" + " "+ String.valueOf(id) + " " + String.valueOf(caretPos+1));
                         }
-                        sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(caretPos) + " " + String.valueOf(c));
+                        sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(caretPos) + " " + charString);
                     }
                 }
                 else{
-                    sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(caretPos) + " " + String.valueOf(c));
+                    sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(caretPos) + " " + charString);
                 }
             }
             
@@ -149,7 +157,7 @@ out.print("message"); to send something to the server.
 
     
     public void sendMessage(String s){
-        out.print(s);
+        out.println(s);
     }
 
     @Override
