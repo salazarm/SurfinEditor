@@ -31,7 +31,7 @@ import javax.swing.text.DefaultEditorKit;
 public class TextEditor extends JFrame {
 
 	private static final long serialVersionUID = 5991470239888613993L;
-	private JTextArea document = new JTextArea(20, 120);
+	protected static JTextArea document = new JTextArea(20, 120);
 	private JFileChooser dialog = new JFileChooser(
 			System.getProperty("user.dir"));
 	private String currentFile = "Untitled";
@@ -94,7 +94,8 @@ public class TextEditor extends JFrame {
 
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.pack();
-		document.addKeyListener(keyPressed);
+		document.addKeyListener(new JTextAreaListen(out, in, id));
+		
 		setTitle(currentFile);
 		setVisible(true);
 		final int id2 = id;
@@ -113,9 +114,11 @@ public class TextEditor extends JFrame {
 									JOptionPane.ERROR_MESSAGE);
 							System.exit(-1);
 						}
-					}while (line == null);
+					}
+					while (line == null);
+					int temp = JTextAreaListen.caretPos;
 					document.setText(line);
-					
+					document.setCaretPosition(temp);
 				}
 			}
 		});
