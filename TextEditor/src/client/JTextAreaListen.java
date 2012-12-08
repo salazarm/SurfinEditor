@@ -1,46 +1,66 @@
 package client;
 
 import javax.swing.*;
+
+import java.io.BufferedReader;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.util.*;
+
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
 
 
 public class JTextAreaListen extends JFrame
-        implements DocumentListener {
+        implements DocumentListener, KeyListener, ActionListener, CaretListener {
      
 
     private static final long serialVersionUID = 6950001634065526391L;
 
     private JTextArea textArea;
      
-    private static final String COMMIT_ACTION = "commit";
-    private static enum Mode { INSERT, COMPLETION };
-    private final List<String> words;
-    private Mode mode = Mode.INSERT;
+
+    private static int caretPos;
+    private static int cMark;
+    protected static boolean text_selected;
+    
+     
+/*
+ * Connecting to server.
+(1337 is the port we are going to use).
+
+socket = new Socket(InetAddress.getByName("127.0.0.1"), 1337);
+
+(Open a new outStream, you can save this instead of opening on every time you want to send a message. If the connection is lost your should to out.close();
+
+out = new PrintWriter(socket.getOutputStream(), true);
+
+out.print("message"); to send something to the server.
+ */
      
      
-     
-    public JTextAreaListen() {
+    public JTextAreaListen(Socket socket, PrintWriter out, BufferedReader breader, int id) {
         super("JTextAreaListen");
         
          
         textArea.getDocument().addDocumentListener(this);
-         
+        textArea.getKeyListeners();
+        textArea.getCaretListeners();
         InputMap im = textArea.getInputMap();
         ActionMap am = textArea.getActionMap();
-        im.put(KeyStroke.getKeyStroke("ENTER"), COMMIT_ACTION);
-        am.put(COMMIT_ACTION, new CommitAction());
-         
-        words = new ArrayList<String>(5);
-        words.add("spark");
-        words.add("special");
-        words.add("spectacles");
-        words.add("spectacular");
-        words.add("swing");
+
+
     }
      
     // Listener methods
@@ -48,94 +68,104 @@ public class JTextAreaListen extends JFrame
     public void changedUpdate(DocumentEvent ev) {
     }
      
-    public void removeUpdate(DocumentEvent ev) {
+    public void removeUpdate(DocumentEvent ev) { 
+        
     }
      
     public void insertUpdate(DocumentEvent ev) {
-        if (ev.getLength() != 1) {
-            return;
-        }
-         
-        int pos = ev.getOffset();
-        String content = null;
-        try {
-            content = textArea.getText(0, pos + 1);
-        } catch (BadLocationException e) {
-            e.printStackTrace();
-        }
-         
-        // Find where the word starts
-        int w;
-        for (w = pos; w >= 0; w--) {
-            if (! Character.isLetter(content.charAt(w))) {
-                break;
-            }
-        }
-        if (pos - w < 2) {
-            // Too few chars
-            return;
-        }
-         
-        String prefix = content.substring(w + 1).toLowerCase();
-        int n = Collections.binarySearch(words, prefix);
-        if (n < 0 && -n <= words.size()) {
-            String match = words.get(-n - 1);
-            if (match.startsWith(prefix)) {
-                // A completion is found
-                String completion = match.substring(pos - w);
-                // We cannot modify Document from within notification,
-                // so we submit a task that does the change later
-                SwingUtilities.invokeLater(
-                        new CompletionTask(completion, pos + 1));
-            }
-        } else {
-            // Nothing found
-            mode = Mode.INSERT;
-        }
     }
      
-    private class CompletionTask implements Runnable {
-        String completion;
-        int position;
-         
-        CompletionTask(String completion, int position) {
-            this.completion = completion;
-            this.position = position;
-        }
-         
-        public void run() {
-            textArea.insert(completion, position);
-            textArea.setCaretPosition(position + completion.length());
-            textArea.moveCaretPosition(position);
-            mode = Mode.COMPLETION;
-        }
+
+    @Override
+    public void actionPerformed(ActionEvent arg0) {
+        // TODO Auto-generated method stub
+        
     }
-     
-    private class CommitAction extends AbstractAction {
 
-        private static final long serialVersionUID = 8656345682397237859L;
+    @Override
+    public void keyPressed(KeyEvent arg0) {
+        // TODO Auto-generated method stub
+        
+    }
 
-        public void actionPerformed(ActionEvent ev) {
-            if (mode == Mode.COMPLETION) {
-                int pos = textArea.getSelectionEnd();
-                textArea.insert(" ", pos);
-                textArea.setCaretPosition(pos + 1);
-                mode = Mode.INSERT;
-            } else {
-                textArea.replaceSelection("\n");
+    @Override
+    public void keyReleased(KeyEvent arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void keyTyped(KeyEvent ev) {
+        int evID = ev.getID();
+        String keyString;
+        int keyCode;
+        if (evID == KeyEvent.KEY_TYPED) {
+            
+            if (ev.getKeyChar()==KeyEvent.CHAR_UNDEFINED){
+                keyCode = ev.getKeyCode();
+                if (keyCode==8){
+                    if (text_selected){
+                        if (caretPos > cMark){
+                            for (int i = caretPos; i>=cMark; i--){
+                                sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(cMark+1));
+                            }
+                        }
+                        else if(caretPos < cMark){
+                            for (int i = caretPos; i>=cMark; i++){
+                                sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(caretPos+1));
+                            }
+                        }
+                    }
+                    else{
+                        sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(caretPos+1));
+                    }
+                }
             }
-        }
+            else{
+                char c = ev.getKeyChar();
+                if (text_selected){
+                    if (caretPos > cMark){
+                        for (int i = caretPos; i>=cMark; i--){
+                            sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(cMark+1));
+                        }
+                        sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(cMark) + " " + String.valueOf(c));
+                    }
+                    else if(caretPos < cMark){
+                        for (int i = caretPos; i >=cMark; i++){
+                            sendMessage("DELETE" + " "+ String.valueOf(id) + " " + String.valueOf(caretPos+1));
+                        }
+                        sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(caretPos) + " " + String.valueOf(c));
+                    }
+                }
+                else{
+                    sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(caretPos) + " " + String.valueOf(c));
+                }
+            }
+            
+        } 
+
     }
     
-    public static void main(String args[]) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                //Turn off metal's use of bold fonts
-                UIManager.put("swing.boldMetal", Boolean.FALSE);
-                new JTextAreaListen().setVisible(true);
-            }
-        });
+
+    
+    public void sendMessage(String s){
+        out.print(s);
     }
+
+    @Override
+    public void caretUpdate(CaretEvent cev) {
+        int dot  = cev.getDot();
+        int mark = cev.getMark();
+        caretPos = dot;
+        cMark = mark;
+        if (dot == mark){
+            text_selected = false;
+        }
+        else if((dot < mark) | (dot > mark)){
+            text_selected = true;
+        }
+    }
+   
      
      
 }
