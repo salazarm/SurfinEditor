@@ -94,7 +94,10 @@ public class TextEditor extends JFrame {
 
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.pack();
+		
+		//add JTextAreaListen to the document. Do this only once, not twice.
 		document.addKeyListener(new JTextAreaListen(out, in, id));
+		document.addCaretListener(new JTextAreaListen(out, in, id));
 		
 		setTitle(currentFile);
 		setVisible(true);

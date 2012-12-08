@@ -38,19 +38,7 @@ public class JTextAreaListen extends JFrame
     private static int cMark;
     protected static boolean text_selected;
     
-     
-/*
- * Connecting to server.
-(1337 is the port we are going to use).
-
-socket = new Socket(InetAddress.getByName("127.0.0.1"), 1337);
-
-(Open a new outStream, you can save this instead of opening on every time you want to send a message. If the connection is lost your should to out.close();
-
-out = new PrintWriter(socket.getOutputStream(), true);
-
-out.print("message"); to send something to the server.
- */
+    
      
      
     public JTextAreaListen(PrintWriter out, BufferedReader in, int id) {
@@ -59,8 +47,8 @@ out.print("message"); to send something to the server.
         this.out = out;
         this.in = in;
          
-        TextEditor.document.addCaretListener(this);
-        TextEditor.document.addKeyListener(this);
+        //TextEditor.document.addCaretListener(this);
+        //TextEditor.document.addKeyListener(this);
 
 
     }
@@ -91,18 +79,26 @@ out.print("message"); to send something to the server.
     }
 
     @Override
-    public void keyReleased(KeyEvent arg0) {
-        // TODO Auto-generated method stub
+    public void keyReleased(KeyEvent ev) {
+        
+        
+    }
+    
+    public void selectedTextInsert(KeyEvent ev){
         
     }
 
     @Override
     public void keyTyped(KeyEvent ev) {
-        System.out.println("Sth happening!");
-        System.out.println(ev.getKeyCode());
+        
         int evID = ev.getID();
         String keyString;
-        int keyCode;
+        char kc = ev.getKeyChar();
+        int keyCode = ev.getKeyCode();
+        
+        System.out.println("Sth happening!");
+        System.out.println(ev.getKeyCode());
+
         if (evID == KeyEvent.KEY_TYPED) {
             if (ev.getKeyChar()==KeyEvent.CHAR_UNDEFINED){
                 keyCode = ev.getKeyCode();
@@ -157,7 +153,7 @@ out.print("message"); to send something to the server.
 
     
     public void sendMessage(String s){
-        out.println(s);
+        out.print(s);
     }
 
     @Override
