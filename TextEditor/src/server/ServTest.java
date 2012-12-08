@@ -36,7 +36,10 @@ import org.junit.Test;
  */
 
 public class ServTest {
-
+	
+	/**
+	 * Test the basic functions of the server using the textClientDemo.
+	 */
     @Test(timeout=20000)
     public void BasicFuntionTest() throws IOException, InterruptedException {
     	
