@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 public class InitialClientLoader {
 	private JFrame mainFrame = new JFrame();
@@ -79,7 +80,7 @@ public class InitialClientLoader {
 			}
 		});
 
-		loginButton.setText("Start surfin' the con-current-ies!");
+		loginButton.setText("Start surfin' the con-curren(t)-seas!");
 		loginPanel.add(loginButton);
 
 		GroupLayout hostLayout = new GroupLayout(hostPanel);
@@ -146,6 +147,11 @@ public class InitialClientLoader {
 	 * @param args
 	 */
 	public static void main(String args[]) {
+		try {
+		    UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
+		} catch (Exception e) {
+		    e.printStackTrace();
+		}
 
 		final InitialClientLoader a = new InitialClientLoader();
 		SwingUtilities.invokeLater(new Runnable() {
