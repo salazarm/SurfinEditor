@@ -272,6 +272,9 @@ public class Server {
 			lc = randomGenerator.nextInt(2000) + title
 					+ randomGenerator.nextInt(2000);
 			File dir = new File("documents");
+			if(!dir.exists()){
+				dir.mkdir();
+			}
 			f = new File(dir, lc);
 		} while (f.exists());
 		try {
