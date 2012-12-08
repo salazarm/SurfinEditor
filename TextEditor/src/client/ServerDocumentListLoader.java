@@ -54,7 +54,7 @@ public class ServerDocumentListLoader {
 							synchronized (docList) {
 								synchronized (docsList) {
 									docsList.clear();
-									for (int i = 0; i < tokens.length; i += 2) {
+									for (int i = 0; i+1< tokens.length; i += 2) {
 										docsList.addElement(tokens[i + 1]);
 									}
 								}
@@ -77,6 +77,8 @@ public class ServerDocumentListLoader {
 		           int id = docList.getSelectedIndex();
 		           new TextEditor(out, in, id);
 		           mainFrame.setVisible(false);
+//		           Socket printWriter BufferedReader id
+		           
 		         }
 		    }
 		};
@@ -142,4 +144,18 @@ public class ServerDocumentListLoader {
 		mainFrame.setVisible(true);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
+
+	// public static void main(String[] arg) {
+	// SwingUtilities.invokeLater(new Runnable() {
+	// public void run() {
+	// ServerDocumentListLoader main;
+	// try {
+	// Socket socket = new Socket(InetAddress.getByName("127.0.0.1"), 1337);
+	// main = new ServerDocumentListLoader(socket);
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// }
+	// }
+	// });
+	// }
 }
