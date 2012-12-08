@@ -25,7 +25,7 @@ import javax.swing.JTextArea;
 
 public class Server {
 	private final CopyOnWriteArrayList<Document> docs = new CopyOnWriteArrayList<Document>();
-	private final String regex = "(NEW [\\s\\S]+)|(DELETE \\d+ \\d+)|(INSERT \\d+ \\d+ [\\s\\S]+)|(GET \\d+)|(CONNECT)";
+	private final String regex = "(NEW [\\s\\S]+)|(DELETE \\d+ \\d+)|(INSERT \\d+ \\d+[ ]?[\\s\\S]?)|(GET \\d+)|(CONNECT)";
 	private final ServerSocket serverSocket;
 	private Map<Socket, BufferedReader> ins = new ConcurrentHashMap<Socket, BufferedReader>();
 	public static Map<Socket, PrintWriter> outs = new ConcurrentHashMap<Socket, PrintWriter>();
@@ -238,7 +238,7 @@ public class Server {
 				outs.get(socket).println(getDocList());
 			} else if (tokens[0].equals("INSERT")) {
 				String ch;
-				if (tokens.length == 2) {
+				if (tokens.length == 3) {
 					ch = " ";
 				} else {
 					ch = tokens[3];
