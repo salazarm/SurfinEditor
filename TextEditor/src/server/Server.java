@@ -239,7 +239,7 @@ public class Server {
 			} else if (tokens[0].equals("INSERT")) {
 				String ch;
 				if (tokens.length == 3) {
-					ch = " ";
+					ch = "\n";
 				} else {
 					ch = tokens[3];
 				}
