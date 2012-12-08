@@ -57,8 +57,8 @@ out.print("message"); to send something to the server.
         
          
         textArea.getDocument().addDocumentListener(this);
-        textArea.getKeyListeners();
-        textArea.getCaretListeners();
+        textArea.addCaretListener(this);
+        textArea.addKeyListener(this);
         InputMap im = textArea.getInputMap();
         ActionMap am = textArea.getActionMap();
 
@@ -101,7 +101,6 @@ out.print("message"); to send something to the server.
         String keyString;
         int keyCode;
         if (evID == KeyEvent.KEY_TYPED) {
-            
             if (ev.getKeyChar()==KeyEvent.CHAR_UNDEFINED){
                 keyCode = ev.getKeyCode();
                 if (keyCode==8){
@@ -166,6 +165,7 @@ out.print("message"); to send something to the server.
             text_selected = true;
         }
     }
+    
    
      
      
