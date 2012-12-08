@@ -1,0 +1,155 @@
+package client;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
+
+import javax.swing.*;
+
+@SuppressWarnings("unused")
+public class ServerDocumentListLoader {
+
+	private JLabel existingDocsLabel = new JLabel();
+	private JButton newDocumentButton = new JButton();
+	private JTextField newDocumentField = new JTextField();
+	private DefaultListModel docsList = new DefaultListModel();
+	private JList docList = new JList(docsList);
+	private JScrollPane scroll = new JScrollPane(docList);
+	private JFrame mainFrame = new JFrame();
+	private JPanel mainPanel = new JPanel();
+	private final BufferedReader in;
+	private final PrintWriter out;
+	ServerDocumentListLoader(Socket socket) throws IOException {
+		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		out = new PrintWriter(socket.getOutputStream(), true);
+		out.println("CONNECT");
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				while (true) {
+					String line = null;
+					while (line == null) {
+						try {
+							line = in.readLine();
+						} catch (IOException e) {
+							JOptionPane.showMessageDialog(null,"Connection Lost", "Error", JOptionPane.ERROR_MESSAGE);
+							System.exit(-1);
+						}
+					}
+					final String[] tokens = line.split("%");
+					assert (tokens.length % 2 == 0);
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							synchronized (docList) {
+								synchronized (docsList) {
+									docsList.clear();
+									for (int i = 0; i < tokens.length; i += 2) {
+										docsList.addElement(tokens[i + 1]);
+									}
+								}
+							}
+						}
+					});
+				}
+			}
+		});
+		t.start();
+		makeGUI();
+	}
+
+	public void makeGUI() {
+		mainFrame.add(mainPanel);
+
+		MouseListener mouseListener = new MouseAdapter() {
+		    public void mouseClicked(MouseEvent e) {
+		        if (e.getClickCount() == 2) {
+		           int id = docList.getSelectedIndex();
+//		           Socket printWriter BufferedReader id
+		           
+		         }
+		    }
+		};
+		docList.addMouseListener(mouseListener);
+		
+		existingDocsLabel.setText("Existing Documents");
+		newDocumentButton.setText("New Document");
+		newDocumentButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (newDocumentField.getText() != "") {
+					String fileName = newDocumentField.getText();
+					out.println("NEW " + fileName);
+					out.println("CONNECT");
+				}
+			}
+		});
+
+		newDocumentField.setText("exampleFile.txt");
+		newDocumentField.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (newDocumentField.getText() != "") {
+					String fileName = newDocumentField.getText();
+					out.println("NEW " + fileName);
+					out.println("CONNECT");
+				}
+			}
+		});
+
+		JPanel newDocumentPanel = new JPanel();
+		GroupLayout newDocumentLayout = new GroupLayout(newDocumentPanel);
+		newDocumentPanel.setLayout(newDocumentLayout);
+		newDocumentLayout.setAutoCreateGaps(true);
+		newDocumentLayout.setAutoCreateContainerGaps(true);
+
+		newDocumentLayout.setHorizontalGroup(newDocumentLayout
+				.createSequentialGroup().addComponent(newDocumentField)
+				.addComponent(newDocumentButton));
+
+		newDocumentLayout.setVerticalGroup(newDocumentLayout
+				.createParallelGroup(GroupLayout.Alignment.CENTER)
+				.addComponent(newDocumentField, 25, 25, 25)
+				.addComponent(newDocumentButton, 25, 25, 25));
+
+		GroupLayout mainLayout = new GroupLayout(mainPanel);
+		mainLayout.setAutoCreateGaps(true);
+		mainLayout.setAutoCreateContainerGaps(true);
+		mainPanel.setLayout(mainLayout);
+
+		mainLayout.setHorizontalGroup(mainLayout
+				.createParallelGroup(GroupLayout.Alignment.CENTER)
+				.addComponent(newDocumentPanel).addComponent(existingDocsLabel)
+				.addComponent(scroll));
+
+		mainLayout.setVerticalGroup(mainLayout.createSequentialGroup()
+				.addComponent(newDocumentPanel).addComponent(existingDocsLabel)
+				.addComponent(scroll));
+		mainFrame.pack();
+		mainFrame.setSize(500, 500);
+		mainFrame.setResizable(false);
+		mainFrame.setLocationRelativeTo(null);
+		mainFrame.setVisible(true);
+		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+
+	// public static void main(String[] arg) {
+	// SwingUtilities.invokeLater(new Runnable() {
+	// public void run() {
+	// ServerDocumentListLoader main;
+	// try {
+	// Socket socket = new Socket(InetAddress.getByName("127.0.0.1"), 1337);
+	// main = new ServerDocumentListLoader(socket);
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// }
+	// }
+	// });
+	// }
+}
