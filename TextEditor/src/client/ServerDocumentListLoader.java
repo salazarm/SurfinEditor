@@ -31,6 +31,7 @@ public class ServerDocumentListLoader {
 	private JPanel mainPanel = new JPanel();
 	private final BufferedReader in;
 	private final PrintWriter out;
+
 	ServerDocumentListLoader(Socket socket) throws IOException {
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		out = new PrintWriter(socket.getOutputStream(), true);
@@ -43,7 +44,9 @@ public class ServerDocumentListLoader {
 						try {
 							line = in.readLine();
 						} catch (IOException e) {
-							JOptionPane.showMessageDialog(null,"Connection Lost", "Error", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(null,
+									"Connection Lost", "Error",
+									JOptionPane.ERROR_MESSAGE);
 							System.exit(-1);
 						}
 					}
@@ -54,7 +57,7 @@ public class ServerDocumentListLoader {
 							synchronized (docList) {
 								synchronized (docsList) {
 									docsList.clear();
-									for (int i = 0; i+1< tokens.length; i += 2) {
+									for (int i = 0; i + 1 < tokens.length; i += 2) {
 										docsList.addElement(tokens[i + 1]);
 									}
 								}
@@ -72,18 +75,18 @@ public class ServerDocumentListLoader {
 		mainFrame.add(mainPanel);
 
 		MouseListener mouseListener = new MouseAdapter() {
-		    public void mouseClicked(MouseEvent e) {
-		        if (e.getClickCount() == 2) {
-		           int id = docList.getSelectedIndex();
-		           new TextEditor(out, in, id);
-		           mainFrame.setVisible(false);
-//		           Socket printWriter BufferedReader id
-		           
-		         }
-		    }
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					int id = docList.getSelectedIndex();
+					new TextEditor(out, in, id);
+					mainFrame.setVisible(false);
+					// Socket printWriter BufferedReader id
+
+				}
+			}
 		};
 		docList.addMouseListener(mouseListener);
-		
+
 		existingDocsLabel.setText("Existing Documents");
 		newDocumentButton.setText("New Document");
 		newDocumentButton.addActionListener(new ActionListener() {
@@ -144,18 +147,4 @@ public class ServerDocumentListLoader {
 		mainFrame.setVisible(true);
 		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-
-	// public static void main(String[] arg) {
-	// SwingUtilities.invokeLater(new Runnable() {
-	// public void run() {
-	// ServerDocumentListLoader main;
-	// try {
-	// Socket socket = new Socket(InetAddress.getByName("127.0.0.1"), 1337);
-	// main = new ServerDocumentListLoader(socket);
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// });
-	// }
 }

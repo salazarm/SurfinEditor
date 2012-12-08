@@ -103,17 +103,7 @@ public class ServTest {
         	o2 = br2.readLine();
         while (o3 == null)
         	o3 = br3.readLine();
-        System.out.println(o1+o2+o3);1
-        assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals("a"));
-        
-//        p2.println("INSERT 0 1 B");
-//        o1 = null; o2 = null; o3 = null;
-//        while (o1 == null)
-//        	o1 = br1.readLine();
-//        while (o2 == null)
-//        	o2 = br2.readLine();
-//        while (o3 == null)
-//        	o3 = br3.readLine();
-//        assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals("aB"));   
+        System.out.println(o1+o2+o3);
+        assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals("a"));  
     }
 }

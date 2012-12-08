@@ -40,7 +40,7 @@ public class Server {
 	public Server(ServerSocket serverSocket) {
 		this.serverSocket = serverSocket;
 	}
-	
+
 	private void makeGUI() {
 		serverLog.setText("Server started on " + serverSocket);
 		serverLog.setLineWrap(true);
@@ -70,41 +70,43 @@ public class Server {
 		docs.get(ID).addActiveUser(socket);
 		outs.get(socket).println(docs.get(ID).toString());
 	}
+
 	/**
 	 * Starts a server for our concurrent text editor
+	 * 
 	 * @param args
 	 */
-	public static void main(String[] args){
+	public static void main(String[] args) {
 		final int port = 1337;
-		try{
-		ServerSocket serverSocket = new ServerSocket(port);
-		Server server = new Server(serverSocket);
-		server.makeGUI();
-		server.build();
-		server.serve();
-		}catch(IOException e){
-			JOptionPane.showMessageDialog(null, "Port "+ port+" already in use", "Error", JOptionPane.ERROR_MESSAGE);
+		try {
+			ServerSocket serverSocket = new ServerSocket(port);
+			Server server = new Server(serverSocket);
+			server.makeGUI();
+			server.build();
+			server.serve();
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, "Port " + port
+					+ " already in use", "Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
-			}
+		}
 	}
 
 	/**
 	 * Reads the location of current existing documents on the server. Files are
 	 * saved line by line in a serverDocs.cfg. Each line has the location of the
-	 * localFile. This rebuilds the server everytime the server starts, so the server
-	 * being off does not result in loss of data.
+	 * localFile. This rebuilds the server everytime the server starts, so the
+	 * server being off does not result in loss of data.
 	 * 
-	 * The grammar for the File is as follows: 
+	 * The grammar for the File is as follows:
 	 * 
-	 * CONFIGFILE ::= LINE* 
-	 * LINE ::= TITLE LOCATION 
-	 * TITLE::= [.]+ 
-	 * LOCATION::= [.]+
+	 * CONFIGFILE ::= LINE* LINE ::= TITLE LOCATION TITLE::= [.]+ LOCATION::=
+	 * [.]+
 	 * 
 	 * @throws IOException
 	 */
 	public void build() throws IOException {
-		serverLog.setText(serverLog.getText()+"\n Building server document models...");
+		serverLog.setText(serverLog.getText()
+				+ "\n Building server document models...");
 		File f;
 		f = new File("serverDocs.cfg");
 		if (!f.exists()) {
@@ -122,16 +124,19 @@ public class Server {
 		}
 		f.setWritable(true);
 		fileIn.close();
-		serverLog.setText(serverLog.getText()+"\n Server document models built...");
+		serverLog.setText(serverLog.getText()
+				+ "\n Server document models built...");
 	}
+
 	private void documentize(String title, String location) throws IOException {
 		File f;
 		f = new File(location);
 		if (f.exists()) {
 			CopyOnWriteArrayList<Character> docModel = new CopyOnWriteArrayList<Character>();
 			BufferedReader fileIn = new BufferedReader(new FileReader(f));
-			for (String line = fileIn.readLine(); line != null; line = fileIn.readLine()) {
-				for(int i=0; i<line.length(); i++)
+			for (String line = fileIn.readLine(); line != null; line = fileIn
+					.readLine()) {
+				for (int i = 0; i < line.length(); i++)
 					docModel.add(line.charAt(i));
 				docModel.add('\n');
 			}
@@ -139,8 +144,10 @@ public class Server {
 			docs.add(new Document(title, docModel, location));
 		}
 	}
+
 	/**
 	 * Starts up the server and listens for new connections
+	 * 
 	 * @throws IOException
 	 */
 	public void serve() throws IOException {
@@ -196,9 +203,11 @@ public class Server {
 			}
 			BufferedReader in = ins.get(socket);
 			try {
-					for (String line = in.readLine(); line != null; line = in.readLine()) {
-						serverLog.setText(serverLog.getText() +"\n"+socket+" : "+ line);
-						handleRequest(line, socket);
+				for (String line = in.readLine(); line != null; line = in
+						.readLine()) {
+					serverLog.setText(serverLog.getText() + "\n" + socket
+							+ " : " + line);
+					handleRequest(line, socket);
 				}
 			} finally {
 				if (socket.isClosed()) {
@@ -211,22 +220,16 @@ public class Server {
 	}
 
 	/**
-	 * Grammar: COMMAND ::= NEW | INSERT | DELETE | GET 
-	 * NEW ::= "NEW" NAME 
-	 * NAME ::= [.]+ 
-	 * DELETE ::= "DELETE" ID INDEX 
-	 * INSERT ::= "INSERT" ID INDEX LETTER
-	 * GET ::= "GET" ID 
-	 * ID ::= [0-9]+ 
-	 * INDEX ::= [0-9]+ 
-	 * LETTER ::= [.]
-	 * CONNECT ::= "CONNECT"
+	 * Grammar: COMMAND ::= NEW | INSERT | DELETE | GET NEW ::= "NEW" NAME NAME
+	 * ::= [.]+ DELETE ::= "DELETE" ID INDEX INSERT ::= "INSERT" ID INDEX LETTER
+	 * GET ::= "GET" ID ID ::= [0-9]+ INDEX ::= [0-9]+ LETTER ::= [.] CONNECT
+	 * ::= "CONNECT"
 	 * 
 	 * @param command
 	 *            the command to be parsed
 	 */
 	private void handleRequest(String command, Socket socket) {
-		if (command.matches(regex)){
+		if (command.matches(regex)) {
 			String[] tokens = command.split(" ");
 			if (tokens[0].equals("NEW")) {
 				makeNewDoc(tokens[1]);
@@ -236,9 +239,11 @@ public class Server {
 				outs.get(socket).println(getDocList());
 			} else if (tokens[0].equals("INSERT")) {
 				String ch;
-				if (tokens.length == 2){
+				if (tokens.length == 2) {
 					ch = " ";
-				}else{ ch = tokens[3];}
+				} else {
+					ch = tokens[3];
+				}
 				int id = Integer.parseInt(tokens[1]);
 				if (id < docs.size())
 					docs.get(Integer.parseInt(tokens[1])).insertChar(
@@ -246,8 +251,7 @@ public class Server {
 			} else if (tokens[0].equals("DELETE")) {
 				int id = Integer.parseInt(tokens[1]);
 				if (id < docs.size())
-					docs.get(id).removeChar(
-						Integer.parseInt(tokens[2]));
+					docs.get(id).removeChar(Integer.parseInt(tokens[2]));
 			} else {
 				/* should not reach here */
 				throw new UnsupportedOperationException();
@@ -264,17 +268,18 @@ public class Server {
 	private void makeNewDoc(String title) {
 		File f = new File("%"); // Should never exist
 		String lc;
-		do{
+		do {
 			/* Design Decision* Only 2000^2 documents can have the same title. */
-			lc = randomGenerator.nextInt(2000)+ title + randomGenerator.nextInt(2000);
+			lc = randomGenerator.nextInt(2000) + title
+					+ randomGenerator.nextInt(2000);
 			File dir = new File("documents");
-			f = new File(dir,lc);
-		}while (f.exists());
+			f = new File(dir, lc);
+		} while (f.exists());
 		try {
 			f.createNewFile();
 			File f2 = new File("serverDocs.cfg");
 			PrintWriter fileOut = new PrintWriter(new FileWriter(f2, true));
-			fileOut.println(title +" documents\\"+ lc);
+			fileOut.println(title + " documents\\" + lc);
 			fileOut.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -301,12 +306,9 @@ public class Server {
 	 * design decision). Also if files are being added then it is okay that we
 	 * are in the middle of iterating over because we want that file to be sent
 	 * as well (Doesn't hurt). This sends a message of all of the documents to
-	 * the client in a string using the following 
+	 * the client in a string using the following
 	 * 
-	 * Grammar: 
-	 * MESSAGE ::= (ID TITLE)* 
-	 * ID ::= \\d+ 
-	 * TITLE ::= [.]+
+	 * Grammar: MESSAGE ::= (ID TITLE)* ID ::= \\d+ TITLE ::= [.]+
 	 * 
 	 * @return all the documents as a string.
 	 */
