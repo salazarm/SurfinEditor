@@ -490,7 +490,7 @@ public class ServTest {
                 }
         });
         serv.start();
-    	
+        
     	// client 1 connect
         Socket s1 = new Socket("localhost", 1341);
         PrintWriter p1 = new PrintWriter(s1.getOutputStream(), true);
@@ -502,6 +502,9 @@ public class ServTest {
         // client 3 connect
         Socket s3 = new Socket("localhost", 1341);
         PrintWriter p3 = new PrintWriter(s3.getOutputStream(), true);
+        
+        // waiting for the clients to be started.
+        Thread.sleep(100);
         
         // create document and wait for the create time lag.
         p1.println("NEW sampleDoc");
@@ -535,5 +538,7 @@ public class ServTest {
         // handle "INSERT 0 0 b" from p2 ---> "ba".
         // handle "INSERT 0 0 c" from p. ---> "cba"
         assertEquals("cba", br4.readLine());  
+        
+        //assertEquals("cba", br4.readLine());
     }
 }
