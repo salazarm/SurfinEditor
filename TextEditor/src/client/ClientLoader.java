@@ -24,6 +24,7 @@ public class ClientLoader {
 	private final String Default_PORT = "1337";
 	private final String Default_HOST = "127.0.0.1";
 	protected static final Map<String,TextEditor> textEditorMap = new HashMap<String,TextEditor>();
+	protected static ServerDocumentListLoader sdl;
 
 	private void makeGUI() {
 		JPanel mainPanel = new JPanel();
@@ -62,7 +63,7 @@ public class ClientLoader {
 					try {
 						Socket socket = new Socket(InetAddress.getByName(host),
 								Integer.parseInt(port));
-						new ServerDocumentListLoader(socket);
+						sdl = new ServerDocumentListLoader(socket);
 						mainFrame.dispose();
 					} catch (NumberFormatException e1) {
 						JOptionPane.showMessageDialog(null,

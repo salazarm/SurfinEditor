@@ -19,7 +19,7 @@ import javax.swing.JOptionPane;
 
 public class Server {
 	private final CopyOnWriteArrayList<Document> docs = new CopyOnWriteArrayList<Document>();
-	private final String regex = "(NEW [\\s\\S]+)|(DELETE \\d+ \\d+)|(INSERT \\d+ \\d+[ ]?[\\s\\S]?)|(GET \\d+)|(CONNECT)";
+	private final String regex = "(NEW [\\s\\S]+)|(DELETE \\d+ \\d+)|(INSERT \\d+ \\d+ \\d+)|(GET \\d+)|(CONNECT)";
 	private final ServerSocket serverSocket;
 	private Map<Socket, BufferedReader> ins = new ConcurrentHashMap<Socket, BufferedReader>();
 	protected static Map<Socket, PrintWriter> outs = new ConcurrentHashMap<Socket, PrintWriter>();
@@ -179,10 +179,16 @@ public class Server {
 	}
 
 	/**
-	 * Grammar: COMMAND ::= NEW | INSERT | DELETE | GET NEW ::= "NEW" NAME NAME
-	 * ::= [.]+ DELETE ::= "DELETE" ID INDEX INSERT ::= "INSERT" ID INDEX LETTER
-	 * GET ::= "GET" ID ID ::= [0-9]+ INDEX ::= [0-9]+ LETTER ::= [.] CONNECT
-	 * ::= "CONNECT"
+	 * Grammar: COMMAND ::= NEW | INSERT | DELETE | GET 
+	 * NEW ::= "NEW" NAME 
+	 * NAME ::= [.]+ 
+	 * DELETE ::= "DELETE" ID INDEX 
+	 * INSERT ::= "INSERT" ID INDEX ASCIICODE
+	 * GET ::= "GET" ID 
+	 * ID ::= \\d+
+	 * INDEX ::= \\d+
+	 * ASCIICODE ::= \\d+ 
+	 * CONNECT ::= "CONNECT"
 	 * 
 	 * @param command
 	 *            the command to be parsed
