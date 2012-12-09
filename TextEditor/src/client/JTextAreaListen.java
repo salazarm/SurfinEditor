@@ -10,6 +10,7 @@ import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
@@ -104,13 +105,16 @@ public class JTextAreaListen extends JFrame implements KeyListener,
                         singularInsert(charString);
                     }
                 } else {
+                    JOptionPane.showMessageDialog(null,
+                            "Control is disabled.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
                     /*
                      * We care about the Cut and Paste commands, because they
                      * affect the contents of the document in a way that the
                      * other user won't see unless a message is sent to the
                      * server.
                      */
-                    if (!(charString.equals("x") | charString.equals("v"))) {
+                    if (!(charString.equals("x") || charString.equals("v"))) {
                         /*
                          * We do nothing. As long as control is down, the only
                          * other relevant commands are Ctrl+A and Ctrl+C, but we
