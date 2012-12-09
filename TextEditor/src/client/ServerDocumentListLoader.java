@@ -55,7 +55,6 @@ public class ServerDocumentListLoader {
 	}
 
 	protected void sendMessage(String docToSend) {
-		System.out.println("sendMessage"+docToSend);
 		docToSend = StringAsciiConversion.toAscii(docToSend);
 		out.println(docToSend);
 	}
@@ -94,8 +93,7 @@ public class ServerDocumentListLoader {
 			@Override
 			protected void process(List<String> lines) {
 				for (String line : lines) {
-					System.out.println("Client Received: " + line);
-					if (line.length()>= 2 && line.charAt(1) == '%') {
+					if (line.length() >= 2 && line.charAt(1) == '%') {
 						/* This is an update regarding documents on the server */
 						final String[] tokens = line.split("%");
 						System.out.println(line);
@@ -113,21 +111,26 @@ public class ServerDocumentListLoader {
 						Matcher matcher = regex.matcher(line);
 						if (matcher.find() && matcher.start() == 0) {
 							String id = line.substring(0, matcher.end() - 1);
-							System.out.println("PARSED ID: "+id);
+							System.out.println("PARSED ID: " + id);
 							if (ClientLoader.textEditorMap.containsKey(id)) {
 								TextEditor editor = ClientLoader.textEditorMap
 										.get(id);
 								JTextArea document = editor.document;
-								
-								String docAsAsciiCode = line.substring(id.length() + 1);
-								String docInAsciiText = StringAsciiConversion.asciiToString(docAsAsciiCode);
+
+								String docAsAsciiCode = line.substring(id
+										.length() + 1);
+								String docInAsciiText = StringAsciiConversion
+										.asciiToString(docAsAsciiCode);
 
 								int temp = editor.textAreaListener.caretPos;
-								
+
 								document.setText(docInAsciiText);
 								document.setCaretPosition(temp);
 							}
-						}else{System.out.println("REGEX DIDN'T MATCH ON: "+line);}
+						} else {
+							System.out
+									.println("REGEX DIDN'T MATCH ON: " + line);
+						}
 					}
 				}
 			}
@@ -159,10 +162,10 @@ public class ServerDocumentListLoader {
 					if (!Pattern.matches("[\\s\\S]*%[\\s\\S]*", fileName)) {
 						out.println("NEW " + fileName);
 						out.println("CONNECT");
-					}else{
+					} else {
 						JOptionPane.showMessageDialog(null,
-								"Please do not use '%' in your file name", "Error",
-								JOptionPane.ERROR_MESSAGE);
+								"Please do not use '%' in your file name",
+								"Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}
@@ -177,10 +180,10 @@ public class ServerDocumentListLoader {
 					if (!Pattern.matches("[\\s\\S]*%[\\s\\S]*", fileName)) {
 						out.println("NEW " + fileName);
 						out.println("CONNECT");
-					}else{
+					} else {
 						JOptionPane.showMessageDialog(null,
-								"Please do not use '%' in your file name", "Error",
-								JOptionPane.ERROR_MESSAGE);
+								"Please do not use '%' in your file name",
+								"Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}
@@ -220,6 +223,6 @@ public class ServerDocumentListLoader {
 		mainFrame.setLocationRelativeTo(null);
 		mainFrame.setTitle("File Selection Window");
 		mainFrame.setVisible(true);
-		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 	}
 }

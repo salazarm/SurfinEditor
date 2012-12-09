@@ -25,14 +25,14 @@ public class Server {
 	protected static Map<Socket, PrintWriter> outs = new ConcurrentHashMap<Socket, PrintWriter>();
 	private List<Socket> sockets = new ArrayList<Socket>();
 	private static Random randomGenerator = new Random();
-	
+
 	public Server(ServerSocket serverSocket) {
 		this.serverSocket = serverSocket;
 	}
 
 	private void getDoc(int ID, Socket socket) {
 		docs.get(ID).addActiveUser(socket);
-		outs.get(socket).println(ID+"A"+docs.get(ID).toString());
+		outs.get(socket).println(ID + "A" + docs.get(ID).toString());
 		sockets.remove(socket);
 	}
 
@@ -97,7 +97,7 @@ public class Server {
 			for (String line = fileIn.readLine(); line != null; line = fileIn
 					.readLine()) {
 				for (int i = 0; i < line.length(); i++)
-					docModel.add(""+line.charAt(i));
+					docModel.add("" + line.charAt(i));
 			}
 			fileIn.close();
 			docs.add(new Document(title, docModel, location, docs.size()));
@@ -164,7 +164,7 @@ public class Server {
 			try {
 				for (String line = in.readLine(); line != null; line = in
 						.readLine()) {
-					System.out.println("Server Received: "+line);
+					System.out.println("Server Received: " + line);
 					handleRequest(line, socket);
 				}
 			} finally {
@@ -178,15 +178,9 @@ public class Server {
 	}
 
 	/**
-	 * Grammar: COMMAND ::= NEW | INSERT | DELETE | GET 
-	 * NEW ::= "NEW" NAME 
-	 * NAME ::= [.]+ 
-	 * DELETE ::= "DELETE" ID INDEX 
-	 * INSERT ::= "INSERT" ID INDEX ASCIICODE
-	 * GET ::= "GET" ID 
-	 * ID ::= \\d+
-	 * INDEX ::= \\d+
-	 * ASCIICODE ::= \\d+ 
+	 * Grammar: COMMAND ::= NEW | INSERT | DELETE | GET NEW ::= "NEW" NAME NAME
+	 * ::= [.]+ DELETE ::= "DELETE" ID INDEX INSERT ::= "INSERT" ID INDEX
+	 * ASCIICODE GET ::= "GET" ID ID ::= \\d+ INDEX ::= \\d+ ASCIICODE ::= \\d+
 	 * CONNECT ::= "CONNECT"
 	 * 
 	 * @param command
@@ -200,14 +194,14 @@ public class Server {
 			} else if (tokens[0].equals("GET")) {
 				getDoc(Integer.parseInt(tokens[1]), socket);
 			} else if (tokens[0].equals("CONNECT")) {
-				if(!sockets.contains(socket))
+				if (!sockets.contains(socket))
 					sockets.add(socket);
 				outs.get(socket).println(getDocList());
 			} else if (tokens[0].equals("INSERT")) {
 				String ch = tokens[3];
 				int id = Integer.parseInt(tokens[1]);
-				System.out.println("ch: "+ch);
-				if(tokens[3].equals(""))
+				System.out.println("ch: " + ch);
+				if (tokens[3].equals(""))
 					ch = tokens[4];
 				if (id < docs.size())
 					docs.get(Integer.parseInt(tokens[1])).insertChar(
@@ -237,7 +231,7 @@ public class Server {
 			lc = randomGenerator.nextInt(2000) + title
 					+ randomGenerator.nextInt(2000);
 			File dir = new File("documents");
-			if(!dir.exists()){
+			if (!dir.exists()) {
 				dir.mkdir();
 			}
 			f = new File(dir, lc);
@@ -251,7 +245,8 @@ public class Server {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		docs.add(new Document(title, new CopyOnWriteArrayList<String>(), lc, docs.size()));
+		docs.add(new Document(title, new CopyOnWriteArrayList<String>(), lc,
+				docs.size()));
 		updateUsersDocList(); // Updates all users of the new file being added.
 	}
 

@@ -24,15 +24,17 @@ public class ClientLoader {
 	private final ImageIcon logo = new ImageIcon("surfinEditor.png");
 	private final String Default_PORT = "1337";
 	private final String Default_HOST = "127.0.0.1";
-	protected static final Map<String,TextEditor> textEditorMap = new HashMap<String,TextEditor>();
+	
+	/** used to keep track of open JFrames **/
+	protected static final Map<String, TextEditor> textEditorMap = new HashMap<String, TextEditor>();
 	protected static ServerDocumentListLoader sdl;
 
 	private void makeGUI() {
 		JPanel mainPanel = new JPanel();
 		mainFrame.add(mainPanel);
 		JPanel headerPanel = new JPanel();
-		headerPanel.setMinimumSize(new Dimension(192,110));
-		headerPanel.setMaximumSize(new Dimension(192,110));
+		headerPanel.setMinimumSize(new Dimension(192, 110));
+		headerPanel.setMaximumSize(new Dimension(192, 110));
 		JPanel hostPanel = new JPanel();
 		JPanel portPanel = new JPanel();
 		JPanel loginPanel = new JPanel();
@@ -50,7 +52,7 @@ public class ClientLoader {
 		portLabel.setText("PORT: ");
 		JButton loginButton = new JButton();
 		loginButton.addActionListener(new ActionListener() {
-			
+
 			@Override
 			/**
 			 * Uses the input from the host and port field to open the file choosing window.
@@ -129,16 +131,16 @@ public class ClientLoader {
 		mainLayout.setAutoCreateContainerGaps(true);
 		mainLayout.setAutoCreateGaps(true);
 
-		mainLayout.setHorizontalGroup(mainLayout.createParallelGroup(
-										GroupLayout.Alignment.CENTER, false)
-								.addComponent(headerPanel, 250, 250, 250)
-								.addComponent(hostPanel, 250, 250, 250)
-								.addComponent(portPanel, 250, 250, 250)
-								.addComponent(loginPanel)
-								.addComponent(copyright));
+		mainLayout.setHorizontalGroup(mainLayout
+				.createParallelGroup(GroupLayout.Alignment.CENTER, false)
+				.addComponent(headerPanel, 250, 250, 250)
+				.addComponent(hostPanel, 250, 250, 250)
+				.addComponent(portPanel, 250, 250, 250)
+				.addComponent(loginPanel).addComponent(copyright));
 		mainLayout.setVerticalGroup(mainLayout.createSequentialGroup()
 				.addComponent(headerPanel).addComponent(hostPanel)
-				.addComponent(portPanel).addComponent(loginPanel, 40, 40, 40).addComponent(copyright));
+				.addComponent(portPanel).addComponent(loginPanel, 40, 40, 40)
+				.addComponent(copyright));
 		mainFrame.pack();
 		mainFrame.setLocationRelativeTo(null);
 		mainFrame.setTitle("Surfin' Editor");
@@ -154,9 +156,11 @@ public class ClientLoader {
 	 * @param args
 	 */
 	public static void main(String args[]) {
-		try{
-			UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
-		}catch(Exception e){}
+		try {
+			UIManager
+					.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
+		} catch (Exception e) {
+		}
 		(new ClientLoader()).makeGUI();
 	}
 }
