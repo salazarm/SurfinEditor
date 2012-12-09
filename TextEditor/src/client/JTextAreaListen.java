@@ -1,7 +1,13 @@
 package client;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 import java.io.PrintWriter;
 import javax.swing.JFrame;
 import javax.swing.event.CaretEvent;
@@ -127,6 +133,29 @@ public class JTextAreaListen extends JFrame implements KeyListener,
                     } else if (charString.equals("v")) {
                         // Somehow send the contents of the clipboard one at a
                         // time.
+                        String clipBoardString = getClipboardContents();
+                        if (clipBoardString.equals("")){
+                            if (text_selected){
+                                deleteSelectedText();
+                            }
+                        }
+                        else{
+                            int tempCaretPos = caretPos;
+                            int tempCMark = cMark;
+                            if(text_selected){
+                                int startingPos = Math.min(tempCaretPos, tempCMark);
+                                deleteSelectedText();
+                                for (int i = startingPos; i<(startingPos+clipBoardString.length()); i++){
+                                    singularInsert(String.valueOf(clipBoardString.charAt(i)));
+                                }
+                                
+                            }
+                            else{
+                                for (int i = tempCaretPos; i<(tempCaretPos+clipBoardString.length()); i++){
+                                    singularInsert(String.valueOf(clipBoardString.charAt(i)));
+                                }
+                            }
+                        }
                     }
 
                 }
@@ -135,6 +164,37 @@ public class JTextAreaListen extends JFrame implements KeyListener,
         }
 
     }
+    /**
+     * Get the String residing on the clipboard.
+     *
+     * @return any text found on the Clipboard; if none found, return an
+     * empty String.
+     */
+     public String getClipboardContents() {
+       String result = "";
+       Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+       //odd: the Object param of getContents is not currently used
+       Transferable contents = clipboard.getContents(null);
+       boolean hasTransferableText =
+         (contents != null) &&
+         contents.isDataFlavorSupported(DataFlavor.stringFlavor)
+       ;
+       if ( hasTransferableText ) {
+         try {
+           result = (String)contents.getTransferData(DataFlavor.stringFlavor);
+         }
+         catch (UnsupportedFlavorException ex){
+           //highly unlikely since we are using a standard DataFlavor
+           System.out.println(ex);
+           ex.printStackTrace();
+         }
+         catch (IOException ex) {
+           System.out.println(ex);
+           ex.printStackTrace();
+         }
+       }
+       return result;
+     }
 
     /**
      * The keyPressed method is called whenever a key is pressed. Since
