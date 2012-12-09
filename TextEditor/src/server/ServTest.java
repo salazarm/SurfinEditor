@@ -27,15 +27,20 @@ import org.junit.Test;
  */
 
 /**
- * Currently a race condition in the testing, will figure out better way to test.
- * @author Marco Salazar
+ * This test is design to simulate the input that the clients are sending in and the response of the server using 
+ * both single client and multiple client. In achieving this, multiple threads are used which can result in the 
+ * differences in responding time every run. This is not resulting from the race condition, but basically not 
+ * giving the server enough time to response.
  * 
- * Fixed: Was not a race condition. Printing "Connect" create another line which offset the BufferedReader.
- * @tester Menghsuan Pan
+ * The testing strategy is to first test the basic functions using single client cases, and then get into multiple
+ * client testing possible failing conditions with multiple users
  */
 
 public class ServTest {
-
+	
+	/**
+	 * test the insert function and what character it handles.
+	 */
 	@Test (timeout = 20000)
 	public void DiffCharTest() throws IOException, InterruptedException {
     	
@@ -99,9 +104,10 @@ public class ServTest {
         assertEquals("0aA .@", br2.readLine());
 	}
 	
-	
 	/**
 	 * Test the basic functions of the server using the textClientDemo.
+	 * NEW INSERT DELETE GET CONNECT
+	 * and the combination of them.
 	 */
     @Test(timeout=20000)
     public void BasicFuntionTest() throws IOException, InterruptedException {
@@ -228,11 +234,12 @@ public class ServTest {
         	o2 = br2.readLine();
         while (o3 == null)
         	o3 = br3.readLine();
-        assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals(""));
-        
-        
+        assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals(""));                
     }
     
+    /**
+     * Test weather typing very fast cause problem in the server.
+     */
     @Test (timeout = 20000)
     public void RapidTypingTest() throws IOException, InterruptedException{
     	try {
@@ -336,6 +343,10 @@ public class ServTest {
         assertEquals("abcdefghijk", br2.readLine());
     }
     
+    /**
+     * Test weather two people changing the same spot will cause undesirable behavior.
+     * Ideally, the server should handle one input at a time, and handle all of them.
+     */
     @Test (timeout = 20000)
     public void changeSameSpotTest() throws IOException, InterruptedException{
     	try {
@@ -396,6 +407,9 @@ public class ServTest {
         assertEquals("ba", br3.readLine());
     }
     
+    /**
+     * Test weather normal concurrent typing from two people causes undesirable problems.
+     */
     @Test (timeout = 20000)
     public void concurrentTypingTest() throws IOException, InterruptedException{
     	try {
@@ -459,6 +473,10 @@ public class ServTest {
         assertEquals("ab", br3.readLine());
     }
     
+    /**
+     * Test weather three people changing the same spot will cause undesirable behavior.
+     * Ideally, the server should handle one input at a time, and handle all of them.
+     */
     @Test (timeout = 20000)
     public void ThreePersonTest() throws IOException, InterruptedException{
     	try {
@@ -530,6 +548,11 @@ public class ServTest {
         assertEquals("cba", br4.readLine());  
     }
     
+    /**
+     * Testing weather editing different document and creating document at the same time cause the server
+     * to behave according to the spec. Ideally, it should not affect other documents and clients editing a
+     * different file
+     */
     @Test (timeout = 20000)
     public void changingMultiDocu() throws IOException, InterruptedException{
     	try {
@@ -599,3 +622,4 @@ public class ServTest {
         assertEquals("0%Doc1%1%Doc2%2%Doc3%", br3.readLine());
     }
 }
+
