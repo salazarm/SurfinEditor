@@ -38,13 +38,11 @@ public class ServerDocumentListLoader {
 		this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		this.out = new PrintWriter(socket.getOutputStream(), true);
 		this.socket = socket;
-		out.println("CONNECT");
 		start();
 	}
 
 	ServerDocumentListLoader(BufferedReader in, PrintWriter out, Socket socket)
 			throws IOException {
-		in.reset();
 		this.in = in;
 		if (out.checkError()) {
 			out.close();
