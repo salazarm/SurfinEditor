@@ -15,7 +15,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 
 public class InitialClientLoader {
 	private JFrame mainFrame = new JFrame();
@@ -149,17 +148,6 @@ public class InitialClientLoader {
 	 * @param args
 	 */
 	public static void main(String args[]) {
-//		try {
-//		    UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
-//		} catch (Exception e) {
-//		    e.printStackTrace();
-//		}
-
-		final InitialClientLoader a = new InitialClientLoader();
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				a.makeGUI();
-			}
-		});
+		(new InitialClientLoader()).makeGUI();
 	}
 }

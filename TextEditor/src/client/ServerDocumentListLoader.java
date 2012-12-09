@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -34,40 +35,44 @@ public class ServerDocumentListLoader {
 	private final Socket socket;
 
 	ServerDocumentListLoader(Socket socket) throws IOException {
-		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		out = new PrintWriter(socket.getOutputStream(), true);
+		this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		this.out = new PrintWriter(socket.getOutputStream(), true);
 		this.socket = socket;
+		out.println("CONNECT");
 		start();
 	}
-	
-	ServerDocumentListLoader(BufferedReader in, PrintWriter out, Socket socket) throws IOException {
+
+	ServerDocumentListLoader(BufferedReader in, PrintWriter out, Socket socket)
+			throws IOException {
 		in.reset();
 		this.in = in;
-		if(out.checkError()){
+		if (out.checkError()) {
 			out.close();
 			this.out = new PrintWriter(socket.getOutputStream(), true);
-		}else{
+		} else {
 			this.out = out;
 		}
 		this.socket = socket;
-		if (socket.isClosed()){
-			JOptionPane.showMessageDialog(null,
-					"Connection Lost", "Error",
+		if (socket.isClosed()) {
+			JOptionPane.showMessageDialog(null, "Connection Lost", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		}
 		start();
 	}
-	
-	private void start() throws IOException{
+
+	private void start() throws IOException {
 		out.println("CONNECT");
-		Thread t = new Thread(new Runnable() {
-			public void run() {
+		makeGUI();
+		(new SwingWorker<Void, String>() {
+			@Override
+			protected Void doInBackground() throws Exception {
 				while (true) {
 					String line = null;
 					while (line == null) {
 						try {
 							line = in.readLine();
+							publish(line);
 						} catch (IOException e) {
 							JOptionPane.showMessageDialog(null,
 									"Connection Lost", "Error",
@@ -75,25 +80,26 @@ public class ServerDocumentListLoader {
 							System.exit(-1);
 						}
 					}
-					final String[] tokens = line.split("%");
-					assert (tokens.length % 2 == 0);
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							synchronized (docList) {
-								synchronized (docsList) {
-									docsList.clear();
-									for (int i = 0; i + 1 < tokens.length; i += 2) {
-										docsList.addElement(tokens[i + 1]);
-									}
-								}
-							}
-						}
-					});
 				}
 			}
-		});
-		t.start();
-		makeGUI();
+
+			@Override
+			protected void process(List<String> lines) {
+				for (String line : lines) {
+					final String[] tokens = line.split("%");
+					System.out.println(line);
+					assert (tokens.length % 2 == 0);
+					synchronized (docList) {
+						synchronized (docsList) {
+							docsList.clear();
+							for (int i = 0; i + 1 < tokens.length; i += 2) {
+								docsList.addElement(tokens[i + 1]);
+							}
+						}
+					}
+				}
+			}
+		}).execute();
 	}
 
 	private void makeGUI() {

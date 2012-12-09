@@ -165,6 +165,7 @@ public class Server {
 			try {
 				for (String line = in.readLine(); line != null; line = in
 						.readLine()) {
+					System.out.println(line);
 					handleRequest(line, socket);
 				}
 			} finally {
