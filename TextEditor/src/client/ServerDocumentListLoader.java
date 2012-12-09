@@ -44,8 +44,8 @@ public class ServerDocumentListLoader {
 	private JScrollPane scroll = new JScrollPane(docList);
 	protected static JFrame mainFrame = new JFrame();
 	private JPanel mainPanel = new JPanel();
-	private final BufferedReader in;
-	private final PrintWriter out;
+	protected final BufferedReader in;
+	protected final PrintWriter out;
 
 	ServerDocumentListLoader(Socket socket) throws IOException {
 		this.in = new BufferedReader(new InputStreamReader(
@@ -56,7 +56,8 @@ public class ServerDocumentListLoader {
 
 	protected void sendMessage(String docToSend) {
 		System.out.println("sendMessage"+docToSend);
-		out.println(StringAsciiConversion.toAscii(docToSend));
+		docToSend = StringAsciiConversion.toAscii(docToSend);
+		out.println(docToSend);
 	}
 
 	private void start() throws IOException {
@@ -94,7 +95,7 @@ public class ServerDocumentListLoader {
 			protected void process(List<String> lines) {
 				for (String line : lines) {
 					System.out.println("Client Received: " + line);
-					if (line.length()>= 1 && line.charAt(1) == '%') {
+					if (line.length()>= 2 && line.charAt(1) == '%') {
 						/* This is an update regarding documents on the server */
 						final String[] tokens = line.split("%");
 						System.out.println(line);
@@ -110,22 +111,23 @@ public class ServerDocumentListLoader {
 					} else {
 						/* This is a document update */
 						Matcher matcher = regex.matcher(line);
-						if (matcher.matches() && matcher.start() == 0) {
+						if (matcher.find() && matcher.start() == 0) {
 							String id = line.substring(0, matcher.end() - 1);
-							System.out.println("Parsed ID: " + id);
+							System.out.println("PARSED ID: "+id);
 							if (ClientLoader.textEditorMap.containsKey(id)) {
 								TextEditor editor = ClientLoader.textEditorMap
 										.get(id);
 								JTextArea document = editor.document;
-	
+								
 								String docAsAsciiCode = line.substring(id.length() + 1);
 								String docInAsciiText = StringAsciiConversion.asciiToString(docAsAsciiCode);
 
 								int temp = editor.textAreaListener.caretPos;
+								
 								document.setText(docInAsciiText);
 								document.setCaretPosition(temp);
 							}
-						}
+						}else{System.out.println("REGEX DIDN'T MATCH ON: "+line);}
 					}
 				}
 			}

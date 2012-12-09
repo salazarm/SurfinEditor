@@ -10,7 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Document {
 	private final CopyOnWriteArrayList<Socket> activeClients = new CopyOnWriteArrayList<Socket>();
-	private final CopyOnWriteArrayList<Character> docModel;
+	private final CopyOnWriteArrayList<String> docModel;
 	private final ConcurrentLinkedQueue<String[]> commandsQueue = new ConcurrentLinkedQueue<String[]>();
 	private final String name;
 	private final String location;
@@ -20,7 +20,7 @@ public class Document {
 	 * @param title the Title of the document
 	 * @param docModel the model for the document.
 	 */
-	public Document(String title, CopyOnWriteArrayList<Character> docModel, String location, int id) {
+	public Document(String title, CopyOnWriteArrayList<String> docModel, String location, int id) {
 		this.docModel = docModel;
 		this.name = title;
 		this.location = location;
@@ -35,6 +35,7 @@ public class Document {
 					if(!commandsQueue.isEmpty()){
 						String[] currCommand = commandsQueue.remove();
 						if (currCommand[0].equals("insert")){
+							System.out.println("Queue has detected insert of: "+currCommand[2]);
 							insert(Integer.parseInt(currCommand[1]),currCommand[2]);
 						}else if(currCommand[0].equals("remove")){
 							remove(Integer.parseInt(currCommand[1]));
@@ -58,9 +59,10 @@ public class Document {
 	}
 
 	private synchronized void insert(int index, String charToAdd) {
-		if (index >= 0 && index <docModel.size()){
+		System.out.println("Inside insert with index: "+index +"and docModelSize: "+docModel.size());
+		if (index >= 0 && index <=docModel.size()){
 			System.out.println("charToAdd: "+charToAdd);
-			docModel.add(index,charToAdd.charAt(0));
+			docModel.add(index,charToAdd);
 		}
 	}
 
@@ -90,8 +92,8 @@ public class Document {
 	 * @param charToInsert the character to insert
 	 */
 	public void insertChar(int index, String charToInsert) {
-		assert(charToInsert.length() == 1);
 		commandsQueue.add(new String[]{"insert", ""+index, charToInsert});
+		System.out.println("Command Added");
 	}
 	
 	/**
@@ -119,11 +121,12 @@ public class Document {
 	@Override
 	public String toString(){
 		StringBuilder docAsString = new StringBuilder();
-		for(char c: docModel){
-			docAsString.append(c);
+		for(String c: docModel){
+			docAsString.append(c+"a");
 		}
 		String newFile = docAsString.toString();
 		updateFile(newFile);
+		System.out.println("Doc is: "+newFile);
 		return newFile;
 	}
 	

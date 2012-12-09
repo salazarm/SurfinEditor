@@ -92,13 +92,12 @@ public class Server {
 		File f;
 		f = new File(location);
 		if (f.exists()) {
-			CopyOnWriteArrayList<Character> docModel = new CopyOnWriteArrayList<Character>();
+			CopyOnWriteArrayList<String> docModel = new CopyOnWriteArrayList<String>();
 			BufferedReader fileIn = new BufferedReader(new FileReader(f));
 			for (String line = fileIn.readLine(); line != null; line = fileIn
 					.readLine()) {
 				for (int i = 0; i < line.length(); i++)
-					docModel.add(line.charAt(i));
-				docModel.add('\n');
+					docModel.add(""+line.charAt(i));
 			}
 			fileIn.close();
 			docs.add(new Document(title, docModel, location, docs.size()));
@@ -165,7 +164,7 @@ public class Server {
 			try {
 				for (String line = in.readLine(); line != null; line = in
 						.readLine()) {
-					System.out.println(line);
+					System.out.println("Server Received: "+line);
 					handleRequest(line, socket);
 				}
 			} finally {
@@ -205,14 +204,7 @@ public class Server {
 					sockets.add(socket);
 				outs.get(socket).println(getDocList());
 			} else if (tokens[0].equals("INSERT")) {
-				String ch;
-				if (tokens.length == 3 && command.charAt(command.length()-1) != ' ') {
-					ch = "\n";
-				} else if( tokens.length == 3 && command.charAt(command.length()-1) == ' '){
-					ch = " ";
-				}else {
-					ch = tokens[3];
-				}
+				String ch = tokens[3];
 				int id = Integer.parseInt(tokens[1]);
 				if (id < docs.size())
 					docs.get(Integer.parseInt(tokens[1])).insertChar(
@@ -256,7 +248,7 @@ public class Server {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		docs.add(new Document(title, new CopyOnWriteArrayList<Character>(), lc, docs.size()));
+		docs.add(new Document(title, new CopyOnWriteArrayList<String>(), lc, docs.size()));
 		updateUsersDocList(); // Updates all users of the new file being added.
 	}
 
