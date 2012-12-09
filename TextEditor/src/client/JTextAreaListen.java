@@ -124,19 +124,19 @@ out.print("message"); to send something to the server.
             if (text_selected){
                 if (caretPos > cMark){
                     for (int i = caretPos; i>=cMark; i--){
-                        sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(cMark+1));
+                        sendMessage(deleteMessage(String.valueOf(cMark+1)));
                     }
-                    sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(cMark) + " " + charString);
+                    sendMessage(insertMessage(String.valueOf(cMark), charString));
                 }
                 else if(caretPos < cMark){
                     for (int i = caretPos; i >=cMark; i++){
-                        sendMessage("DELETE" + " "+ String.valueOf(id) + " " + String.valueOf(caretPos+1));
+                        sendMessage(deleteMessage(String.valueOf(caretPos+1)));
                     }
-                    sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(caretPos) + " " + charString);
+                    sendMessage(insertMessage(String.valueOf(caretPos), charString));
                 }
             }
             else{
-                sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(caretPos) + " " + charString);
+                sendMessage(insertMessage(String.valueOf(caretPos), charString));
             }  
         } 
     }
@@ -145,21 +145,27 @@ out.print("message"); to send something to the server.
         if (text_selected){
             if (caretPos > cMark){
                 for (int i = caretPos; i>=cMark; i--){
-                    sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(cMark+1));
+                    sendMessage(deleteMessage(String.valueOf(cMark+1)));
                 }
             }
             else if(caretPos < cMark){
                 for (int i = caretPos; i>=cMark; i++){
-                    sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(caretPos+1));
+                    sendMessage(deleteMessage(String.valueOf(caretPos+1)));
                 }
             }
         }
         else{
-            sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(caretPos));
+            sendMessage(deleteMessage(String.valueOf(caretPos)));
         }
     }
     
-
+    private String insertMessage(String index, String chart){
+    	return "INSERT" + " " + String.valueOf(id) + " " + index + " " + chart;
+    }
+    
+    private String deleteMessage(String index){
+    	return "DELETE" + " " + String.valueOf(id) + " " + index;
+    }
     
     public void sendMessage(String s){
         out.println(s);
@@ -178,8 +184,4 @@ out.print("message"); to send something to the server.
             text_selected = true;
         }
     }
-    
-   
-     
-     
 }

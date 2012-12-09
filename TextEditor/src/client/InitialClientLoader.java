@@ -21,6 +21,8 @@ import javax.swing.UIManager;
 public class InitialClientLoader {
 	private JFrame mainFrame = new JFrame();
 	private final ImageIcon logo = new ImageIcon("surfinEditor.png");
+	private final String Default_PORT = "1337";
+	private final String Default_HOST = "127.0.0.1";
 
 	private void makeGUI() {
 		JPanel mainPanel = new JPanel();
@@ -36,11 +38,11 @@ public class InitialClientLoader {
 		JLabel banner = new JLabel(logo);
 		headerPanel.add(banner);
 		final JTextField hostField = new JTextField();
-		hostField.setText("127.0.0.1");
+		hostField.setText(Default_HOST);
 		JLabel hostLabel = new JLabel();
 		hostLabel.setText("HOST: ");
 		final JTextField portField = new JTextField();
-		portField.setText("1337");
+		portField.setText(Default_PORT);
 		JLabel portLabel = new JLabel();
 		portLabel.setText("PORT: ");
 		JButton loginButton = new JButton();
@@ -65,19 +67,19 @@ public class InitialClientLoader {
 								"Please input a number for port",
 								"Invalid Port number",
 								JOptionPane.ERROR_MESSAGE);
-						portField.setText("1337");
-						hostField.setText("127.0.0.1");
+						portField.setText(Default_PORT);
+						hostField.setText(Default_HOST);
 					} catch (UnknownHostException e1) {
 						JOptionPane.showMessageDialog(null, "Unknown Host",
 								"Error", JOptionPane.ERROR_MESSAGE);
-						portField.setText("1337");
-						hostField.setText("127.0.0.1");
+						portField.setText(Default_PORT);
+						hostField.setText(Default_HOST);
 					} catch (IOException e1) {
 						JOptionPane.showMessageDialog(null,
 								"Connection Refused", "Error",
 								JOptionPane.ERROR_MESSAGE);
-						portField.setText("1337");
-						hostField.setText("127.0.0.1");
+						portField.setText(Default_PORT);
+						hostField.setText(Default_HOST);
 					}
 				}
 			}

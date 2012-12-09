@@ -76,14 +76,14 @@ public class ServTest {
         // test capital letter
         p1.println("INSERT 0 2 A");
         // test space
-        p1.println("INSERT 0 3");
+        p1.println("INSERT 0 3  ");
         // test punctuation
         p1.println("INSERT 0 4 .");
         // test other symbols
         p1.println("INSERT 0 5 @");
         
         // server handling time
-        Thread.sleep(100);
+        Thread.sleep(1000);
         
         // read-only purpose client connected
         Socket s2 = new Socket("localhost", 1336);
@@ -439,6 +439,9 @@ public class ServTest {
         Socket s2 = new Socket("localhost", 1340);
         PrintWriter p2 = new PrintWriter(s2.getOutputStream(), true);
         
+        // waiting for the clients to be started.
+        Thread.sleep(100);
+        
         // create document and wait for the create time lag.
         p1.println("NEW sampleDoc");
         Thread.sleep(100);
@@ -503,7 +506,7 @@ public class ServTest {
         PrintWriter p3 = new PrintWriter(s3.getOutputStream(), true);
         
         // waiting for the clients to be started.
-        Thread.sleep(100);
+        Thread.sleep(200);
         
         // create document and wait for the create time lag.
         p1.println("NEW sampleDoc");
