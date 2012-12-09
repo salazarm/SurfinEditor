@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 public class ClientLoader {
 	private JFrame mainFrame = new JFrame();
@@ -153,6 +154,9 @@ public class ClientLoader {
 	 * @param args
 	 */
 	public static void main(String args[]) {
+		try{
+			UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
+		}catch(Exception e){}
 		(new ClientLoader()).makeGUI();
 	}
 }

@@ -141,14 +141,16 @@ public class Document {
 
 	@Override
 	public String toString() {
+		StringBuilder docAsStringtoSend = new StringBuilder();
 		StringBuilder docAsString = new StringBuilder();
 		for (String c : docModel) {
-			docAsString.append(c + "a");
+			docAsStringtoSend.append(c + "a");
+			docAsString.append(c);
 		}
 		String newFile = docAsString.toString();
 		updateFile(newFile);
 		System.out.println("Doc is: " + newFile);
-		return newFile;
+		return docAsStringtoSend.toString();
 	}
 
 	private void updateFile(String doc) {

@@ -174,8 +174,14 @@ public class ServerDocumentListLoader {
 			public void actionPerformed(ActionEvent e) {
 				if (newDocumentField.getText() != "") {
 					String fileName = newDocumentField.getText();
-					out.println("NEW " + fileName);
-					out.println("CONNECT");
+					if (!Pattern.matches("[\\s\\S]*%[\\s\\S]*", fileName)) {
+						out.println("NEW " + fileName);
+						out.println("CONNECT");
+					}else{
+						JOptionPane.showMessageDialog(null,
+								"Please do not use '%' in your file name", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			}
 		});
