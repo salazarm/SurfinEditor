@@ -32,7 +32,7 @@ public class JTextAreaListen extends JFrame
     protected static int caretPos;
     protected static int cMark;
     private static int curr_KeyCode;
-    protected static boolean text_selected;
+    private static boolean text_selected;
      
     
     /**
@@ -101,12 +101,22 @@ public class JTextAreaListen extends JFrame
         
         System.out.println("valid_Unicode: " +String.valueOf(valid_Unicode));
         System.out.println("currkeycode: " + curr_KeyCode);
+        System.out.println("CaretPos: " + caretPos);
+        System.out.println("cMark: " + cMark);
+        System.out.println("text_selected: " + text_selected);
+        
         int evID = ev.getID();
         String keyString;
         int keyCode = curr_KeyCode;
         
         if(curr_KeyCode == 8){
+            System.out.println("CP, CM before DE: " + caretPos + " " + cMark);
             delete(ev);
+            System.out.println("CP, CM after DE: " + caretPos + " " + cMark);
+        }
+        else if(curr_KeyCode == 10){
+            System.out.println("Enter/Linebreak EVENT");
+            sendMessage("INSERT"+" " + String.valueOf(id) + " " + String.valueOf(caretPos) + " " + "\\n");
         }
         else {
             boolean capital = ev.isShiftDown();
@@ -115,6 +125,7 @@ public class JTextAreaListen extends JFrame
                 charString.toUpperCase();
             }
             if (text_selected){
+                System.out.println("textselected fired");
                 int tempCar2 = caretPos;
                 int tempCMark2 = cMark;
                 if (caretPos > cMark){
