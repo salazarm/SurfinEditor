@@ -7,6 +7,9 @@ public class StringAsciiConversion {
 	 * Converts each individual character in an String in to ASCII Code.
 	 */
 	public static String toAscii(String str){
+		if('\\' == str.charAt(str.length()-2) && 'n' == str.charAt(str.length()-1)){
+			return str.substring(0,str.length()-2)+10;
+		}
 		if(str.charAt(0)=='I')
 			return str.substring(0,str.length()-2)+" "+(int)str.charAt(str.length()-1);
 		return str;
@@ -26,6 +29,7 @@ public class StringAsciiConversion {
 				text += c;
 			}
 		}
+		System.out.println("AfterAsciiCodeToString: "+text);
 		return text;
 	}
 }
