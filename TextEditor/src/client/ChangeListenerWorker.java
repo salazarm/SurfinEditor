@@ -11,12 +11,10 @@ import client.JTextAreaListen;
 
 public class ChangeListenerWorker extends SwingWorker<Void, String > {
 
-	private final PrintWriter out;
 	private final BufferedReader in;
 	private final JTextArea document;
 
 	public ChangeListenerWorker(PrintWriter out, BufferedReader in, JTextArea document){
-		this.out = out;
 		this.in = in;
 		this.document = document;
 	}

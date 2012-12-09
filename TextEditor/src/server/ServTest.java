@@ -49,7 +49,12 @@ public class ServTest {
     	
         Thread serv = new Thread(new Runnable() {
             public void run() {
-				server.serve();
+				try {
+					server.serve();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
                 }
         });
         serv.start();
@@ -111,7 +116,12 @@ public class ServTest {
     	
         Thread serv = new Thread(new Runnable() {
             public void run() {
-				server.serve();
+				try {
+					server.serve();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
                 }
         });
         serv.start();
@@ -159,9 +169,6 @@ public class ServTest {
         	o2 = br2.readLine();
         while (o3 == null)
         	o3 = br3.readLine();
-        System.out.println(o1);
-        System.out.println(o2);
-        System.out.println(o3);
         assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals("0%sampleDoc%"));
         
         //clients get the documents just created.
@@ -188,9 +195,6 @@ public class ServTest {
         	o2 = br2.readLine();
         while (o3 == null)
         	o3 = br3.readLine();
-        System.out.println(o1);
-        System.out.println(o2);
-        System.out.println(o3);
         assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals("a"));
         
         //check Insert command from a different client.
@@ -202,9 +206,6 @@ public class ServTest {
         	o2 = br2.readLine();
         while (o3 == null)
         	o3 = br3.readLine();
-        System.out.println(o1);
-        System.out.println(o2);
-        System.out.println(o3);
         assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals("aB"));                 
         
         //check Delete command
@@ -216,9 +217,6 @@ public class ServTest {
         	o2 = br2.readLine();
         while (o3 == null)
         	o3 = br3.readLine();
-        System.out.println(o1);
-        System.out.println(o2);
-        System.out.println(o3);
         assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals("B"));
         
         //check Delete command from another client.
@@ -230,9 +228,6 @@ public class ServTest {
         	o2 = br2.readLine();
         while (o3 == null)
         	o3 = br3.readLine();
-        System.out.println(o1);
-        System.out.println(o2);
-        System.out.println(o3);
         assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals(""));
         
         
@@ -250,7 +245,12 @@ public class ServTest {
     	
         Thread serv = new Thread(new Runnable() {
             public void run() {
-				server.serve();
+				try {
+					server.serve();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
                 }
         });
         serv.start();
@@ -348,7 +348,12 @@ public class ServTest {
     	
         Thread serv = new Thread(new Runnable() {
             public void run() {
-				server.serve();
+				try {
+					server.serve();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
                 }
         });
         serv.start();
@@ -403,7 +408,12 @@ public class ServTest {
     	
         Thread serv = new Thread(new Runnable() {
             public void run() {
-				server.serve();
+				try {
+					server.serve();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
                 }
         });
         serv.start();
@@ -461,7 +471,12 @@ public class ServTest {
     	
         Thread serv = new Thread(new Runnable() {
             public void run() {
-				server.serve();
+				try {
+					server.serve();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
                 }
         });
         serv.start();
@@ -529,8 +544,9 @@ public class ServTest {
             public void run() {
 				try {
 					server.serve();
-				} catch (IOException e1) {
-					e1.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
                 }
         });

@@ -2,14 +2,8 @@ package client;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -18,41 +12,33 @@ import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
-import javax.swing.SwingWorker;
 import javax.swing.text.DefaultEditorKit;
-import client.ChangeListenerWorker;
 
 public class TextEditor extends JFrame {
 
 	private static final long serialVersionUID = 5991470239888613993L;
 	protected static JTextArea document = new JTextArea(20, 120);
-	private JFileChooser dialog = new JFileChooser(
-			System.getProperty("user.dir"));
 	private String currentFile = "Untitled";
-	private boolean changed = false;
-	private int id;
 	private final BufferedReader in;
 	private final PrintWriter out;
+	private final Socket socket;
 	private final TextEditor me;
-	private final SwingWorker worker;
 
-	public TextEditor(final PrintWriter out, final BufferedReader in, int id) {
+	public TextEditor(final PrintWriter out, final BufferedReader in, int id,
+			Socket socket) {
 		this.me = this;
 		out.println("GET " + id);
-		worker = new ChangeListenerWorker(out, in, document);
-		worker.execute();
+		this.socket = socket;
+		(new ChangeListenerWorker(out, in, document)).execute();
 		this.out = out;
 		this.in = in;
-		this.id = id;
 		document.setFont(new Font("Monospaced", Font.PLAIN, 12));
 
 		JScrollPane scroll = new JScrollPane(document,
@@ -106,22 +92,12 @@ public class TextEditor extends JFrame {
 		setVisible(true);
 	}
 
-	private KeyListener keyPressed = new KeyAdapter() {
-
-		public void keyPressed(KeyEvent e) {
-			changed = true;
-		}
-	};
 	Action Open = new AbstractAction("Open", new ImageIcon("open.png")) {
 		private static final long serialVersionUID = -474289105133169886L;
 
 		public void actionPerformed(ActionEvent e) {
 			try {
-				worker.cancel(true);
-				in.close();
-				out.close();
-				new ServerDocumentListLoader(in, out);
-				me.dispose();
+				new ServerDocumentListLoader(in, out, socket);
 
 			} catch (IOException e1) {
 				JOptionPane.showMessageDialog(null, "Connection Lost", "Error",

@@ -31,12 +31,36 @@ public class ServerDocumentListLoader {
 	private JPanel mainPanel = new JPanel();
 	private final BufferedReader in;
 	private final PrintWriter out;
+	private final Socket socket;
 
-	ServerDocumentListLoader(final BufferedReader in,final PrintWriter out) throws IOException {
+	ServerDocumentListLoader(Socket socket) throws IOException {
+		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		out = new PrintWriter(socket.getOutputStream(), true);
+		this.socket = socket;
+		start();
+	}
+	
+	ServerDocumentListLoader(BufferedReader in, PrintWriter out, Socket socket) throws IOException {
+		in.reset();
 		this.in = in;
-		this.out = out;
+		if(out.checkError()){
+			out.close();
+			this.out = new PrintWriter(socket.getOutputStream(), true);
+		}else{
+			this.out = out;
+		}
+		this.socket = socket;
+		if (socket.isClosed()){
+			JOptionPane.showMessageDialog(null,
+					"Connection Lost", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			System.exit(-1);
+		}
+		start();
+	}
+	
+	private void start() throws IOException{
 		out.println("CONNECT");
-		System.out.print("Printed Connect");
 		Thread t = new Thread(new Runnable() {
 			public void run() {
 				while (true) {
@@ -79,8 +103,10 @@ public class ServerDocumentListLoader {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					int id = docList.getSelectedIndex();
-					new TextEditor(out, in, id);
-					mainFrame.dispose();
+					new TextEditor(out, in, id, socket);
+					mainFrame.setVisible(false);
+					// Socket printWriter BufferedReader id
+
 				}
 			}
 		};
