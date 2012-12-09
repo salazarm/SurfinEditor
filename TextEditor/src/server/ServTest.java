@@ -319,9 +319,6 @@ public class ServTest {
         p1.println("NEW sampleDoc");
         Thread.sleep(100);
         
-        // create another document print all documents 
-        assertEquals("0%sampleDoc%1%sampleDoc%", br2.readLine());
-        
         // connect to the new document.
         p1.println("CONNECT");
         p1.println("GET 1");
