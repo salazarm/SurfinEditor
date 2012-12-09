@@ -27,6 +27,7 @@ public class ClientLoader {
 	
 	/** used to keep track of open JFrames **/
 	protected static final Map<String, TextEditor> textEditorMap = new HashMap<String, TextEditor>();
+	protected static int count = 0;
 	protected static ServerDocumentListLoader sdl;
 
 	private void makeGUI() {

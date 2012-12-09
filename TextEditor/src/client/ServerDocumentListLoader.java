@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -39,7 +41,7 @@ public class ServerDocumentListLoader {
 	private JLabel existingDocsLabel = new JLabel();
 	private JButton newDocumentButton = new JButton();
 	private JTextField newDocumentField = new JTextField();
-	protected DefaultListModel docsList = new DefaultListModel();
+	private DefaultListModel docsList = new DefaultListModel();
 	private JList docList = new JList(docsList);
 	private JScrollPane scroll = new JScrollPane(docList);
 	protected static JFrame mainFrame = new JFrame();
@@ -146,6 +148,7 @@ public class ServerDocumentListLoader {
 					int id = docList.getSelectedIndex();
 					TextEditor editor = new TextEditor(out, id);
 					ClientLoader.textEditorMap.put("" + id, editor);
+					ClientLoader.count +=1;
 					mainFrame.setVisible(false);
 				}
 			}
@@ -217,7 +220,49 @@ public class ServerDocumentListLoader {
 		mainLayout.setVerticalGroup(mainLayout.createSequentialGroup()
 				.addComponent(newDocumentPanel).addComponent(existingDocsLabel)
 				.addComponent(scroll));
+		mainFrame.addWindowListener(new WindowListener(){
 
+			@Override
+			public void windowActivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowClosed(WindowEvent e) {
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				if(ClientLoader.count==0)
+					System.exit(0);
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowIconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowOpened(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		
+		});
 		mainFrame.pack();
 		mainFrame.setSize(500, 500);
 		mainFrame.setLocationRelativeTo(null);

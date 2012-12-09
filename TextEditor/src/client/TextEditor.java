@@ -3,6 +3,8 @@ package client;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.PrintWriter;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -24,7 +26,7 @@ public class TextEditor extends JFrame {
 	private String currentFile = "Untitled";
 	protected final JTextAreaListen textAreaListener;
 
-	public TextEditor(final PrintWriter out, int id) {
+	public TextEditor(final PrintWriter out, final int id) {
 		this.textAreaListener = new JTextAreaListen(out, id);
 		out.println("GET " + id);
 		document.setFont(new Font("Monospaced", Font.PLAIN, 12));
@@ -78,6 +80,52 @@ public class TextEditor extends JFrame {
 
 		setTitle(currentFile);
 		setVisible(true);
+		this.addWindowListener(new WindowListener(){
+
+			@Override
+			public void windowActivated(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowClosed(WindowEvent arg0) {
+			}
+
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+				System.out.println(ClientLoader.textEditorMap.size());
+				ClientLoader.textEditorMap.remove(id);
+				ClientLoader.count -= 1;
+				if(ClientLoader.count ==0)
+					ServerDocumentListLoader.mainFrame.setVisible(true);
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowIconified(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void windowOpened(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		
+		});
 	}
 
 	Action Open = new AbstractAction("Open", new ImageIcon("open.png")) {
