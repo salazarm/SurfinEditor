@@ -3,7 +3,10 @@ package client;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -60,7 +63,8 @@ public class InitialClientLoader {
 					try {
 						Socket socket = new Socket(InetAddress.getByName(host),
 								Integer.parseInt(port));
-						new ServerDocumentListLoader(socket);
+						new ServerDocumentListLoader(new BufferedReader(new InputStreamReader(socket
+								.getInputStream())), new PrintWriter(socket.getOutputStream()));
 						mainFrame.dispose();
 					} catch (NumberFormatException e1) {
 						JOptionPane.showMessageDialog(null,

@@ -13,7 +13,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -30,6 +29,7 @@ import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.SwingWorker;
 import javax.swing.text.DefaultEditorKit;
+import client.ChangeListenerWorker;
 
 public class TextEditor extends JFrame {
 
@@ -42,16 +42,13 @@ public class TextEditor extends JFrame {
 	private int id;
 	private final BufferedReader in;
 	private final PrintWriter out;
-	private final Socket socket;
 	private final TextEditor me;
 	private final SwingWorker worker;
 
-	public TextEditor(final PrintWriter out, final BufferedReader in, int id,
-			Socket socket) {
+	public TextEditor(final PrintWriter out, final BufferedReader in, int id) {
 		this.me = this;
 		out.println("GET " + id);
-		this.socket = socket;
-		worker = new changeListenerWorker(out, in, document);
+		worker = new ChangeListenerWorker(out, in, document);
 		worker.execute();
 		this.out = out;
 		this.in = in;
@@ -123,7 +120,7 @@ public class TextEditor extends JFrame {
 				worker.cancel(true);
 				in.close();
 				out.close();
-				new ServerDocumentListLoader(socket);
+				new ServerDocumentListLoader(in, out);
 				me.dispose();
 
 			} catch (IOException e1) {

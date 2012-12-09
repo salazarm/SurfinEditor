@@ -4,18 +4,18 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
-
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
+import client.JTextAreaListen;
 
-public class changeListenerWorker extends SwingWorker<Void, String > {
+public class ChangeListenerWorker extends SwingWorker<Void, String > {
 
 	private final PrintWriter out;
 	private final BufferedReader in;
 	private final JTextArea document;
 
-	public changeListenerWorker(PrintWriter out, BufferedReader in, JTextArea document){
+	public ChangeListenerWorker(PrintWriter out, BufferedReader in, JTextArea document){
 		this.out = out;
 		this.in = in;
 		this.document = document;

@@ -31,12 +31,10 @@ public class ServerDocumentListLoader {
 	private JPanel mainPanel = new JPanel();
 	private final BufferedReader in;
 	private final PrintWriter out;
-	private final Socket socket;
 
-	ServerDocumentListLoader(Socket socket) throws IOException {
-		this.socket = socket;
-		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		out = new PrintWriter(socket.getOutputStream(), true);
+	ServerDocumentListLoader(final BufferedReader in,final PrintWriter out) throws IOException {
+		this.in = in;
+		this.out = out;
 		out.println("CONNECT");
 		Thread t = new Thread(new Runnable() {
 			public void run() {
@@ -80,7 +78,7 @@ public class ServerDocumentListLoader {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					int id = docList.getSelectedIndex();
-					new TextEditor(out, in, id, socket);
+					new TextEditor(out, in, id);
 					mainFrame.dispose();
 				}
 			}

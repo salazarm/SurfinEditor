@@ -1,34 +1,23 @@
 package client;
 
-import javax.swing.*;
-
-import java.io.BufferedReader;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.util.*;
-
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
+import java.io.BufferedReader;
+import java.io.PrintWriter;
+import javax.swing.JFrame;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 
 
 public class JTextAreaListen extends JFrame
         implements DocumentListener, KeyListener, ActionListener, CaretListener {
      
-
     private static final long serialVersionUID = 6950001634065526391L;
-
-    private JTextArea textArea;
      
     protected final PrintWriter out;
     protected final int id;
