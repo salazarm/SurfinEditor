@@ -93,7 +93,7 @@ public class ServerDocumentListLoader {
 			protected void process(List<String> lines) {
 				for (String line : lines) {
 					System.out.println("Client Received: " + line);
-					if (line.charAt(1) == '%') {
+					if (line.length()>= 1 && line.charAt(1) == '%') {
 						/* This is an update regarding documents on the server */
 						final String[] tokens = line.split("%");
 						System.out.println(line);

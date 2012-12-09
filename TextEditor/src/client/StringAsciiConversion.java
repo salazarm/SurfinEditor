@@ -12,7 +12,8 @@ public class StringAsciiConversion {
 			String a = "" + (int)charArray[i] + "a";
 			asciiString += a;
 		}
-		asciiString += "" + (int)charArray[length-1];
+		if(charArray.length>0)
+			asciiString += "" + (int)charArray[length-1];
 		return asciiString;
 	}
 	

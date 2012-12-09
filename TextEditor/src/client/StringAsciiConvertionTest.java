@@ -4,10 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-/**
- * @author Marco Salazar
- *
- */
+
 public class StringAsciiConvertionTest {
 
 	@Test
