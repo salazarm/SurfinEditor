@@ -31,8 +31,8 @@ public class JTextAreaListen extends JFrame
     protected final BufferedReader in;
     protected int caretPos;
     protected int cMark;
-    private static int curr_KeyCode;
-    private static boolean text_selected;
+    protected int curr_KeyCode;
+    protected boolean text_selected;
      
     
     /**
@@ -46,11 +46,8 @@ public class JTextAreaListen extends JFrame
         this.id = id;
         this.out = out;
         this.in = in;
-         
         //TextEditor.document.addCaretListener(this);
         //TextEditor.document.addKeyListener(this);
-
-
     }
 
     /**
@@ -82,6 +79,7 @@ public class JTextAreaListen extends JFrame
         if (evID==KeyEvent.KEY_PRESSED){
             System.out.println("KPEV:" + text_selected);
             curr_KeyCode = ev.getKeyCode();
+            System.out.println("KPEV KEYCODE: " + curr_KeyCode);
             if(curr_KeyCode == 8){
                 System.out.println("CP, CM before DE: " + caretPos + " " + cMark);
                 delete(ev);
@@ -133,32 +131,39 @@ public class JTextAreaListen extends JFrame
                 
             }
             else {
-                boolean capital = ev.isShiftDown();
                 String charString = String.valueOf(kc);
-                if(capital){
-                    charString.toUpperCase();
-                }
-
-                if (text_selected){
-                    System.out.println("textselected fired");
-                    int tempCar2 = caretPos;
-                    int tempCMark2 = cMark;
-                    if (caretPos > cMark){
-                        for (int i = tempCar2; i>tempCMark2; i--){
-                            sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(tempCMark2+1));
-                        }
-                        sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(tempCMark2) + " " + charString);
+                if (!ev.isControlDown()){
+                    if(ev.isShiftDown()){
+                        charString.toUpperCase();
                     }
-                    else if(caretPos < cMark){
-                        for (int i = tempCar2; i <tempCMark2; i++){
-                            sendMessage("DELETE" + " "+ String.valueOf(id) + " " + String.valueOf(tempCar2+1));
+                    if (text_selected){
+                        System.out.println("textselected fired");
+                        int tempCar2 = caretPos;
+                        int tempCMark2 = cMark;
+                        if (caretPos > cMark){
+                            for (int i = tempCar2; i>tempCMark2; i--){
+                                sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(tempCMark2+1));
+                            }
+                            sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(tempCMark2) + " " + charString);
                         }
-                        sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(tempCar2) + " " + charString);
+                        else if(caretPos < cMark){
+                            for (int i = tempCar2; i <tempCMark2; i++){
+                                sendMessage("DELETE" + " "+ String.valueOf(id) + " " + String.valueOf(tempCar2+1));
+                            }
+                            sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(tempCar2) + " " + charString);
+                        }
+                    }
+                    else{
+                        sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(caretPos) + " " + charString);
                     }
                 }
                 else{
-                    sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(caretPos) + " " + charString);
-                }  
+                    if(charString.equals("c") | charString.equals("v")){
+                        
+                    }
+                }
+                
+                
             } 
         }
         
