@@ -36,6 +36,7 @@ public class JTextAreaListen extends JFrame
     protected final BufferedReader in;
     protected static int caretPos;
     private static int cMark;
+    private static int curr_KeyCode;
     protected static boolean text_selected;
     
      
@@ -85,8 +86,10 @@ out.print("message"); to send something to the server.
     }
 
     @Override
-    public void keyPressed(KeyEvent arg0) {
-        // TODO Auto-generated method stub
+    public void keyPressed(KeyEvent ev) {
+        curr_KeyCode = ev.getKeyCode();
+
+        
         
     }
 
@@ -99,59 +102,61 @@ out.print("message"); to send something to the server.
     @Override
     public void keyTyped(KeyEvent ev) {
         System.out.println("Sth happening!");
-        System.out.println(ev.getKeyCode());
+        char kc = ev.getKeyChar();
+        System.out.println("KeyChar: " + kc);
+        boolean valid_Unicode = (ev.getKeyChar()!=(KeyEvent.CHAR_UNDEFINED));
+        
+        System.out.println("valid_Unicode: " +String.valueOf(valid_Unicode));
+        System.out.println("currkeycode: " + curr_KeyCode);
         int evID = ev.getID();
         String keyString;
-        int keyCode;
-        if (evID == KeyEvent.KEY_TYPED) {
-            if (ev.getKeyChar()==KeyEvent.CHAR_UNDEFINED){
-                keyCode = ev.getKeyCode();
-                if (keyCode==8){
-                    if (text_selected){
-                        if (caretPos > cMark){
-                            for (int i = caretPos; i>=cMark; i--){
-                                sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(cMark+1));
-                            }
-                        }
-                        else if(caretPos < cMark){
-                            for (int i = caretPos; i>=cMark; i++){
-                                sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(cMark+1));
-                            }
-                        }
-                    }
-                    else{
-                        sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(caretPos+1));
-                    }
-                }
+        int keyCode = curr_KeyCode;
+        
+        if(curr_KeyCode == 8){
+            delete(ev);
+        }
+        else {
+            boolean capital = ev.isShiftDown();
+            String charString = String.valueOf(kc);
+            if(capital){
+                charString.toUpperCase();
             }
-            else{
-                char c = ev.getKeyChar();
-                boolean capital = ev.isShiftDown();
-                String charString = String.valueOf(c);
-                if(capital){
-                    charString.toUpperCase();
-                }
-                if (text_selected){
-                    if (caretPos > cMark){
-                        for (int i = caretPos; i>=cMark; i--){
-                            sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(cMark+1));
-                        }
-                        sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(cMark) + " " + charString);
+            if (text_selected){
+                if (caretPos > cMark){
+                    for (int i = caretPos; i>=cMark; i--){
+                        sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(cMark+1));
                     }
-                    else if(caretPos < cMark){
-                        for (int i = caretPos; i >=cMark; i++){
-                            sendMessage("DELETE" + " "+ String.valueOf(id) + " " + String.valueOf(caretPos+1));
-                        }
-                        sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(caretPos) + " " + charString);
-                    }
+                    sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(cMark) + " " + charString);
                 }
-                else{
+                else if(caretPos < cMark){
+                    for (int i = caretPos; i >=cMark; i++){
+                        sendMessage("DELETE" + " "+ String.valueOf(id) + " " + String.valueOf(caretPos+1));
+                    }
                     sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(caretPos) + " " + charString);
                 }
             }
-            
+            else{
+                sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(caretPos) + " " + charString);
+            }  
         } 
-
+    }
+    
+    public void delete(KeyEvent ev){
+        if (text_selected){
+            if (caretPos > cMark){
+                for (int i = caretPos; i>=cMark; i--){
+                    sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(cMark+1));
+                }
+            }
+            else if(caretPos < cMark){
+                for (int i = caretPos; i>=cMark; i++){
+                    sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(caretPos+1));
+                }
+            }
+        }
+        else{
+            sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(caretPos));
+        }
     }
     
 
