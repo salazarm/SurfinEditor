@@ -71,7 +71,7 @@ public class TextEditor extends JFrame {
 		paste.setText(null);
 		paste.setIcon(new ImageIcon("paste.png"));
 
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.pack();
 
 		// add JTextAreaListen to the document. Do this only once, not twice.
@@ -143,8 +143,25 @@ public class TextEditor extends JFrame {
 		}
 	};
 	ActionMap m = document.getActionMap();
-	Action Cut = m.get(DefaultEditorKit.cutAction);
+	//Action Cut = m.get(DefaultEditorKit.cutAction);
 	Action Copy = m.get(DefaultEditorKit.copyAction);
-	Action Paste = m.get(DefaultEditorKit.pasteAction);
+	//Action Paste = m.get(DefaultEditorKit.pasteAction);
+	
+	Action Cut = new AbstractAction("Cut", new ImageIcon("cut.png")){
+        private static final long serialVersionUID = -3218760224238810832L;
 
+        public void actionPerformed(ActionEvent e){
+	        m.get(DefaultEditorKit.cutAction);
+	        
+	        textAreaListener.deleteSelectedText();
+	    }
+	};
+    Action Paste = new AbstractAction("Paste", new ImageIcon("paste.png")){
+        private static final long serialVersionUID = -8950087920797506481L;
+
+        public void actionPerformed(ActionEvent e){
+            m.get(DefaultEditorKit.pasteAction);
+            textAreaListener.pasteOverwrite();
+        }
+    };
 }
