@@ -91,6 +91,7 @@ public class ClientLoader {
 				}
 			}
 		});
+		
 
 		loginButton.setText("Start surfin' the con-curren(t)-seas!");
 		loginPanel.add(loginButton);
