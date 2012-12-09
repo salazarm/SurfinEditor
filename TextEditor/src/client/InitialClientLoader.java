@@ -31,7 +31,7 @@ public class InitialClientLoader {
 		JPanel hostPanel = new JPanel();
 		JPanel portPanel = new JPanel();
 		JPanel loginPanel = new JPanel();
-		JLabel copyright = new JLabel("Marco S, Eric E, Mengshaun P © 2012");
+		JLabel copyright = new JLabel("Marco S, Eric E, Mengshaun P ï¿½ 2012");
 
 		JLabel banner = new JLabel(logo);
 		headerPanel.add(banner);
@@ -150,11 +150,11 @@ public class InitialClientLoader {
 	 * @param args
 	 */
 	public static void main(String args[]) {
-		try {
-		    UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
-		} catch (Exception e) {
-		    e.printStackTrace();
-		}
+//		try {
+//		    UIManager.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
+//		} catch (Exception e) {
+//		    e.printStackTrace();
+//		}
 
 		final InitialClientLoader a = new InitialClientLoader();
 		SwingUtilities.invokeLater(new Runnable() {

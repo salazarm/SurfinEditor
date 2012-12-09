@@ -61,11 +61,9 @@ public class TextEditor extends JFrame {
 		JMB.add(edit);
 
 		file.add(Open);
-		file.add(Save);
 		file.add(Quit);
-		file.add(SaveAs);
 		file.addSeparator();
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 2; i++)
 			file.getItem(i).setIcon(null);
 
 		edit.add("Cut");
@@ -78,7 +76,7 @@ public class TextEditor extends JFrame {
 		JToolBar tool = new JToolBar();
 		this.add(tool, BorderLayout.NORTH);
 		tool.add(Open);
-		tool.add(Save);
+		//tool.add(Save);
 		tool.addSeparator();
 
 		JButton cut = tool.add(Cut), copy = tool.add(Copy), paste = tool
@@ -90,8 +88,6 @@ public class TextEditor extends JFrame {
 		paste.setText(null);
 		paste.setIcon(new ImageIcon("paste.png"));
 
-		Save.setEnabled(false);
-		SaveAs.setEnabled(false);
 
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.pack();
@@ -108,43 +104,19 @@ public class TextEditor extends JFrame {
 
 		public void keyPressed(KeyEvent e) {
 			changed = true;
-			Save.setEnabled(true);
-			SaveAs.setEnabled(true);
 		}
 	};
 	Action Open = new AbstractAction("Open", new ImageIcon("open.png")) {
 		private static final long serialVersionUID = -474289105133169886L;
 
 		public void actionPerformed(ActionEvent e) {
-			saveOld();
-			if (dialog.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-				readInFile(dialog.getSelectedFile().getAbsolutePath());
-			}
-			SaveAs.setEnabled(true);
-		}
-	};
-	Action Save = new AbstractAction("Save", new ImageIcon("save.png")) {
-		private static final long serialVersionUID = 2064233284536910855L;
-
-		public void actionPerformed(ActionEvent e) {
-			if (!currentFile.equals("Untitled"))
-				saveFile(currentFile);
-			else
-				saveFileAs();
-		}
-	};
-	Action SaveAs = new AbstractAction("Save as...") {
-		private static final long serialVersionUID = -5473532525926088880L;
-
-		public void actionPerformed(ActionEvent e) {
-			saveFileAs();
 		}
 	};
 	Action Quit = new AbstractAction("Quit") {
 		private static final long serialVersionUID = -5339245808869817726L;
 
 		public void actionPerformed(ActionEvent e) {
-			saveOld();
+			//saveOld();
 			System.exit(0);
 		}
 	};
@@ -152,19 +124,6 @@ public class TextEditor extends JFrame {
 	Action Cut = m.get(DefaultEditorKit.cutAction);
 	Action Copy = m.get(DefaultEditorKit.copyAction);
 	Action Paste = m.get(DefaultEditorKit.pasteAction);
-
-	private void saveFileAs() {
-		if (dialog.showSaveDialog(null) == JFileChooser.APPROVE_OPTION)
-			saveFile(dialog.getSelectedFile().getAbsolutePath());
-	}
-
-	private void saveOld() {
-		if (changed) {
-			if (JOptionPane.showConfirmDialog(this, "Save " + currentFile
-					+ " ?", "Save", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
-				saveFile(currentFile);
-		}
-	}
 
 	private void readInFile(String fileName) {
 		try {
@@ -180,19 +139,4 @@ public class TextEditor extends JFrame {
 		}
 	}
 
-	private void saveFile(String fileName) {
-		try {
-			FileWriter w = new FileWriter(fileName);
-			document.write(w);
-			w.close();
-			currentFile = fileName;
-			setTitle(currentFile);
-			changed = false;
-			Save.setEnabled(false);
-		} catch (IOException e) {
-			JOptionPane
-					.showMessageDialog(this,
-							"An error has occurred. Your document may not have been saved");
-		}
-	}
 }
