@@ -13,31 +13,31 @@ public class DocTest {
 	
 	@Test
 	public void BasicFuntionTest() throws InterruptedException{
-		Document doc = new Document("samplefiles", new CopyOnWriteArrayList<Character>(), "2000", 0);
+		Document doc = new Document("samplefiles", new CopyOnWriteArrayList<String>(), "2000", 0);
 		assertEquals("samplefiles", doc.getName());
 		
 		// Check insert function.
-		doc.insertChar(0, "a");
+		doc.insertChar(0, "60");
 		Thread.sleep(10);
-		assertEquals("a", doc.toString());
+		assertEquals("60a", doc.toString());
 		
-		doc.insertChar(0, "b");
+		doc.insertChar(0, "100");
 		Thread.sleep(10);
-		assertEquals("ba", doc.toString());
+		assertEquals("100a60a", doc.toString());
 		
 		// Check remove function.
 		doc.removeChar(0);
 		Thread.sleep(10);
-		assertEquals("a", doc.toString());
+		assertEquals("60a", doc.toString());
 		
 		// Check series of commands.
-		doc.insertChar(1, "c");
-		doc.insertChar(2, "d");
-		doc.insertChar(3, "e");
-		doc.insertChar(4, "f");
+		doc.insertChar(1, "0");
+		doc.insertChar(2, "1");
+		doc.insertChar(3, "2");
+		doc.insertChar(4, "3");
 		doc.removeChar(3);
-		doc.insertChar(4, "g");
+		doc.insertChar(4, "4");
 		Thread.sleep(10);
-		assertEquals("acdfg", doc.toString());
+		assertEquals("60a0a1a3a4a", doc.toString());
 	}
 }
