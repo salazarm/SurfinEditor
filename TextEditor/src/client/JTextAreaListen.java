@@ -59,8 +59,8 @@ out.print("message"); to send something to the server.
         this.out = out;
         this.in = in;
          
-        TextEditor.document.addCaretListener(this);
-        TextEditor.document.addKeyListener(this);
+        //TextEditor.document.addCaretListener(this);
+        //TextEditor.document.addKeyListener(this);
 
 
     }

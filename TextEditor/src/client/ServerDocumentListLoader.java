@@ -142,7 +142,6 @@ public class ServerDocumentListLoader {
 				.addComponent(scroll));
 		mainFrame.pack();
 		mainFrame.setSize(500, 500);
-		mainFrame.setResizable(false);
 		mainFrame.setLocationRelativeTo(null);
 		mainFrame.setTitle("File Selection Window");
 		mainFrame.setVisible(true);

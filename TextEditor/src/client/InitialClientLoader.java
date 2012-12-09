@@ -1,5 +1,6 @@
 package client;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -24,8 +25,9 @@ public class InitialClientLoader {
 	private void makeGUI() {
 		JPanel mainPanel = new JPanel();
 		mainFrame.add(mainPanel);
-
 		JPanel headerPanel = new JPanel();
+		headerPanel.setMinimumSize(new Dimension(192,110));
+		headerPanel.setMaximumSize(new Dimension(192,110));
 		JPanel hostPanel = new JPanel();
 		JPanel portPanel = new JPanel();
 		JPanel loginPanel = new JPanel();
@@ -125,14 +127,14 @@ public class InitialClientLoader {
 
 		mainLayout.setHorizontalGroup(mainLayout.createParallelGroup(
 										GroupLayout.Alignment.CENTER, false)
-								.addComponent(headerPanel)
-								.addComponent(hostPanel)
-								.addComponent(portPanel)
+								.addComponent(headerPanel, 250, 250, 250)
+								.addComponent(hostPanel, 250, 250, 250)
+								.addComponent(portPanel, 250, 250, 250)
 								.addComponent(loginPanel)
 								.addComponent(copyright));
 		mainLayout.setVerticalGroup(mainLayout.createSequentialGroup()
 				.addComponent(headerPanel).addComponent(hostPanel)
-				.addComponent(portPanel).addComponent(loginPanel).addComponent(copyright));
+				.addComponent(portPanel).addComponent(loginPanel, 40, 40, 40).addComponent(copyright));
 		mainFrame.pack();
 		mainFrame.setLocationRelativeTo(null);
 		mainFrame.setTitle("Surfin' Editor");
