@@ -21,7 +21,13 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
 
-
+/**
+ * JTextAreaListen provides a KeyListener and CaretListener for the TextEditor. This class will send updates to the server whenever a meaningful key is pressed.
+ * The KeyListener looks for characters which are typed by the user. The CaretListener observes and reports the position of the caret and mark at
+ * any given time.
+ * @author e3m3r
+ *
+ */
 public class JTextAreaListen extends JFrame
         implements DocumentListener, KeyListener, ActionListener, CaretListener {
      
@@ -35,25 +41,17 @@ public class JTextAreaListen extends JFrame
 
     protected final BufferedReader in;
     protected static int caretPos;
-    private static int cMark;
+    protected static int cMark;
     private static int curr_KeyCode;
     protected static boolean text_selected;
+     
     
-     
-/*
- * Connecting to server.
-(1337 is the port we are going to use).
-
-socket = new Socket(InetAddress.getByName("127.0.0.1"), 1337);
-
-(Open a new outStream, you can save this instead of opening on every time you want to send a message. If the connection is lost your should to out.close();
-
-out = new PrintWriter(socket.getOutputStream(), true);
-
-out.print("message"); to send something to the server.
- */
-     
-     
+    /**
+     * Constructor for the JTextAreaListen. Implements the JTextAreaListen for the document.
+     * @param out
+     * @param in
+     * @param id
+     */
     public JTextAreaListen(PrintWriter out, BufferedReader in, int id) {
         super("JTextAreaListen");
         this.id = id;
@@ -65,9 +63,10 @@ out.print("message"); to send something to the server.
 
 
     }
-     
-    // Listener methods
-     
+
+    /**
+     *  A required DocumentListener Method.
+     */
     public void changedUpdate(DocumentEvent ev) {
     }
      
@@ -85,11 +84,13 @@ out.print("message"); to send something to the server.
         
     }
 
+    /**
+     * The KeyPressed method is called whenever a key is pressed. Since KeyPressed events have the attribute keyCode, while KeyTyped events
+     * do not, we have to get the keyCode from keyPressed.
+     */
     @Override
     public void keyPressed(KeyEvent ev) {
         curr_KeyCode = ev.getKeyCode();
-
-        
         
     }
 
@@ -99,6 +100,9 @@ out.print("message"); to send something to the server.
         
     }
 
+    /**
+     * 
+     */
     @Override
     public void keyTyped(KeyEvent ev) {
         System.out.println("Sth happening!");
@@ -122,50 +126,50 @@ out.print("message"); to send something to the server.
                 charString.toUpperCase();
             }
             if (text_selected){
+                int tempCar2 = caretPos;
+                int tempCMark2 = cMark;
                 if (caretPos > cMark){
-                    for (int i = caretPos; i>=cMark; i--){
-                        sendMessage(deleteMessage(String.valueOf(cMark+1)));
+                    for (int i = tempCar2; i>=tempCMark2; i--){
+                        sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(tempCMark2+1));
                     }
-                    sendMessage(insertMessage(String.valueOf(cMark), charString));
+                    sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(tempCMark2) + " " + charString);
                 }
                 else if(caretPos < cMark){
-                    for (int i = caretPos; i >=cMark; i++){
-                        sendMessage(deleteMessage(String.valueOf(caretPos+1)));
+                    for (int i = tempCar2; i >=tempCMark2; i++){
+                        sendMessage("DELETE" + " "+ String.valueOf(id) + " " + String.valueOf(tempCar2+1));
                     }
-                    sendMessage(insertMessage(String.valueOf(caretPos), charString));
+                    sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(tempCar2) + " " + charString);
                 }
             }
             else{
-                sendMessage(insertMessage(String.valueOf(caretPos), charString));
+                sendMessage("INSERT" + " " + String.valueOf(id) + " " + String.valueOf(caretPos) + " " + charString);
             }  
         } 
     }
     
     public void delete(KeyEvent ev){
         if (text_selected){
+            int tempCar = caretPos;
+            int tempCMark = cMark;
+            System.out.println("tempCar: " + tempCar);
+            System.out.println("tempCMark: " + tempCMark);
             if (caretPos > cMark){
-                for (int i = caretPos; i>=cMark; i--){
-                    sendMessage(deleteMessage(String.valueOf(cMark+1)));
+                for (int i = tempCar; i>=tempCMark; i--){
+                    sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(tempCMark+1));
                 }
             }
             else if(caretPos < cMark){
-                for (int i = caretPos; i>=cMark; i++){
-                    sendMessage(deleteMessage(String.valueOf(caretPos+1)));
+                for (int i = tempCar; i>=tempCMark; i++){
+                    sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(tempCar+1));
                 }
             }
         }
         else{
-            sendMessage(deleteMessage(String.valueOf(caretPos)));
+            sendMessage("DELETE" + " " + String.valueOf(id) + " " + String.valueOf(caretPos));
         }
     }
     
-    private String insertMessage(String index, String chart){
-    	return "INSERT" + " " + String.valueOf(id) + " " + index + " " + chart;
-    }
-    
-    private String deleteMessage(String index){
-    	return "DELETE" + " " + String.valueOf(id) + " " + index;
-    }
+
     
     public void sendMessage(String s){
         out.println(s);
@@ -184,4 +188,8 @@ out.print("message"); to send something to the server.
             text_selected = true;
         }
     }
+    
+   
+     
+     
 }
