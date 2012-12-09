@@ -55,7 +55,8 @@ public class ServerDocumentListLoader {
 	}
 
 	protected void sendMessage(String docToSend) {
-		out.println(StringAsciiConversion.asciiToString(docToSend));
+		System.out.println("sendMessage"+docToSend);
+		out.println(StringAsciiConversion.toAscii(docToSend));
 	}
 
 	private void start() throws IOException {
@@ -118,7 +119,7 @@ public class ServerDocumentListLoader {
 								JTextArea document = editor.document;
 	
 								String docAsAsciiCode = line.substring(id.length() + 1);
-								String docInAsciiText = StringAsciiConversion.toAscii(docAsAsciiCode);
+								String docInAsciiText = StringAsciiConversion.asciiToString(docAsAsciiCode);
 
 								int temp = editor.textAreaListener.caretPos;
 								document.setText(docInAsciiText);

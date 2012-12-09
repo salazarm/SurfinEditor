@@ -58,9 +58,10 @@ public class Document {
 	}
 
 	private synchronized void insert(int index, String charToAdd) {
-		if (index >= 0 && index <docModel.size())
-			System.out.println(charToAdd);
+		if (index >= 0 && index <docModel.size()){
+			System.out.println("charToAdd: "+charToAdd);
 			docModel.add(index,charToAdd.charAt(0));
+		}
 	}
 
 	/**

@@ -1,32 +1,29 @@
 package client;
 
+import java.util.regex.Pattern;
+
 public class StringAsciiConversion {
 	/**
 	 * Converts each individual character in an String in to ASCII Code.
 	 */
 	public static String toAscii(String str){
-		char[] charArray = str.toCharArray();
-		int length = charArray.length;
-		String asciiString = "";
-		for (int i = 0; i < length-1; i++){
-			String a = "" + (int)charArray[i] + "a";
-			asciiString += a;
-		}
-		if(charArray.length>0)
-			asciiString += "" + (int)charArray[length-1];
-		return asciiString;
+		System.out.println("Received: "+str);
+		return str.substring(0,str.length()-2)+(int)str.charAt(str.length()-1);
 	}
 	
 	/**
 	 * Converts each individual ASCII Code into String.
 	 */
 	public static String asciiToString(String str){
+		System.out.println("asciiToString: "+str);
 		String[] asciiArray = str.split("a");
 		String text = "";
 		for (String s: asciiArray){
-			int i = Integer.parseInt(s);
-			char c = (char) i;
-			text += c;
+			if(!Pattern.matches("[\\s]*", s)){
+				int i = Integer.parseInt(s);
+				char c = (char) i;
+				text += c;
+			}
 		}
 		return text;
 	}
