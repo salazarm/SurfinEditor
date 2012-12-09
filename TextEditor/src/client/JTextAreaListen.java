@@ -19,7 +19,7 @@ import javax.swing.event.DocumentListener;
  * @author e3m3r
  * 
  */
-public class JTextAreaListen extends JFrame implements DocumentListener,
+public class JTextAreaListen extends JFrame implements
         KeyListener, CaretListener {
 
     private static final long serialVersionUID = 6950001634065526391L;
@@ -32,10 +32,10 @@ public class JTextAreaListen extends JFrame implements DocumentListener,
 
     /**
      * Constructor for the JTextAreaListen. Implements the JTextAreaListen for
-     * the document.
+     * the document. Requires the PrintWriter to the server socket, and the document ID for
+     * the document that we are editing.
      * 
      * @param out
-     * @param in
      * @param id
      */
     public JTextAreaListen(PrintWriter out, int id) {
@@ -44,24 +44,6 @@ public class JTextAreaListen extends JFrame implements DocumentListener,
         this.out = out;
     }
 
-    /**
-     * A required DocumentListener Method.
-     */
-    @Override
-    public void changedUpdate(DocumentEvent ev) {
-        System.out.println(ev.getType());
-    }
-
-    @Override
-    public void removeUpdate(DocumentEvent ev) {
-        System.out.println(ev.getType());
-
-    }
-
-    @Override
-    public void insertUpdate(DocumentEvent ev) {
-        System.out.println(ev.getType());
-    }
 
     /**
      * keyEventHandler is used to filter all of the events of our KeyListener.
@@ -70,10 +52,12 @@ public class JTextAreaListen extends JFrame implements DocumentListener,
      */
     public void keyEventHandler(KeyEvent ev) {
         int evID = ev.getID();
+        //There are three KeyEvents that we are interested in filtering: KEY_PRESSED, KEY_RELEASED, and KEY_TYPED
         if (evID == KeyEvent.KEY_PRESSED) {
             System.out.println("KPEV:" + text_selected);
             curr_KeyCode = ev.getKeyCode();
             System.out.println("KPEV KEYCODE: " + curr_KeyCode);
+            //the keyCode 8 refers to "delete".
             if (curr_KeyCode == 8) {
                 System.out.println("CP, CM before DE: " + caretPos + " "
                         + cMark);
@@ -88,22 +72,22 @@ public class JTextAreaListen extends JFrame implements DocumentListener,
                     System.out.println("tempCMark: " + tempCMark3);
                     if (caretPos > cMark) {
                         for (int i = tempCar3; i > tempCMark3; i--) {
-                            sendMessage("DELETE" + " " + String.valueOf(id)
+                            ClientLoader.sdl.sendMessage("DELETE" + " " + String.valueOf(id)
                                     + " " + String.valueOf(tempCMark3 + 1));
                         }
-                        sendMessage("INSERT" + " " + String.valueOf(id) + " "
+                        ClientLoader.sdl.sendMessage("INSERT" + " " + String.valueOf(id) + " "
                                 + String.valueOf(tempCMark3) + " " + "\\n");
 
                     } else if (caretPos < cMark) {
                         for (int i = tempCar3; i < tempCMark3; i++) {
-                            sendMessage("DELETE" + " " + String.valueOf(id)
+                            ClientLoader.sdl.sendMessage("DELETE" + " " + String.valueOf(id)
                                     + " " + String.valueOf(tempCar3 + 1));
                         }
-                        sendMessage("INSERT" + " " + String.valueOf(id) + " "
+                        ClientLoader.sdl.sendMessage("INSERT" + " " + String.valueOf(id) + " "
                                 + String.valueOf(tempCar3) + " " + "\\n");
                     }
                 } else {
-                    sendMessage("INSERT" + " " + String.valueOf(id) + " "
+                    ClientLoader.sdl.sendMessage("INSERT" + " " + String.valueOf(id) + " "
                             + String.valueOf(caretPos) + " " + "\\n");
                 }
             }
@@ -138,29 +122,68 @@ public class JTextAreaListen extends JFrame implements DocumentListener,
                         int tempCMark2 = cMark;
                         if (caretPos > cMark) {
                             for (int i = tempCar2; i > tempCMark2; i--) {
-                                sendMessage("DELETE" + " " + String.valueOf(id)
+                                ClientLoader.sdl.sendMessage("DELETE" + " " + String.valueOf(id)
                                         + " " + String.valueOf(tempCMark2 + 1));
                             }
-                            sendMessage("INSERT" + " " + String.valueOf(id)
+                            ClientLoader.sdl.sendMessage("INSERT" + " " + String.valueOf(id)
                                     + " " + String.valueOf(tempCMark2) + " "
                                     + charString);
                         } else if (caretPos < cMark) {
                             for (int i = tempCar2; i < tempCMark2; i++) {
-                                sendMessage("DELETE" + " " + String.valueOf(id)
+                                ClientLoader.sdl.sendMessage("DELETE" + " " + String.valueOf(id)
                                         + " " + String.valueOf(tempCar2 + 1));
                             }
-                            sendMessage("INSERT" + " " + String.valueOf(id)
+                            ClientLoader.sdl.sendMessage("INSERT" + " " + String.valueOf(id)
                                     + " " + String.valueOf(tempCar2) + " "
                                     + charString);
                         }
                     } else {
-                        sendMessage("INSERT" + " " + String.valueOf(id) + " "
+                        ClientLoader.sdl.sendMessage("INSERT" + " " + String.valueOf(id) + " "
                                 + String.valueOf(caretPos) + " " + charString);
                     }
                 } else {
-                    if (charString.equals("c") | charString.equals("v")) {
-
+                    /*
+                     * We care about the Cut and Paste commands, because they
+                     * affect the contents of the document in a wayt the other
+                     * user won't see unless a message is sent to the server.
+                     */
+                    if (!(charString.equals("x") | charString.equals("v"))) {
+                        /*
+                         * We do nothing. As long as control is down, the only other relevant commands are Ctrl+A and Ctrl+C, but we
+                         * don't need to send any message for those. For any other Ctrl+(char), we expect no action.
+                         */
+                        
+                    } else if (charString.equals("x")) {
+                        /*if text is selected during a cut command, we need to send messages to 
+                         * delete each character in the selection.
+                         */
+                        if (text_selected) {
+                            int tempCar = caretPos;
+                            int tempCMark = cMark;
+                            System.out.println("tempCar: " + tempCar);
+                            System.out.println("tempCMark: " + tempCMark);
+                            if (caretPos > cMark) {
+                                for (int i = tempCar; i > tempCMark; i--) {
+                                    ClientLoader.sdl.sendMessage("DELETE" + " "
+                                            + String.valueOf(id) + " "
+                                            + String.valueOf(tempCMark + 1));
+                                }
+                            } else if (caretPos < cMark) {
+                                for (int i = tempCar; i < tempCMark; i++) {
+                                    ClientLoader.sdl.sendMessage("DELETE" + " "
+                                            + String.valueOf(id) + " "
+                                            + String.valueOf(tempCar + 1));
+                                }
+                            }
+                        }
+                        else{
+                            //if no text is selected during a cut command, nothing happens.
+                        }
+                    } else if (charString.equals("v")) {
+                        // Somehow send the contents of the clipboard one at a
+                        // time.
                     }
+
                 }
 
             }
@@ -210,26 +233,28 @@ public class JTextAreaListen extends JFrame implements DocumentListener,
             System.out.println("tempCMark: " + tempCMark);
             if (caretPos > cMark) {
                 for (int i = tempCar; i > tempCMark; i--) {
-                    sendMessage("DELETE" + " " + String.valueOf(id) + " "
+                    ClientLoader.sdl.sendMessage("DELETE" + " " + String.valueOf(id) + " "
                             + String.valueOf(tempCMark + 1));
                 }
             } else if (caretPos < cMark) {
                 for (int i = tempCar; i < tempCMark; i++) {
-                    sendMessage("DELETE" + " " + String.valueOf(id) + " "
+                    ClientLoader.sdl.sendMessage("DELETE" + " " + String.valueOf(id) + " "
                             + String.valueOf(tempCar + 1));
                 }
             }
         } else {
-            sendMessage("DELETE" + " " + String.valueOf(id) + " "
+            ClientLoader.sdl.sendMessage("DELETE" + " " + String.valueOf(id) + " "
                     + String.valueOf(caretPos));
         }
     }
 
-    public void sendMessage(String s) {
-        out.println(s);
-        System.out.println(s);
-    }
 
+    /**
+     * The caretUpdate method is a method of CaretListener, and it will occur at any CaretEvent. This method allows us to update the index values of caret and mark.
+     * This will tell us their location in real-time. We are also interested in whether or not text is highlighted, and we can
+     * discern this using our CaretListener.
+     * @param cev
+     */
     @Override
     public void caretUpdate(CaretEvent cev) {
         int dot = cev.getDot();
