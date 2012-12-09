@@ -126,20 +126,21 @@ public class ServerDocumentListLoader {
 									String docInAsciiText = StringAsciiConversion
 											.asciiToString(docAsAsciiCode);
 									synchronized (document) {
-										System.out.println(docInAsciiText);
+										//System.out.println(docInAsciiText);
 										int before = editor.document.getText().length();
 										int after = docInAsciiText.length();
 										int temp = editor.textAreaListener.caretPos+(after-before);
 										//String doc = (String) dmp.patch_apply(dmp.patch_make(editor.document.getText(),docInAsciiText), docInAsciiText)[0];
-										document.setText(docInAsciiText);
 										
 										if (!editor.textAreaListener.text_selected){
+											document.setText(docInAsciiText);
 										    document.setCaretPosition(temp);
 										    
 										}
 										else if(editor.textAreaListener.text_selected){
-										    
-										    document.getCaret().moveDot(editor.textAreaListener.caretPos+(after-before));
+											int dotbefore = document.getCaret().getDot();
+											document.setText(docInAsciiText);
+										    document.getCaret().moveDot(dotbefore);
 										}
 										
 									}
