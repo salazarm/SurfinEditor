@@ -31,7 +31,7 @@ public class InitialClientLoader {
 		JPanel hostPanel = new JPanel();
 		JPanel portPanel = new JPanel();
 		JPanel loginPanel = new JPanel();
-		JLabel copyright = new JLabel("Marco S, Eric E, Mengshaun P � 2012");
+		JLabel copyright = new JLabel("Marco S, Eric E, Mengshaun P (c) 2012");
 
 		JLabel banner = new JLabel(logo);
 		headerPanel.add(banner);

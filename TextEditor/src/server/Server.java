@@ -241,9 +241,11 @@ public class Server {
 				outs.get(socket).println(getDocList());
 			} else if (tokens[0].equals("INSERT")) {
 				String ch;
-				if (tokens.length == 3) {
+				if (tokens.length == 3 && command.charAt(command.length()) != ' ') {
 					ch = "\n";
-				} else {
+				} else if( tokens.length == 3 && command.charAt(command.length()) == ' '){
+					ch = " ";
+				}else {
 					ch = tokens[3];
 				}
 				int id = Integer.parseInt(tokens[1]);

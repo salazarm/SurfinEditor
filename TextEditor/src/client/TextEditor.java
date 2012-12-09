@@ -28,6 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
+import javax.swing.SwingWorker;
 import javax.swing.text.DefaultEditorKit;
 
 public class TextEditor extends JFrame {
@@ -43,13 +44,15 @@ public class TextEditor extends JFrame {
 	private final PrintWriter out;
 	private final Socket socket;
 	private final TextEditor me;
+	private final SwingWorker worker;
 
 	public TextEditor(final PrintWriter out, final BufferedReader in, int id,
 			Socket socket) {
 		this.me = this;
 		out.println("GET " + id);
 		this.socket = socket;
-		(new changeListenerWorker(out, in, document)).execute();
+		worker = new changeListenerWorker(out, in, document);
+		worker.execute();
 		this.out = out;
 		this.in = in;
 		this.id = id;
@@ -117,6 +120,9 @@ public class TextEditor extends JFrame {
 
 		public void actionPerformed(ActionEvent e) {
 			try {
+				worker.cancel(true);
+				in.close();
+				out.close();
 				new ServerDocumentListLoader(socket);
 				me.dispose();
 
