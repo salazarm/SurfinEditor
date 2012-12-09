@@ -32,7 +32,7 @@ public class Server {
 
 	private void getDoc(int ID, Socket socket) {
 		docs.get(ID).addActiveUser(socket);
-		outs.get(socket).println(docs.get(ID).toString());
+		outs.get(socket).println(ID+"A"+docs.get(ID).toString());
 		sockets.remove(socket);
 	}
 
