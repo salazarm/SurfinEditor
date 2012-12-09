@@ -11,7 +11,11 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.*;
 
@@ -35,27 +39,10 @@ public class ServerDocumentListLoader {
 	private final Socket socket;
 
 	ServerDocumentListLoader(Socket socket) throws IOException {
-		this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		this.in = new BufferedReader(new InputStreamReader(
+				socket.getInputStream()));
 		this.out = new PrintWriter(socket.getOutputStream(), true);
 		this.socket = socket;
-		start();
-	}
-
-	ServerDocumentListLoader(BufferedReader in, PrintWriter out, Socket socket)
-			throws IOException {
-		this.in = in;
-		if (out.checkError()) {
-			out.close();
-			this.out = new PrintWriter(socket.getOutputStream(), true);
-		} else {
-			this.out = out;
-		}
-		this.socket = socket;
-		if (socket.isClosed()) {
-			JOptionPane.showMessageDialog(null, "Connection Lost", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			System.exit(-1);
-		}
 		start();
 	}
 
@@ -63,6 +50,8 @@ public class ServerDocumentListLoader {
 		out.println("CONNECT");
 		makeGUI();
 		(new SwingWorker<Void, String>() {
+			private Pattern regex = Pattern.compile("[\\d]+A");
+			
 			@Override
 			protected Void doInBackground() throws Exception {
 				while (true) {
@@ -84,15 +73,26 @@ public class ServerDocumentListLoader {
 			@Override
 			protected void process(List<String> lines) {
 				for (String line : lines) {
-					final String[] tokens = line.split("%");
-					System.out.println(line);
-					assert (tokens.length % 2 == 0);
-					synchronized (docList) {
-						synchronized (docsList) {
-							docsList.clear();
-							for (int i = 0; i + 1 < tokens.length; i += 2) {
-								docsList.addElement(tokens[i + 1]);
+					if (line.charAt(0) == '%') {
+						final String[] tokens = line.split("%");
+						System.out.println(line);
+						assert (tokens.length % 2 == 0);
+						synchronized (docList) {
+							synchronized (docsList) {
+								docsList.clear();
+								for (int i = 0; i + 1 < tokens.length; i += 2) {
+									docsList.addElement(tokens[i + 1]);
+								}
 							}
+						}
+					}else{
+						Matcher matcher = regex.matcher(line); 
+						if (matcher.matches() && matcher.start()==0){
+							String id = line.substring(0,matcher.end()-1);
+							JTextArea document = ClientLoader.textEditorMap.get(id).document;
+							temp = document.
+							document.setText(line.substring(id.length()+1));
+							document.setCaretPosition(temp);
 						}
 					}
 				}
@@ -107,7 +107,7 @@ public class ServerDocumentListLoader {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					int id = docList.getSelectedIndex();
-					new TextEditor(out, in, id, socket);
+					new TextEditor(out, in, id, socket, mainFrame);
 					mainFrame.setVisible(false);
 					// Socket printWriter BufferedReader id
 

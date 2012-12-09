@@ -24,19 +24,24 @@ import javax.swing.text.DefaultEditorKit;
 public class TextEditor extends JFrame {
 
 	private static final long serialVersionUID = 5991470239888613993L;
-	protected static JTextArea document = new JTextArea(20, 120);
+	protected final JTextArea document = new JTextArea(20, 120);
 	private String currentFile = "Untitled";
 	private final BufferedReader in;
 	private final PrintWriter out;
 	private final Socket socket;
 	private final TextEditor me;
-
+	private final JFrame menu;
+	protected final JTextAreaListen textAreaListener;
+	
 	public TextEditor(final PrintWriter out, final BufferedReader in, int id,
-			Socket socket) {
+			Socket socket, JFrame menu) {
+		
+		this.textAreaListener = new JTextAreaListen(out, in, id);
+		this.menu = menu;
 		this.me = this;
 		out.println("GET " + id);
 		this.socket = socket;
-		(new ChangeListenerWorker(out, in, document)).execute();
+		(new ChangeListenerWorker(out, in, document, id)).execute();
 		this.out = out;
 		this.in = in;
 		document.setFont(new Font("Monospaced", Font.PLAIN, 12));
@@ -85,8 +90,8 @@ public class TextEditor extends JFrame {
 		this.pack();
 
 		// add JTextAreaListen to the document. Do this only once, not twice.
-		document.addKeyListener(new JTextAreaListen(out, in, id));
-		document.addCaretListener(new JTextAreaListen(out, in, id));
+		document.addKeyListener(textAreaListener);
+		document.addCaretListener(textAreaListener);
 
 		setTitle(currentFile);
 		setVisible(true);
@@ -96,14 +101,8 @@ public class TextEditor extends JFrame {
 		private static final long serialVersionUID = -474289105133169886L;
 
 		public void actionPerformed(ActionEvent e) {
-			try {
-				new ServerDocumentListLoader(in, out, socket);
-
-			} catch (IOException e1) {
-				JOptionPane.showMessageDialog(null, "Connection Lost", "Error",
-						JOptionPane.ERROR_MESSAGE);
-				System.exit(-1);
-			}
+			menu.setVisible(true);
+			out.println("CONNECT");
 		}
 	};
 	Action Quit = new AbstractAction("Quit") {

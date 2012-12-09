@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
@@ -13,10 +16,14 @@ public class ChangeListenerWorker extends SwingWorker<Void, String > {
 
 	private final BufferedReader in;
 	private final JTextArea document;
+	private final Pattern regex;
+	private final String id;
 
-	public ChangeListenerWorker(PrintWriter out, BufferedReader in, JTextArea document){
+	public ChangeListenerWorker(PrintWriter out, BufferedReader in, JTextArea document, int id){
 		this.in = in;
 		this.document = document;
+		this.regex = Pattern.compile(""+id+"A");
+		this.id = ""+id;
 	}
 
 	@Override
@@ -41,8 +48,11 @@ public class ChangeListenerWorker extends SwingWorker<Void, String > {
 	protected void process(List<String> strings){
 		for(String doc: strings){
 			int temp = JTextAreaListen.caretPos;
-			document.setText(doc);
-			document.setCaretPosition(temp);
+			Matcher matcher = regex.matcher(doc);
+			if (matcher.matches() && matcher.start()==0){
+				document.setText(doc.substring(id.length()+1));
+				document.setCaretPosition(temp);
+			}
 		}
 	}
 
