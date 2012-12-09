@@ -132,7 +132,16 @@ public class ServerDocumentListLoader {
 										int temp = editor.textAreaListener.caretPos+(after-before);
 										//String doc = (String) dmp.patch_apply(dmp.patch_make(editor.document.getText(),docInAsciiText), docInAsciiText)[0];
 										document.setText(docInAsciiText);
-										document.setCaretPosition(temp);
+										
+										if (!editor.textAreaListener.text_selected){
+										    document.setCaretPosition(temp);
+										    
+										}
+										else if(editor.textAreaListener.text_selected){
+										    
+										    document.getCaret().moveDot(editor.textAreaListener.caretPos+(after-before));
+										}
+										
 									}
 								}
 							} else {
