@@ -68,6 +68,7 @@ public class Server {
 	private void getDoc(int ID, Socket socket) {
 		docs.get(ID).addActiveUser(socket);
 		outs.get(socket).println(docs.get(ID).toString());
+		sockets.remove(socket);
 	}
 
 	/**
@@ -235,6 +236,8 @@ public class Server {
 			} else if (tokens[0].equals("GET")) {
 				getDoc(Integer.parseInt(tokens[1]), socket);
 			} else if (tokens[0].equals("CONNECT")) {
+				if(!sockets.contains(socket))
+					sockets.add(socket);
 				outs.get(socket).println(getDocList());
 			} else if (tokens[0].equals("INSERT")) {
 				String ch;

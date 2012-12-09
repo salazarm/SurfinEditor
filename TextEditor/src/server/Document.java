@@ -14,7 +14,6 @@ public class Document {
 	private final ConcurrentLinkedQueue<String[]> commandsQueue = new ConcurrentLinkedQueue<String[]>();
 	private final String name;
 	private final String location;
-	
 	/**
 	 * Constructor that makes document with Document Model docModel and Title title.
 	 * @param title the Title of the document

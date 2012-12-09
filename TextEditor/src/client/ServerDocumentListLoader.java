@@ -31,8 +31,10 @@ public class ServerDocumentListLoader {
 	private JPanel mainPanel = new JPanel();
 	private final BufferedReader in;
 	private final PrintWriter out;
+	private final Socket socket;
 
 	ServerDocumentListLoader(Socket socket) throws IOException {
+		this.socket = socket;
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		out = new PrintWriter(socket.getOutputStream(), true);
 		out.println("CONNECT");
@@ -78,10 +80,8 @@ public class ServerDocumentListLoader {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					int id = docList.getSelectedIndex();
-					new TextEditor(out, in, id);
-					mainFrame.setVisible(false);
-					// Socket printWriter BufferedReader id
-
+					new TextEditor(out, in, id, socket);
+					mainFrame.dispose();
 				}
 			}
 		};

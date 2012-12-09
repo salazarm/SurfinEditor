@@ -58,10 +58,8 @@ public class InitialClientLoader {
 					try {
 						Socket socket = new Socket(InetAddress.getByName(host),
 								Integer.parseInt(port));
-						@SuppressWarnings("unused")
-						ServerDocumentListLoader s = new ServerDocumentListLoader(
-								socket);
-						mainFrame.setVisible(false);
+						new ServerDocumentListLoader(socket);
+						mainFrame.dispose();
 					} catch (NumberFormatException e1) {
 						JOptionPane.showMessageDialog(null,
 								"Please input a number for port",
