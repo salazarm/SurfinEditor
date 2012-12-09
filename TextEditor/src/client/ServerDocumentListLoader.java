@@ -9,15 +9,27 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.swing.DefaultListModel;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingWorker;
 
-import javax.swing.*;
-
-@SuppressWarnings("unused")
 /**
- * Opens the file picking window.
+ * Opens the file picking window. Only 1 of these is ever made but the main frame's visibility chages.
+ * This lets the documentList update in the background.
+ * Also has the main thread that handles incoming messages from the server.
  * @author Marco Salazar
  *
  */
@@ -28,41 +40,30 @@ public class ServerDocumentListLoader {
 	private DefaultListModel docsList = new DefaultListModel();
 	private JList docList = new JList(docsList);
 	private JScrollPane scroll = new JScrollPane(docList);
-	private JFrame mainFrame = new JFrame();
+	protected static JFrame mainFrame = new JFrame();
 	private JPanel mainPanel = new JPanel();
 	private final BufferedReader in;
 	private final PrintWriter out;
-	private final Socket socket;
-
+	
 	ServerDocumentListLoader(Socket socket) throws IOException {
-		this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		this.in = new BufferedReader(new InputStreamReader(
+				socket.getInputStream()));
 		this.out = new PrintWriter(socket.getOutputStream(), true);
-		this.socket = socket;
-		start();
-	}
-
-	ServerDocumentListLoader(BufferedReader in, PrintWriter out, Socket socket)
-			throws IOException {
-		this.in = in;
-		if (out.checkError()) {
-			out.close();
-			this.out = new PrintWriter(socket.getOutputStream(), true);
-		} else {
-			this.out = out;
-		}
-		this.socket = socket;
-		if (socket.isClosed()) {
-			JOptionPane.showMessageDialog(null, "Connection Lost", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			System.exit(-1);
-		}
 		start();
 	}
 
 	private void start() throws IOException {
 		out.println("CONNECT");
 		makeGUI();
+		
+		/**
+		 * This is the main thread that reads ALL incoming messages from the server
+		 * and takes appropriate action. This includes handling messages to multiple
+		 * open documents as well as updating the list of documents on the server.
+		 */
 		(new SwingWorker<Void, String>() {
+			private Pattern regex = Pattern.compile("[\\d]+A");
+			
 			@Override
 			protected Void doInBackground() throws Exception {
 				while (true) {
@@ -84,14 +85,32 @@ public class ServerDocumentListLoader {
 			@Override
 			protected void process(List<String> lines) {
 				for (String line : lines) {
-					final String[] tokens = line.split("%");
-					System.out.println(line);
-					assert (tokens.length % 2 == 0);
-					synchronized (docList) {
-						synchronized (docsList) {
-							docsList.clear();
-							for (int i = 0; i + 1 < tokens.length; i += 2) {
-								docsList.addElement(tokens[i + 1]);
+					System.out.println("Client Received: "+line);
+					if (line.charAt(1) == '%') {
+						/* This is an update regarding documents on the server */
+						final String[] tokens = line.split("%");
+						System.out.println(line);
+						assert (tokens.length % 2 == 0);
+						synchronized (docList) {
+							synchronized (docsList) {
+								docsList.clear();
+								for (int i = 0; i + 1 < tokens.length; i += 2) {
+									docsList.addElement(tokens[i + 1]);
+								}
+							}
+						}
+					}else{
+						/* This is a document update */
+						Matcher matcher = regex.matcher(line); 
+						if (matcher.matches() && matcher.start()==0){
+							String id = line.substring(0,matcher.end()-1);
+							System.out.println("Parsed ID: "+id);
+							if(ClientLoader.textEditorMap.containsKey(id)){
+								TextEditor editor = ClientLoader.textEditorMap.get(id);
+								JTextArea document = editor.document;
+								int temp = editor.textAreaListener.caretPos;
+								document.setText(line.substring(id.length()+1));
+								document.setCaretPosition(temp);
 							}
 						}
 					}
@@ -107,10 +126,9 @@ public class ServerDocumentListLoader {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					int id = docList.getSelectedIndex();
-					new TextEditor(out, in, id, socket);
+					TextEditor editor = new TextEditor(out, id);
+					ClientLoader.textEditorMap.put(""+id, editor);
 					mainFrame.setVisible(false);
-					// Socket printWriter BufferedReader id
-
 				}
 			}
 		};

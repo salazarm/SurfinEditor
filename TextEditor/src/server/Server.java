@@ -22,7 +22,7 @@ public class Server {
 	private final String regex = "(NEW [\\s\\S]+)|(DELETE \\d+ \\d+)|(INSERT \\d+ \\d+[ ]?[\\s\\S]?)|(GET \\d+)|(CONNECT)";
 	private final ServerSocket serverSocket;
 	private Map<Socket, BufferedReader> ins = new ConcurrentHashMap<Socket, BufferedReader>();
-	public static Map<Socket, PrintWriter> outs = new ConcurrentHashMap<Socket, PrintWriter>();
+	protected static Map<Socket, PrintWriter> outs = new ConcurrentHashMap<Socket, PrintWriter>();
 	private List<Socket> sockets = new ArrayList<Socket>();
 	private static Random randomGenerator = new Random();
 	
@@ -101,7 +101,7 @@ public class Server {
 				docModel.add('\n');
 			}
 			fileIn.close();
-			docs.add(new Document(title, docModel, location));
+			docs.add(new Document(title, docModel, location, docs.size()));
 		}
 	}
 
@@ -250,7 +250,7 @@ public class Server {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		docs.add(new Document(title, new CopyOnWriteArrayList<Character>(), lc));
+		docs.add(new Document(title, new CopyOnWriteArrayList<Character>(), lc, docs.size()));
 		updateUsersDocList(); // Updates all users of the new file being added.
 	}
 

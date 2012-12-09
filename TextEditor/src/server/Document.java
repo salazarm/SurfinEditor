@@ -14,15 +14,17 @@ public class Document {
 	private final ConcurrentLinkedQueue<String[]> commandsQueue = new ConcurrentLinkedQueue<String[]>();
 	private final String name;
 	private final String location;
+	private final int id;
 	/**
 	 * Constructor that makes document with Document Model docModel and Title title.
 	 * @param title the Title of the document
 	 * @param docModel the model for the document.
 	 */
-	public Document(String title, CopyOnWriteArrayList<Character> docModel, String location) {
+	public Document(String title, CopyOnWriteArrayList<Character> docModel, String location, int id) {
 		this.docModel = docModel;
 		this.name = title;
 		this.location = location;
+		this.id = id;
 		
 		/* Starts up command listener for document*/
 		Thread t = new Thread(new Runnable(){
@@ -77,7 +79,7 @@ public class Document {
 		String currentDoc = this.toString();
 		for (Socket socket: activeClients){
 			if (!socket.isClosed())
-				Server.outs.get(socket).println(currentDoc);
+				Server.outs.get(socket).println(id+"A"+currentDoc);
 		}
 	}
 

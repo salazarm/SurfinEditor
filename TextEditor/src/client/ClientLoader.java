@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -16,11 +18,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class InitialClientLoader {
+public class ClientLoader {
 	private JFrame mainFrame = new JFrame();
 	private final ImageIcon logo = new ImageIcon("surfinEditor.png");
 	private final String Default_PORT = "1337";
 	private final String Default_HOST = "127.0.0.1";
+	protected static final Map<String,TextEditor> textEditorMap = new HashMap<String,TextEditor>();
 
 	private void makeGUI() {
 		JPanel mainPanel = new JPanel();
@@ -45,6 +48,7 @@ public class InitialClientLoader {
 		portLabel.setText("PORT: ");
 		JButton loginButton = new JButton();
 		loginButton.addActionListener(new ActionListener() {
+			
 			@Override
 			/**
 			 * Uses the input from the host and port field to open the file choosing window.
@@ -148,6 +152,6 @@ public class InitialClientLoader {
 	 * @param args
 	 */
 	public static void main(String args[]) {
-		(new InitialClientLoader()).makeGUI();
+		(new ClientLoader()).makeGUI();
 	}
 }
