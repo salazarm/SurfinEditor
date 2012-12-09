@@ -65,7 +65,12 @@ public class Document {
 	 */
 	private synchronized void remove(int index) {
 		if (index - 1 >= 0 && index - 1 <= docModel.size())
-			docModel.remove(index - 1);
+			try{
+				docModel.remove(index - 1);
+			}catch (ArrayIndexOutOfBoundsException e){
+				while(commandsQueue.size()!=0){}
+				updateActiveUsers();
+			}
 	}
 
 	private synchronized void insert(int index, String charToAdd) {
@@ -91,7 +96,7 @@ public class Document {
 	 * Updates all users of changes to the document model.
 	 */
 	public void updateActiveUsers() {
-		if (!(commandsQueue.size() > 2)) {
+		if ((commandsQueue.size() ==0)) {
 			String currentDoc = this.toString();
 			for (Socket socket : activeClients) {
 				if (!socket.isClosed())
@@ -110,7 +115,6 @@ public class Document {
 	 */
 	public void insertChar(int index, String charToInsert) {
 		commandsQueue.add(new String[] { "insert", "" + index, charToInsert });
-		System.out.println("Command Added");
 	}
 
 	/**
@@ -142,15 +146,14 @@ public class Document {
 	@Override
 	public String toString() {
 		StringBuilder docAsStringtoSend = new StringBuilder();
-		StringBuilder docAsString = new StringBuilder();
 		for (String c : docModel) {
-			docAsStringtoSend.append(c + "a");
-			docAsString.append(c);
+			if(!c.equals("a")){
+				docAsStringtoSend.append(c + "a");
+			}
 		}
-		String newFile = docAsString.toString();
+		String newFile = docAsStringtoSend.toString();
 		updateFile(newFile);
-		System.out.println("Doc is: " + newFile);
-		return docAsStringtoSend.toString();
+		return newFile;
 	}
 
 	private void updateFile(String doc) {

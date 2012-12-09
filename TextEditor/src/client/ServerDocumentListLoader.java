@@ -58,6 +58,7 @@ public class ServerDocumentListLoader {
 
 	protected void sendMessage(String docToSend) {
 		docToSend = StringAsciiConversion.toAscii(docToSend);
+		ClientLoader.textEditorMap.get(docToSend.split(" ")[1]).activeCommands +=1;
 		out.println(docToSend);
 	}
 
@@ -117,21 +118,24 @@ public class ServerDocumentListLoader {
 							if (ClientLoader.textEditorMap.containsKey(id)) {
 								TextEditor editor = ClientLoader.textEditorMap
 										.get(id);
-								JTextArea document = editor.document;
+								editor.activeCommands -= 1;
+								if (editor.activeCommands == -1) {
+									JTextArea document = editor.document;
 
-								String docAsAsciiCode = line.substring(id
-										.length() + 1);
-								String docInAsciiText = StringAsciiConversion
-										.asciiToString(docAsAsciiCode);
-
-								int temp = editor.textAreaListener.caretPos;
-
-								document.setText(docInAsciiText);
-								document.setCaretPosition(temp);
+									String docAsAsciiCode = line.substring(id
+											.length() + 1);
+									String docInAsciiText = StringAsciiConversion
+											.asciiToString(docAsAsciiCode);
+									synchronized (document) {
+										int temp = editor.textAreaListener.caretPos;
+										document.setText(docInAsciiText);
+										document.setCaretPosition(temp);
+									}
+								}
+							} else {
+								System.out.println("REGEX DIDN'T MATCH ON: "
+										+ line);
 							}
-						} else {
-							System.out
-									.println("REGEX DIDN'T MATCH ON: " + line);
 						}
 					}
 				}
@@ -148,7 +152,7 @@ public class ServerDocumentListLoader {
 					int id = docList.getSelectedIndex();
 					TextEditor editor = new TextEditor(out, id);
 					ClientLoader.textEditorMap.put("" + id, editor);
-					ClientLoader.count +=1;
+					ClientLoader.count += 1;
 					mainFrame.setVisible(false);
 				}
 			}
@@ -220,12 +224,12 @@ public class ServerDocumentListLoader {
 		mainLayout.setVerticalGroup(mainLayout.createSequentialGroup()
 				.addComponent(newDocumentPanel).addComponent(existingDocsLabel)
 				.addComponent(scroll));
-		mainFrame.addWindowListener(new WindowListener(){
+		mainFrame.addWindowListener(new WindowListener() {
 
 			@Override
 			public void windowActivated(WindowEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
@@ -234,34 +238,34 @@ public class ServerDocumentListLoader {
 
 			@Override
 			public void windowClosing(WindowEvent e) {
-				if(ClientLoader.count==0)
+				if (ClientLoader.count == 0)
 					System.exit(0);
 			}
 
 			@Override
 			public void windowDeactivated(WindowEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void windowDeiconified(WindowEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void windowIconified(WindowEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void windowOpened(WindowEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-		
+
 		});
 		mainFrame.pack();
 		mainFrame.setSize(500, 500);

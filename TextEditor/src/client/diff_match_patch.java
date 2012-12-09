@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-package server;
+package client;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -61,7 +61,7 @@ public class diff_match_patch {
   /**
    * At what point is no match declared (0.0 = perfection, 1.0 = very loose).
    */
-  public float Match_Threshold = 0.5f;
+  public float Match_Threshold = 1f;
   /**
    * How far to search for a match (0 = exact location, 1000+ = broad match).
    * A match this many characters away from the expected location will add
@@ -74,7 +74,7 @@ public class diff_match_patch {
    * 1.0 = very loose).  Note that Match_Threshold controls how closely the
    * end points of a delete need to match.
    */
-  public float Patch_DeleteThreshold = 0.5f;
+  public float Patch_DeleteThreshold = 1f;
   /**
    * Chunk size for context length.
    */
