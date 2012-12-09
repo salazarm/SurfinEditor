@@ -25,7 +25,7 @@ public class TextEditor extends JFrame {
 	protected final JTextArea document = new JTextArea(20, 120);
 	private String currentFile = "Untitled";
 	protected final JTextAreaListen textAreaListener;
-	protected int activeCommands = 0;
+	//protected int activeCommands = 0;
 
 	public TextEditor(final PrintWriter out, final int id) {
 		this.textAreaListener = new JTextAreaListen(out, id);

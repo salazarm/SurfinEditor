@@ -25,6 +25,8 @@ public class Server {
 	protected static Map<Socket, PrintWriter> outs = new ConcurrentHashMap<Socket, PrintWriter>();
 	private List<Socket> sockets = new ArrayList<Socket>();
 	private static Random randomGenerator = new Random();
+	private final Map<String, Socket> identityMap = new ConcurrentHashMap<String, Socket>();
+	private Integer users;
 
 	public Server(ServerSocket serverSocket) {
 		this.serverSocket = serverSocket;
@@ -196,6 +198,12 @@ public class Server {
 			} else if (tokens[0].equals("CONNECT")) {
 				if (!sockets.contains(socket))
 					sockets.add(socket);
+				if (!identityMap.containsValue(socket)) {
+					synchronized (users) {
+						users += 1;
+						identityMap.put("" + users, socket);
+					}
+				}
 				outs.get(socket).println(getDocList());
 			} else if (tokens[0].equals("INSERT")) {
 				String ch = tokens[3];

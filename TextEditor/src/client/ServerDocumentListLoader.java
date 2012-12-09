@@ -48,6 +48,7 @@ public class ServerDocumentListLoader {
 	private JPanel mainPanel = new JPanel();
 	protected final BufferedReader in;
 	protected final PrintWriter out;
+	private final diff_match_patch dmp = new diff_match_patch();
 
 	ServerDocumentListLoader(Socket socket) throws IOException {
 		this.in = new BufferedReader(new InputStreamReader(
@@ -58,7 +59,7 @@ public class ServerDocumentListLoader {
 
 	protected void sendMessage(String docToSend) {
 		docToSend = StringAsciiConversion.toAscii(docToSend);
-		ClientLoader.textEditorMap.get(docToSend.split(" ")[1]).activeCommands +=1;
+		//ClientLoader.textEditorMap.get(docToSend.split(" ")[1]).activeCommands += 1;
 		out.println(docToSend);
 	}
 
@@ -99,7 +100,6 @@ public class ServerDocumentListLoader {
 					if (line.length() >= 2 && line.charAt(1) == '%') {
 						/* This is an update regarding documents on the server */
 						final String[] tokens = line.split("%");
-						System.out.println(line);
 						assert (tokens.length % 2 == 0);
 						synchronized (docList) {
 							synchronized (docsList) {
@@ -114,12 +114,11 @@ public class ServerDocumentListLoader {
 						Matcher matcher = regex.matcher(line);
 						if (matcher.find() && matcher.start() == 0) {
 							String id = line.substring(0, matcher.end() - 1);
-							System.out.println("PARSED ID: " + id);
 							if (ClientLoader.textEditorMap.containsKey(id)) {
 								TextEditor editor = ClientLoader.textEditorMap
 										.get(id);
-								editor.activeCommands -= 1;
-								if (editor.activeCommands == -1) {
+								//editor.activeCommands -= 1;
+								//if (editor.activeCommands == -1) {
 									JTextArea document = editor.document;
 
 									String docAsAsciiCode = line.substring(id
@@ -127,7 +126,11 @@ public class ServerDocumentListLoader {
 									String docInAsciiText = StringAsciiConversion
 											.asciiToString(docAsAsciiCode);
 									synchronized (document) {
-										int temp = editor.textAreaListener.caretPos;
+										System.out.println(docInAsciiText);
+										int before = editor.document.getText().length();
+										int after = docInAsciiText.length();
+										int temp = editor.textAreaListener.caretPos+(after-before);
+										//String doc = (String) dmp.patch_apply(dmp.patch_make(editor.document.getText(),docInAsciiText), docInAsciiText)[0];
 										document.setText(docInAsciiText);
 										document.setCaretPosition(temp);
 									}
@@ -137,7 +140,7 @@ public class ServerDocumentListLoader {
 										+ line);
 							}
 						}
-					}
+					//}
 				}
 			}
 		}).execute();
