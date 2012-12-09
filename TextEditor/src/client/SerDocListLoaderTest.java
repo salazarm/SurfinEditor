@@ -13,32 +13,31 @@ import org.junit.Test;
 import server.Server;
 
 public class SerDocListLoaderTest {
-
+	
 	@Test
-	public void StringToAsciiTest() throws UnknownHostException, IOException {
-
+	public void StringToAsciiTest() throws UnknownHostException, IOException{
+		
 		try {
-			File f = new File("serverDocs.cfg");
-			f.delete();
-		} catch (Exception e) {
-		}
-
+        	File f = new File("serverDocs.cfg");
+        	f.delete();
+        }catch(Exception e){}
+    	
 		final Server server = new Server(new ServerSocket(1337));
 		server.build();
-
-		Thread serv = new Thread(new Runnable() {
-			public void run() {
+    	
+        Thread serv = new Thread(new Runnable() {
+            public void run() {
 				try {
 					server.serve();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			}
-		});
-		serv.start();
-
+                }
+        });
+        serv.start();
+        
 		Socket s1 = new Socket("localhost", 1337);
 		ServerDocumentListLoader serDoc = new ServerDocumentListLoader(s1);
-	}
+	}	
 }

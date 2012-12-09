@@ -163,7 +163,7 @@ public class ServTest {
 		assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals("0A48a50a"));
 
 		// check Delete command
-		p3.println("DELETE 0 0");
+		p3.println("DELETE 0 1");
 		o1 = null;
 		o2 = null;
 		o3 = null;
@@ -176,7 +176,7 @@ public class ServTest {
 		assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals("0A50a"));
 
 		// check Delete command from another client.
-		p2.println("DELETE 0 0");
+		p2.println("DELETE 0 1");
 		o1 = null;
 		o2 = null;
 		o3 = null;
