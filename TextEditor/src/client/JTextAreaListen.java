@@ -19,8 +19,8 @@ import javax.swing.event.DocumentListener;
  * @author e3m3r
  * 
  */
-public class JTextAreaListen extends JFrame implements
-        KeyListener, CaretListener {
+public class JTextAreaListen extends JFrame implements KeyListener,
+        CaretListener {
 
     private static final long serialVersionUID = 6950001634065526391L;
     protected final PrintWriter out;
@@ -32,8 +32,8 @@ public class JTextAreaListen extends JFrame implements
 
     /**
      * Constructor for the JTextAreaListen. Implements the JTextAreaListen for
-     * the document. Requires the PrintWriter to the server socket, and the document ID for
-     * the document that we are editing.
+     * the document. Requires the PrintWriter to the server socket, and the
+     * document ID for the document that we are editing.
      * 
      * @param out
      * @param id
@@ -44,7 +44,6 @@ public class JTextAreaListen extends JFrame implements
         this.out = out;
     }
 
-
     /**
      * keyEventHandler is used to filter all of the events of our KeyListener.
      * 
@@ -52,132 +51,78 @@ public class JTextAreaListen extends JFrame implements
      */
     public void keyEventHandler(KeyEvent ev) {
         int evID = ev.getID();
-        //There are three KeyEvents that we are interested in filtering: KEY_PRESSED, KEY_RELEASED, and KEY_TYPED
+        // There are three KeyEvents that we are interested in filtering:
+        // KEY_PRESSED, KEY_RELEASED, and KEY_TYPED
         if (evID == KeyEvent.KEY_PRESSED) {
-            System.out.println("KPEV:" + text_selected);
             curr_KeyCode = ev.getKeyCode();
-            System.out.println("KPEV KEYCODE: " + curr_KeyCode);
-            //the keyCode 8 refers to "delete".
+            // the keyCode 8 refers to "delete".
             if (curr_KeyCode == 8) {
-                System.out.println("CP, CM before DE: " + caretPos + " "
-                        + cMark);
-                delete(ev);
-                System.out
-                        .println("CP, CM after DE: " + caretPos + " " + cMark);
-            } else if (curr_KeyCode == 10) {
+                // We wish to handle deletes during the KEY_PRESSED event,
+                // because the selected text is preserved in this event.
                 if (text_selected) {
-                    int tempCar3 = caretPos;
-                    int tempCMark3 = cMark;
-                    System.out.println("tempCar: " + tempCar3);
-                    System.out.println("tempCMark: " + tempCMark3);
-                    if (caretPos > cMark) {
-                        for (int i = tempCar3; i > tempCMark3; i--) {
-                            ClientLoader.sdl.sendMessage("DELETE" + " " + String.valueOf(id)
-                                    + " " + String.valueOf(tempCMark3 + 1));
-                        }
-                        ClientLoader.sdl.sendMessage("INSERT" + " " + String.valueOf(id) + " "
-                                + String.valueOf(tempCMark3) + " " + "\\n");
-
-                    } else if (caretPos < cMark) {
-                        for (int i = tempCar3; i < tempCMark3; i++) {
-                            ClientLoader.sdl.sendMessage("DELETE" + " " + String.valueOf(id)
-                                    + " " + String.valueOf(tempCar3 + 1));
-                        }
-                        ClientLoader.sdl.sendMessage("INSERT" + " " + String.valueOf(id) + " "
-                                + String.valueOf(tempCar3) + " " + "\\n");
-                    }
+                    deleteSelectedText();
                 } else {
-                    ClientLoader.sdl.sendMessage("INSERT" + " " + String.valueOf(id) + " "
-                            + String.valueOf(caretPos) + " " + "\\n");
+                    singularDelete();
+                }
+            }
+            // The keyCode 10 refers to "ENTER", indicating a line break.
+            else if (curr_KeyCode == 10) {
+                // For selected text, we want to send deletes and replace it
+                // with a line break.
+                if (text_selected) {
+                    replaceSelectedText("\\n");
+                } else {
+                    singularInsert("\\n");
                 }
             }
 
         } else if (evID == KeyEvent.KEY_RELEASED) {
-            System.out.println("KREV: " + text_selected);
 
         } else if (evID == KeyEvent.KEY_TYPED) {
-            System.out.println("KTEV: " + text_selected);
             char kc = ev.getKeyChar();
-            System.out.println("KeyChar: " + kc);
-            boolean valid_Unicode = (ev.getKeyChar() != (KeyEvent.CHAR_UNDEFINED));
 
-            System.out.println("valid_Unicode: "
-                    + String.valueOf(valid_Unicode));
-            System.out.println("currkeycode: " + curr_KeyCode);
-            System.out.println("CaretPos: " + caretPos);
-            System.out.println("cMark: " + cMark);
-            System.out.println("text_selected: " + text_selected);
-
-            if (curr_KeyCode == 8 || curr_KeyCode == 10) {
+            if (curr_KeyCode == 8 || curr_KeyCode == 10 || ev.isActionKey()) {
+                //pass over deletes and enters, since they've already been taken care of.
 
             } else {
                 String charString = String.valueOf(kc);
+                //
                 if (!ev.isControlDown()) {
                     if (ev.isShiftDown()) {
                         charString.toUpperCase();
                     }
                     if (text_selected) {
-                        System.out.println("textselected fired");
-                        int tempCar2 = caretPos;
-                        int tempCMark2 = cMark;
-                        if (caretPos > cMark) {
-                            for (int i = tempCar2; i > tempCMark2; i--) {
-                                ClientLoader.sdl.sendMessage("DELETE" + " " + String.valueOf(id)
-                                        + " " + String.valueOf(tempCMark2 + 1));
-                            }
-                            ClientLoader.sdl.sendMessage("INSERT" + " " + String.valueOf(id)
-                                    + " " + String.valueOf(tempCMark2) + " "
-                                    + charString);
-                        } else if (caretPos < cMark) {
-                            for (int i = tempCar2; i < tempCMark2; i++) {
-                                ClientLoader.sdl.sendMessage("DELETE" + " " + String.valueOf(id)
-                                        + " " + String.valueOf(tempCar2 + 1));
-                            }
-                            ClientLoader.sdl.sendMessage("INSERT" + " " + String.valueOf(id)
-                                    + " " + String.valueOf(tempCar2) + " "
-                                    + charString);
-                        }
+                        replaceSelectedText(charString);
+
                     } else {
-                        ClientLoader.sdl.sendMessage("INSERT" + " " + String.valueOf(id) + " "
-                                + String.valueOf(caretPos) + " " + charString);
+                        singularInsert(charString);
                     }
                 } else {
                     /*
                      * We care about the Cut and Paste commands, because they
-                     * affect the contents of the document in a wayt the other
-                     * user won't see unless a message is sent to the server.
+                     * affect the contents of the document in a way that the
+                     * other user won't see unless a message is sent to the
+                     * server.
                      */
                     if (!(charString.equals("x") | charString.equals("v"))) {
                         /*
-                         * We do nothing. As long as control is down, the only other relevant commands are Ctrl+A and Ctrl+C, but we
-                         * don't need to send any message for those. For any other Ctrl+(char), we expect no action.
+                         * We do nothing. As long as control is down, the only
+                         * other relevant commands are Ctrl+A and Ctrl+C, but we
+                         * don't need to send any message for those. For any
+                         * other Ctrl+(char), we expect no action.
                          */
-                        
+
                     } else if (charString.equals("x")) {
-                        /*if text is selected during a cut command, we need to send messages to 
-                         * delete each character in the selection.
+                        /*
+                         * if text is selected during a cut command, we need to
+                         * send messages to delete each character in the
+                         * selection.
                          */
                         if (text_selected) {
-                            int tempCar = caretPos;
-                            int tempCMark = cMark;
-                            System.out.println("tempCar: " + tempCar);
-                            System.out.println("tempCMark: " + tempCMark);
-                            if (caretPos > cMark) {
-                                for (int i = tempCar; i > tempCMark; i--) {
-                                    ClientLoader.sdl.sendMessage("DELETE" + " "
-                                            + String.valueOf(id) + " "
-                                            + String.valueOf(tempCMark + 1));
-                                }
-                            } else if (caretPos < cMark) {
-                                for (int i = tempCar; i < tempCMark; i++) {
-                                    ClientLoader.sdl.sendMessage("DELETE" + " "
-                                            + String.valueOf(id) + " "
-                                            + String.valueOf(tempCar + 1));
-                                }
-                            }
-                        }
-                        else{
-                            //if no text is selected during a cut command, nothing happens.
+                            deleteSelectedText();
+                        } else {
+                            // if no text is selected during a cut command,
+                            // nothing happens.
                         }
                     } else if (charString.equals("v")) {
                         // Somehow send the contents of the clipboard one at a
@@ -219,40 +164,111 @@ public class JTextAreaListen extends JFrame implements
     /**
      * The keyTyped method is called whenever a key is pressed and released. We
      * use keyTyped when we are interested in the character that has been typed.
+     * 
+     * @param ev
      */
     @Override
     public void keyTyped(KeyEvent ev) {
         keyEventHandler(ev);
     }
 
-    public void delete(KeyEvent ev) {
+    /**
+     * This is a helper method for deletes of text blocks.
+     * It sends a message to delete each character in the highlighted text
+     * by sending a delete message on the same index as many times as the length of the
+     * selected text block.
+     * 
+     */
+    public void deleteSelectedText() {
         if (text_selected) {
             int tempCar = caretPos;
             int tempCMark = cMark;
-            System.out.println("tempCar: " + tempCar);
-            System.out.println("tempCMark: " + tempCMark);
             if (caretPos > cMark) {
                 for (int i = tempCar; i > tempCMark; i--) {
-                    ClientLoader.sdl.sendMessage("DELETE" + " " + String.valueOf(id) + " "
+                    ClientLoader.sdl.sendMessage("DELETE" + " "
+                            + String.valueOf(id) + " "
+                            + String.valueOf(tempCMark + 1));
+                    System.out.println("DELETE" + " "
+                            + String.valueOf(id) + " "
                             + String.valueOf(tempCMark + 1));
                 }
             } else if (caretPos < cMark) {
                 for (int i = tempCar; i < tempCMark; i++) {
-                    ClientLoader.sdl.sendMessage("DELETE" + " " + String.valueOf(id) + " "
+                    ClientLoader.sdl.sendMessage("DELETE" + " "
+                            + String.valueOf(id) + " "
+                            + String.valueOf(tempCar + 1));
+                    System.out.println("DELETE" + " "
+                            + String.valueOf(id) + " "
                             + String.valueOf(tempCar + 1));
                 }
             }
         } else {
-            ClientLoader.sdl.sendMessage("DELETE" + " " + String.valueOf(id) + " "
-                    + String.valueOf(caretPos));
+            ClientLoader.sdl.sendMessage("DELETE" + " " + String.valueOf(id)
+                    + " " + String.valueOf(caretPos));
+            System.out.println("DELETE" + " " + String.valueOf(id)
+                    + " " + String.valueOf(caretPos));
         }
     }
 
+    /**
+     * This helper method replaces selected text.
+     * 
+     * @param r
+     */
+    public void replaceSelectedText(String r) {
+        int tempCar3 = caretPos;
+        int tempCMark3 = cMark;
+        if (caretPos > cMark) {
+            for (int i = tempCar3; i > tempCMark3; i--) {
+                ClientLoader.sdl.sendMessage("DELETE" + " "
+                        + String.valueOf(id) + " "
+                        + String.valueOf(tempCMark3 + 1));
+                System.out.println("DELETE" + " "
+                        + String.valueOf(id) + " "
+                        + String.valueOf(tempCMark3 + 1));
+            }
+            ClientLoader.sdl.sendMessage("INSERT" + " " + String.valueOf(id)
+                    + " " + String.valueOf(tempCMark3) + " " + r);
+            System.out.println("INSERT" + " " + String.valueOf(id)
+                    + " " + String.valueOf(tempCMark3) + " " + r);
+
+        } else if (caretPos < cMark) {
+            for (int i = tempCar3; i < tempCMark3; i++) {
+                ClientLoader.sdl.sendMessage("DELETE" + " "
+                        + String.valueOf(id) + " "
+                        + String.valueOf(tempCar3 + 1));
+                System.out.println("DELETE" + " "
+                        + String.valueOf(id) + " "
+                        + String.valueOf(tempCar3 + 1));
+            }
+            ClientLoader.sdl.sendMessage("INSERT" + " " + String.valueOf(id)
+                    + " " + String.valueOf(tempCar3) + " " + r);
+            System.out.println("INSERT" + " " + String.valueOf(id)
+                    + " " + String.valueOf(tempCar3) + " " + r);
+        }
+    }
+
+    public void singularInsert(String insertString) {
+        ClientLoader.sdl.sendMessage("INSERT" + " " + String.valueOf(id) + " "
+                + String.valueOf(caretPos) + " " + insertString);
+        System.out.println("INSERT" + " " + String.valueOf(id) + " "
+                + String.valueOf(caretPos) + " " + insertString);
+    }
+
+    public void singularDelete() {
+        ClientLoader.sdl.sendMessage("DELETE" + " " + String.valueOf(id) + " "
+                + String.valueOf(caretPos));
+        System.out.println("DELETE" + " " + String.valueOf(id) + " "
+                + String.valueOf(caretPos));
+    }
 
     /**
-     * The caretUpdate method is a method of CaretListener, and it will occur at any CaretEvent. This method allows us to update the index values of caret and mark.
-     * This will tell us their location in real-time. We are also interested in whether or not text is highlighted, and we can
-     * discern this using our CaretListener.
+     * The caretUpdate method is a method of CaretListener, and it will occur at
+     * any CaretEvent. This method allows us to update the index values of caret
+     * and mark. This will tell us their location in real-time. We are also
+     * interested in whether or not text is highlighted, and we can discern this
+     * using our CaretListener.
+     * 
      * @param cev
      */
     @Override
