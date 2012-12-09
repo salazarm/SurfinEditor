@@ -3,10 +3,7 @@ package client;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.Socket;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -15,7 +12,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
@@ -26,24 +22,11 @@ public class TextEditor extends JFrame {
 	private static final long serialVersionUID = 5991470239888613993L;
 	protected final JTextArea document = new JTextArea(20, 120);
 	private String currentFile = "Untitled";
-	private final BufferedReader in;
-	private final PrintWriter out;
-	private final Socket socket;
-	private final TextEditor me;
-	private final JFrame menu;
 	protected final JTextAreaListen textAreaListener;
 	
-	public TextEditor(final PrintWriter out, final BufferedReader in, int id,
-			Socket socket, JFrame menu) {
-		
-		this.textAreaListener = new JTextAreaListen(out, in, id);
-		this.menu = menu;
-		this.me = this;
+	public TextEditor(final PrintWriter out, int id) {
+		this.textAreaListener = new JTextAreaListen(out, id);
 		out.println("GET " + id);
-		this.socket = socket;
-		(new ChangeListenerWorker(out, in, document, id)).execute();
-		this.out = out;
-		this.in = in;
 		document.setFont(new Font("Monospaced", Font.PLAIN, 12));
 
 		JScrollPane scroll = new JScrollPane(document,
@@ -101,8 +84,7 @@ public class TextEditor extends JFrame {
 		private static final long serialVersionUID = -474289105133169886L;
 
 		public void actionPerformed(ActionEvent e) {
-			menu.setVisible(true);
-			out.println("CONNECT");
+			ServerDocumentListLoader.mainFrame.setVisible(true);
 		}
 	};
 	Action Quit = new AbstractAction("Quit") {

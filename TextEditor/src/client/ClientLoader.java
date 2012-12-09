@@ -9,7 +9,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -49,6 +48,7 @@ public class ClientLoader {
 		portLabel.setText("PORT: ");
 		JButton loginButton = new JButton();
 		loginButton.addActionListener(new ActionListener() {
+			
 			@Override
 			/**
 			 * Uses the input from the host and port field to open the file choosing window.

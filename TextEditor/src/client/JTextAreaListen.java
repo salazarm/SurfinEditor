@@ -1,10 +1,7 @@
 package client;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.BufferedReader;
 import java.io.PrintWriter;
 import javax.swing.JFrame;
 import javax.swing.event.CaretEvent;
@@ -24,15 +21,12 @@ public class JTextAreaListen extends JFrame
         implements DocumentListener, KeyListener, CaretListener {
      
     private static final long serialVersionUID = 6950001634065526391L;
-     
     protected final PrintWriter out;
     protected final int id;
-
-    protected final BufferedReader in;
     protected int caretPos;
     protected int cMark;
-    private static int curr_KeyCode;
-    private static boolean text_selected;
+    protected int curr_KeyCode;
+    protected boolean text_selected;
      
     
     /**
@@ -41,16 +35,10 @@ public class JTextAreaListen extends JFrame
      * @param in
      * @param id
      */
-    public JTextAreaListen(PrintWriter out, BufferedReader in, int id) {
+    public JTextAreaListen(PrintWriter out, int id) {
         super("JTextAreaListen");
         this.id = id;
         this.out = out;
-        this.in = in;
-         
-        //TextEditor.document.addCaretListener(this);
-        //TextEditor.document.addKeyListener(this);
-
-
     }
 
     /**
