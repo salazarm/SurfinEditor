@@ -39,72 +39,6 @@ import org.junit.Test;
 public class ServTest {
 	
 	/**
-	 * test the insert function and what character it handles.
-	 */
-	@Test (timeout = 20000)
-	public void DiffCharTest() throws IOException, InterruptedException {
-    	
-    	try {
-        	File f = new File("serverDocs.cfg");
-        	f.delete();
-        }catch(Exception e){}
-    	
-		final Server server = new Server(new ServerSocket(1336));
-		server.build();
-    	
-        Thread serv = new Thread(new Runnable() {
-            public void run() {
-				try {
-					server.serve();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-                }
-        });
-        serv.start();
-        
-        // client connect
-        Socket s1 = new Socket("localhost", 1336);
-        BufferedReader br1 = new BufferedReader(new InputStreamReader(
-                s1.getInputStream()));
-        PrintWriter p1 = new PrintWriter(s1.getOutputStream(), true);
-        
-        // make a new Document
-        p1.println("NEW sampleDoc");
-        // Waiting for document creation lag time.
-        Thread.sleep(10);
-        
-        // test digit
-        p1.println("INSERT 0 0 0");
-        // test lower case letter
-        p1.println("INSERT 0 1 a");
-        // test capital letter
-        p1.println("INSERT 0 2 A");
-        // test space
-        p1.println("INSERT 0 3  ");
-        // test punctuation
-        p1.println("INSERT 0 4 .");
-        // test other symbols
-        p1.println("INSERT 0 5 @");
-        
-        // server handling time
-        Thread.sleep(1000);
-        
-        // read-only purpose client connected
-        Socket s2 = new Socket("localhost", 1336);
-        BufferedReader br2 = new BufferedReader(new InputStreamReader(
-                s2.getInputStream()));
-        PrintWriter p2 = new PrintWriter(s2.getOutputStream(), true);
-        
-        // get the document
-        p2.println("GET 0");
-        
-        // check if expected.
-        assertEquals("0aA .@", br2.readLine());
-	}
-	
-	/**
 	 * Test the basic functions of the server using the textClientDemo.
 	 * NEW INSERT DELETE GET CONNECT
 	 * and the combination of them.
@@ -190,10 +124,10 @@ public class ServTest {
         	o2 = br2.readLine();
         while (o3 == null)
         	o3 = br3.readLine();
-        assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals(""));
+        assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals("0A"));
         
         //check Insert command.
-        p1.println("INSERT 0 0 a");
+        p1.println("INSERT 0 0 48");
         o1 = null; o2 = null; o3 = null;
         while (o1 == null)
         	o1 = br1.readLine();
@@ -201,10 +135,10 @@ public class ServTest {
         	o2 = br2.readLine();
         while (o3 == null)
         	o3 = br3.readLine();
-        assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals("a"));
+        assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals("0A48a"));
         
         //check Insert command from a different client.
-        p2.println("INSERT 0 1 B");
+        p2.println("INSERT 0 1 50");
         o1 = null; o2 = null; o3 = null;
         while (o1 == null)
         	o1 = br1.readLine();
@@ -212,7 +146,7 @@ public class ServTest {
         	o2 = br2.readLine();
         while (o3 == null)
         	o3 = br3.readLine();
-        assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals("aB"));                 
+        assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals("0A48a50a"));                 
         
         //check Delete command
         p3.println("DELETE 0 0");
@@ -223,7 +157,7 @@ public class ServTest {
         	o2 = br2.readLine();
         while (o3 == null)
         	o3 = br3.readLine();
-        assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals("B"));
+        assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals("0A50a"));
         
         //check Delete command from another client.
         p2.println("DELETE 0 0");
@@ -234,7 +168,7 @@ public class ServTest {
         	o2 = br2.readLine();
         while (o3 == null)
         	o3 = br3.readLine();
-        assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals(""));                
+        assertTrue(o1.equals(o2) && o1.equals(o3) && o1.equals("0A"));                
     }
     
     /**
@@ -275,24 +209,24 @@ public class ServTest {
         p1.println("GET 0");
         
         // rapid typing
-        p1.println("INSERT 0 0 a");
-        p1.println("INSERT 0 0 b");
-        p1.println("INSERT 0 0 c");
-        p1.println("INSERT 0 0 d");
-        p1.println("INSERT 0 0 e");
-        p1.println("INSERT 0 0 f");
-        p1.println("INSERT 0 0 g");
-        p1.println("INSERT 0 0 h");
-        p1.println("INSERT 0 0 i");
-        p1.println("INSERT 0 0 j");
-        p1.println("INSERT 0 0 k");
-        p1.println("INSERT 0 0 l");
-        p1.println("INSERT 0 0 m");
-        p1.println("INSERT 0 0 n");
-        p1.println("INSERT 0 0 o");
-        p1.println("INSERT 0 0 p");
-        p1.println("INSERT 0 0 q");
-        p1.println("INSERT 0 0 r");
+        p1.println("INSERT 0 0 0");
+        p1.println("INSERT 0 0 1");
+        p1.println("INSERT 0 0 2");
+        p1.println("INSERT 0 0 3");
+        p1.println("INSERT 0 0 4");
+        p1.println("INSERT 0 0 5");
+        p1.println("INSERT 0 0 6");
+        p1.println("INSERT 0 0 7");
+        p1.println("INSERT 0 0 8");
+        p1.println("INSERT 0 0 9");
+        p1.println("INSERT 0 0 10");
+        p1.println("INSERT 0 0 11");
+        p1.println("INSERT 0 0 12");
+        p1.println("INSERT 0 0 13");
+        p1.println("INSERT 0 0 14");
+        p1.println("INSERT 0 0 15");
+        p1.println("INSERT 0 0 16");
+        p1.println("INSERT 0 0 17");
         
         // waiting for the server to response to the typing.
         Thread.sleep(500);
@@ -308,7 +242,7 @@ public class ServTest {
         
         assertEquals("0%sampleDoc%", br2.readLine());
         // check whether the text is what we expected
-        assertEquals("rqponmlkjihgfedcba", br2.readLine());
+        assertEquals("0A17a16a15a14a13a12a11a10a9a8a7a6a5a4a3a2a1a0a", br2.readLine());
         
         // create another document
         p1.println("NEW sampleDoc");
@@ -319,17 +253,17 @@ public class ServTest {
         p1.println("GET 1");
         
         // rapid typing forward (how most people type).
-        p1.println("INSERT 1 0 a");
-        p1.println("INSERT 1 1 b");
-        p1.println("INSERT 1 2 c");
-        p1.println("INSERT 1 3 d");
-        p1.println("INSERT 1 4 e");
-        p1.println("INSERT 1 5 f");
-        p1.println("INSERT 1 6 g");
-        p1.println("INSERT 1 7 h");
-        p1.println("INSERT 1 8 i");
-        p1.println("INSERT 1 9 j");
-        p1.println("INSERT 1 10 k");
+        p1.println("INSERT 1 0 0");
+        p1.println("INSERT 1 1 1");
+        p1.println("INSERT 1 2 2");
+        p1.println("INSERT 1 3 3");
+        p1.println("INSERT 1 4 4");
+        p1.println("INSERT 1 5 5");
+        p1.println("INSERT 1 6 6");
+        p1.println("INSERT 1 7 7");
+        p1.println("INSERT 1 8 8");
+        p1.println("INSERT 1 9 9");
+        p1.println("INSERT 1 10 10");
         
         Thread.sleep(500);
         
@@ -340,7 +274,7 @@ public class ServTest {
         // connected, all documents are printed.
         assertEquals("0%sampleDoc%1%sampleDoc%", br2.readLine());
         // From the GET command, printed the document text.
-        assertEquals("abcdefghijk", br2.readLine());
+        assertEquals("1A0a1a2a3a4a5a6a7a8a9a10a", br2.readLine());
     }
     
     /**
@@ -384,11 +318,11 @@ public class ServTest {
         p2.println("GET 0");
         
         // client 1 insert
-        p1.println("INSERT 0 0 a");
+        p1.println("INSERT 0 0 15");
         // Ensure that "INSERT 0 0 a" get to the server first.
         Thread.sleep(10);
         // client 2 insert
-        p2.println("INSERT 0 0 b");
+        p2.println("INSERT 0 0 30");
         
         // server handle time
         Thread.sleep(100);
@@ -402,9 +336,9 @@ public class ServTest {
         // get the document.
         p3.println("GET 0");
         
-        // handle "INSERT 0 0 a" from p1 ---> "a".
-        // handle "INSERT 0 0 b" from p2 ---> "ba".
-        assertEquals("ba", br3.readLine());
+        // handle "INSERT 0 0 a" from p1 ---> "0A15a".
+        // handle "INSERT 0 0 b" from p2 ---> "0A30a15a".
+        assertEquals("0A30a15a", br3.readLine());
     }
     
     /**
@@ -450,11 +384,11 @@ public class ServTest {
         p2.println("GET 0");
         
         // client 1 insert
-        p1.println("INSERT 0 0 a");
+        p1.println("INSERT 0 0 60");
         // Ensure that "INSERT 0 0 a" get to the server first.
         Thread.sleep(10);
         // client 2 insert
-        p2.println("INSERT 0 1 b");
+        p2.println("INSERT 0 1 120");
         
         // server handle time
         Thread.sleep(100);
@@ -468,9 +402,9 @@ public class ServTest {
         // get the document.
         p3.println("GET 0");
         
-        // handle "INSERT 0 0 a" from p1 ---> "a".
-        // handle "INSERT 0 1 b" from p2 ---> "ab".
-        assertEquals("ab", br3.readLine());
+        // handle "INSERT 0 0 a" from p1 ---> "0A60a".
+        // handle "INSERT 0 1 b" from p2 ---> "0A60a120a".
+        assertEquals("0A60a120a", br3.readLine());
     }
     
     /**
@@ -522,13 +456,13 @@ public class ServTest {
         p3.println("GET 0");
         
         // client 1 insert
-        p1.println("INSERT 0 0 a");
+        p1.println("INSERT 0 0 30");
         // Ensure that "INSERT 0 0 a" get to the server first.
         Thread.sleep(10);
         // client 2 insert
-        p2.println("INSERT 0 0 b");
+        p2.println("INSERT 0 0 60");
         Thread.sleep(10);
-        p3.println("INSERT 0 0 c");
+        p3.println("INSERT 0 0 90");
         
         // server handle time
         Thread.sleep(100);
@@ -542,10 +476,10 @@ public class ServTest {
         // get the document.
         p4.println("GET 0");
         
-        // handle "INSERT 0 0 a" from p1 ---> "a".
-        // handle "INSERT 0 0 b" from p2 ---> "ba".
-        // handle "INSERT 0 0 c" from p. ---> "cba"
-        assertEquals("cba", br4.readLine());  
+        // handle "INSERT 0 0 a" from p1 ---> "0A30a".
+        // handle "INSERT 0 0 b" from p2 ---> "0A60a30a".
+        // handle "INSERT 0 0 c" from p. ---> "0A90a60a30a"
+        assertEquals("0A90a60a30a", br4.readLine());  
     }
     
     /**
@@ -599,24 +533,24 @@ public class ServTest {
         Thread.sleep(100);
         
         p1.println("GET 0");
-        p1.println("INSERT 0 0 a");
+        p1.println("INSERT 0 0 33");
         p2.println("NEW Doc2");
         Thread.sleep(100);
         
         p2.println("GET 1");
-        p1.println("INSERT 0 1 b");
-        p2.println("INSERT 1 0 c");
+        p1.println("INSERT 0 1 67");
+        p2.println("INSERT 1 0 100");
         p3.println("NEW Doc3");
         Thread.sleep(100);
         
         assertEquals("0%Doc1%", br1.readLine());
-        assertEquals("", br1.readLine());
-        assertEquals("a", br1.readLine());
-        assertEquals("ab", br1.readLine());
+        assertEquals("0A", br1.readLine());
+        assertEquals("0A33a", br1.readLine());
+        assertEquals("0A33a67a", br1.readLine());
         assertEquals("0%Doc1%", br2.readLine());
         assertEquals("0%Doc1%1%Doc2%", br2.readLine());
-        assertEquals("", br2.readLine());
-        assertEquals("c", br2.readLine());
+        assertEquals("1A", br2.readLine());
+        assertEquals("1A100a", br2.readLine());
         assertEquals("0%Doc1%", br3.readLine());
         assertEquals("0%Doc1%1%Doc2%", br3.readLine());
         assertEquals("0%Doc1%1%Doc2%2%Doc3%", br3.readLine());
