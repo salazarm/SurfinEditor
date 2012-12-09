@@ -13,20 +13,17 @@ public class changeListenerWorker extends SwingWorker<Void, String > {
 
 	private final PrintWriter out;
 	private final BufferedReader in;
-	private final int id;
 	private final JTextArea document;
 
-	public changeListenerWorker(PrintWriter out, BufferedReader in, int id, JTextArea document){
+	public changeListenerWorker(PrintWriter out, BufferedReader in, JTextArea document){
 		this.out = out;
 		this.in = in;
-		this.id = id;
 		this.document = document;
 	}
 
 	@Override
 	protected Void doInBackground() throws Exception {
 		while (true) {
-			this.out.println("GET " + id);
 			String line = null;
 			do{
 				try {

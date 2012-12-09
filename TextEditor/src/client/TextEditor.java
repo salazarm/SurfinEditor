@@ -12,6 +12,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.Socket;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -23,6 +24,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
@@ -39,9 +41,15 @@ public class TextEditor extends JFrame {
 	private int id;
 	private final BufferedReader in;
 	private final PrintWriter out;
+	private final Socket socket;
+	private final TextEditor me;
 
-	public TextEditor(final PrintWriter out, final BufferedReader in, int id) {
-		(new changeListenerWorker(out,in,id,document)).execute();
+	public TextEditor(final PrintWriter out, final BufferedReader in, int id,
+			Socket socket) {
+		this.me = this;
+		out.println("GET " + id);
+		this.socket = socket;
+		(new changeListenerWorker(out, in, document)).execute();
 		this.out = out;
 		this.in = in;
 		this.id = id;
@@ -76,7 +84,6 @@ public class TextEditor extends JFrame {
 		JToolBar tool = new JToolBar();
 		this.add(tool, BorderLayout.NORTH);
 		tool.add(Open);
-		//tool.add(Save);
 		tool.addSeparator();
 
 		JButton cut = tool.add(Cut), copy = tool.add(Copy), paste = tool
@@ -88,14 +95,13 @@ public class TextEditor extends JFrame {
 		paste.setText(null);
 		paste.setIcon(new ImageIcon("paste.png"));
 
-
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.pack();
-		
-		//add JTextAreaListen to the document. Do this only once, not twice.
+
+		// add JTextAreaListen to the document. Do this only once, not twice.
 		document.addKeyListener(new JTextAreaListen(out, in, id));
 		document.addCaretListener(new JTextAreaListen(out, in, id));
-		
+
 		setTitle(currentFile);
 		setVisible(true);
 	}
@@ -110,13 +116,21 @@ public class TextEditor extends JFrame {
 		private static final long serialVersionUID = -474289105133169886L;
 
 		public void actionPerformed(ActionEvent e) {
+			try {
+				new ServerDocumentListLoader(socket);
+				me.dispose();
+
+			} catch (IOException e1) {
+				JOptionPane.showMessageDialog(null, "Connection Lost", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				System.exit(-1);
+			}
 		}
 	};
 	Action Quit = new AbstractAction("Quit") {
 		private static final long serialVersionUID = -5339245808869817726L;
 
 		public void actionPerformed(ActionEvent e) {
-			//saveOld();
 			System.exit(0);
 		}
 	};
@@ -124,19 +138,5 @@ public class TextEditor extends JFrame {
 	Action Cut = m.get(DefaultEditorKit.cutAction);
 	Action Copy = m.get(DefaultEditorKit.copyAction);
 	Action Paste = m.get(DefaultEditorKit.pasteAction);
-
-	private void readInFile(String fileName) {
-		try {
-			FileReader r = new FileReader(fileName);
-			document.read(r, null);
-			r.close();
-			currentFile = fileName;
-			setTitle(currentFile);
-			changed = false;
-		} catch (IOException e) {
-			Toolkit.getDefaultToolkit().beep();
-			JOptionPane.showMessageDialog(this, "Could not find " + fileName);
-		}
-	}
 
 }
