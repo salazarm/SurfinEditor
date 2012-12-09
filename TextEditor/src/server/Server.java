@@ -19,7 +19,7 @@ import javax.swing.JOptionPane;
 
 public class Server {
 	private final CopyOnWriteArrayList<Document> docs = new CopyOnWriteArrayList<Document>();
-	private final String regex = "(NEW [\\s\\S]+)|(DELETE \\d+ \\d+)|(INSERT \\d+ \\d+ \\d+)|(GET \\d+)|(CONNECT)";
+	private final String regex = "(NEW [\\s\\S]+)|(DELETE \\d+ \\d+)|(INSERT \\d+ \\d+ [ ]?\\d+)|(GET \\d+)|(CONNECT)";
 	private final ServerSocket serverSocket;
 	private Map<Socket, BufferedReader> ins = new ConcurrentHashMap<Socket, BufferedReader>();
 	protected static Map<Socket, PrintWriter> outs = new ConcurrentHashMap<Socket, PrintWriter>();
@@ -206,6 +206,9 @@ public class Server {
 			} else if (tokens[0].equals("INSERT")) {
 				String ch = tokens[3];
 				int id = Integer.parseInt(tokens[1]);
+				System.out.println("ch: "+ch);
+				if(tokens[3].equals(""))
+					ch = tokens[4];
 				if (id < docs.size())
 					docs.get(Integer.parseInt(tokens[1])).insertChar(
 							Integer.parseInt(tokens[2]), ch);

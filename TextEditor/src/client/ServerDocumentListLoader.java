@@ -39,7 +39,7 @@ public class ServerDocumentListLoader {
 	private JLabel existingDocsLabel = new JLabel();
 	private JButton newDocumentButton = new JButton();
 	private JTextField newDocumentField = new JTextField();
-	private DefaultListModel docsList = new DefaultListModel();
+	protected DefaultListModel docsList = new DefaultListModel();
 	private JList docList = new JList(docsList);
 	private JScrollPane scroll = new JScrollPane(docList);
 	protected static JFrame mainFrame = new JFrame();
@@ -174,8 +174,14 @@ public class ServerDocumentListLoader {
 			public void actionPerformed(ActionEvent e) {
 				if (newDocumentField.getText() != "") {
 					String fileName = newDocumentField.getText();
-					out.println("NEW " + fileName);
-					out.println("CONNECT");
+					if (!Pattern.matches("[\\s\\S]*%[\\s\\S]*", fileName)) {
+						out.println("NEW " + fileName);
+						out.println("CONNECT");
+					}else{
+						JOptionPane.showMessageDialog(null,
+								"Please do not use '%' in your file name", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			}
 		});
