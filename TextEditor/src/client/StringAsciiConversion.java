@@ -1,6 +1,6 @@
 package client;
 
-public class StringAsciiConvertion {
+public class StringAsciiConversion {
 	/**
 	 * Converts each individual character in an String in to ASCII Code.
 	 */

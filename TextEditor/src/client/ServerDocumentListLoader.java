@@ -27,11 +27,13 @@ import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 
 /**
- * Opens the file picking window. Only 1 of these is ever made but the main frame's visibility chages.
- * This lets the documentList update in the background.
- * Also has the main thread that handles incoming messages from the server.
+ * Opens the file picking window. Only 1 of these is ever made but the main
+ * frame's visibility chages. This lets the documentList update in the
+ * background. Also has the main thread that handles incoming messages from the
+ * server.
+ * 
  * @author Marco Salazar
- *
+ * 
  */
 public class ServerDocumentListLoader {
 	private JLabel existingDocsLabel = new JLabel();
@@ -44,7 +46,7 @@ public class ServerDocumentListLoader {
 	private JPanel mainPanel = new JPanel();
 	private final BufferedReader in;
 	private final PrintWriter out;
-	
+
 	ServerDocumentListLoader(Socket socket) throws IOException {
 		this.in = new BufferedReader(new InputStreamReader(
 				socket.getInputStream()));
@@ -52,18 +54,23 @@ public class ServerDocumentListLoader {
 		start();
 	}
 
+	protected void sendMessage(String docToSend) {
+		out.println(StringAsciiConversion.asciiToString(docToSend));
+	}
+
 	private void start() throws IOException {
 		out.println("CONNECT");
 		makeGUI();
-		
+
 		/**
-		 * This is the main thread that reads ALL incoming messages from the server
-		 * and takes appropriate action. This includes handling messages to multiple
-		 * open documents as well as updating the list of documents on the server.
+		 * This is the main thread that reads ALL incoming messages from the
+		 * server and takes appropriate action. This includes handling messages
+		 * to multiple open documents as well as updating the list of documents
+		 * on the server.
 		 */
 		(new SwingWorker<Void, String>() {
 			private Pattern regex = Pattern.compile("[\\d]+A");
-			
+
 			@Override
 			protected Void doInBackground() throws Exception {
 				while (true) {
@@ -85,7 +92,7 @@ public class ServerDocumentListLoader {
 			@Override
 			protected void process(List<String> lines) {
 				for (String line : lines) {
-					System.out.println("Client Received: "+line);
+					System.out.println("Client Received: " + line);
 					if (line.charAt(1) == '%') {
 						/* This is an update regarding documents on the server */
 						final String[] tokens = line.split("%");
@@ -99,17 +106,22 @@ public class ServerDocumentListLoader {
 								}
 							}
 						}
-					}else{
+					} else {
 						/* This is a document update */
-						Matcher matcher = regex.matcher(line); 
-						if (matcher.matches() && matcher.start()==0){
-							String id = line.substring(0,matcher.end()-1);
-							System.out.println("Parsed ID: "+id);
-							if(ClientLoader.textEditorMap.containsKey(id)){
-								TextEditor editor = ClientLoader.textEditorMap.get(id);
+						Matcher matcher = regex.matcher(line);
+						if (matcher.matches() && matcher.start() == 0) {
+							String id = line.substring(0, matcher.end() - 1);
+							System.out.println("Parsed ID: " + id);
+							if (ClientLoader.textEditorMap.containsKey(id)) {
+								TextEditor editor = ClientLoader.textEditorMap
+										.get(id);
 								JTextArea document = editor.document;
+	
+								String docAsAsciiCode = line.substring(id.length() + 1);
+								String docInAsciiText = StringAsciiConversion.toAscii(docAsAsciiCode);
+
 								int temp = editor.textAreaListener.caretPos;
-								document.setText(line.substring(id.length()+1));
+								document.setText(docInAsciiText);
 								document.setCaretPosition(temp);
 							}
 						}
@@ -127,13 +139,13 @@ public class ServerDocumentListLoader {
 				if (e.getClickCount() == 2) {
 					int id = docList.getSelectedIndex();
 					TextEditor editor = new TextEditor(out, id);
-					ClientLoader.textEditorMap.put(""+id, editor);
+					ClientLoader.textEditorMap.put("" + id, editor);
 					mainFrame.setVisible(false);
 				}
 			}
 		};
-		docList.addMouseListener(mouseListener);
 
+		docList.addMouseListener(mouseListener);
 		existingDocsLabel.setText("Existing Documents");
 		newDocumentButton.setText("New Document");
 		newDocumentButton.addActionListener(new ActionListener() {
@@ -141,8 +153,14 @@ public class ServerDocumentListLoader {
 			public void actionPerformed(ActionEvent e) {
 				if (newDocumentField.getText() != "") {
 					String fileName = newDocumentField.getText();
-					out.println("NEW " + fileName);
-					out.println("CONNECT");
+					if (!Pattern.matches("[\\s\\S]*%[\\s\\S]*", fileName)) {
+						out.println("NEW " + fileName);
+						out.println("CONNECT");
+					}else{
+						JOptionPane.showMessageDialog(null,
+								"Please do not use '%' in your file name", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			}
 		});
@@ -187,6 +205,7 @@ public class ServerDocumentListLoader {
 		mainLayout.setVerticalGroup(mainLayout.createSequentialGroup()
 				.addComponent(newDocumentPanel).addComponent(existingDocsLabel)
 				.addComponent(scroll));
+
 		mainFrame.pack();
 		mainFrame.setSize(500, 500);
 		mainFrame.setLocationRelativeTo(null);
