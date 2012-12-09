@@ -41,6 +41,7 @@ public class TextEditor extends JFrame {
 	private final PrintWriter out;
 
 	public TextEditor(final PrintWriter out, final BufferedReader in, int id) {
+		(new changeListenerWorker(out,in,id,document)).execute();
 		this.out = out;
 		this.in = in;
 		this.id = id;
@@ -101,31 +102,6 @@ public class TextEditor extends JFrame {
 		
 		setTitle(currentFile);
 		setVisible(true);
-		final int id2 = id;
-		Thread t = new Thread(new Runnable() {
-			public void run() {
-				out.println("GET " + id2);
-				while (true) {
-					out.println("GET " + id2);
-					String line = null;
-					do{
-						try {
-							line = in.readLine();
-						} catch (IOException e) {
-							JOptionPane.showMessageDialog(null,
-									"Connection Lost", "Error",
-									JOptionPane.ERROR_MESSAGE);
-							System.exit(-1);
-						}
-					}
-					while (line == null);
-					int temp = JTextAreaListen.caretPos;
-					document.setText(line);
-					document.setCaretPosition(temp);
-				}
-			}
-		});
-		t.start();
 	}
 
 	private KeyListener keyPressed = new KeyAdapter() {
