@@ -36,6 +36,7 @@ public class ServerDocumentListLoader {
 		this.in = in;
 		this.out = out;
 		out.println("CONNECT");
+		System.out.print("Printed Connect");
 		Thread t = new Thread(new Runnable() {
 			public void run() {
 				while (true) {

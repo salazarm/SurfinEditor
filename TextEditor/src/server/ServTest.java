@@ -49,11 +49,7 @@ public class ServTest {
     	
         Thread serv = new Thread(new Runnable() {
             public void run() {
-				try {
-					server.serve();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
+				server.serve();
                 }
         });
         serv.start();
@@ -115,11 +111,7 @@ public class ServTest {
     	
         Thread serv = new Thread(new Runnable() {
             public void run() {
-				try {
-					server.serve();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
+				server.serve();
                 }
         });
         serv.start();
@@ -258,11 +250,7 @@ public class ServTest {
     	
         Thread serv = new Thread(new Runnable() {
             public void run() {
-				try {
-					server.serve();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
+				server.serve();
                 }
         });
         serv.start();
@@ -363,11 +351,7 @@ public class ServTest {
     	
         Thread serv = new Thread(new Runnable() {
             public void run() {
-				try {
-					server.serve();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
+				server.serve();
                 }
         });
         serv.start();
@@ -422,11 +406,7 @@ public class ServTest {
     	
         Thread serv = new Thread(new Runnable() {
             public void run() {
-				try {
-					server.serve();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
+				server.serve();
                 }
         });
         serv.start();
@@ -484,11 +464,7 @@ public class ServTest {
     	
         Thread serv = new Thread(new Runnable() {
             public void run() {
-				try {
-					server.serve();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
+				server.serve();
                 }
         });
         serv.start();

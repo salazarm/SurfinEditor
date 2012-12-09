@@ -26,13 +26,13 @@ import javax.swing.JTextArea;
 public class Server {
 	private final CopyOnWriteArrayList<Document> docs = new CopyOnWriteArrayList<Document>();
 	private final String regex = "(NEW [\\s\\S]+)|(DELETE \\d+ \\d+)|(INSERT \\d+ \\d+[ ]?[\\s\\S]?)|(GET \\d+)|(CONNECT)";
-	private final ServerSocket serverSocket;
-	private Map<Socket, BufferedReader> ins = new ConcurrentHashMap<Socket, BufferedReader>();
-	public static Map<Socket, PrintWriter> outs = new ConcurrentHashMap<Socket, PrintWriter>();
-	private List<Socket> sockets = new ArrayList<Socket>();
+	protected final ServerSocket serverSocket;
+	protected Map<Socket, BufferedReader> ins = new ConcurrentHashMap<Socket, BufferedReader>();
+	protected static Map<Socket, PrintWriter> outs = new ConcurrentHashMap<Socket, PrintWriter>();
+	protected List<Socket> sockets = new ArrayList<Socket>();
 	private static Random randomGenerator = new Random();
 	private JTextArea serverLog = new JTextArea();
-	private JScrollPane scroll = new JScrollPane(serverLog);
+	protected JScrollPane scroll = new JScrollPane(serverLog);
 	private JPanel serverPanel = new JPanel();
 	private JFrame serverWindow = new JFrame();
 
@@ -97,6 +97,8 @@ public class Server {
 	 * localFile. This rebuilds the server everytime the server starts, so the
 	 * server being off does not result in loss of data.
 	 * 
+	 * Also starts the server in a SwingWorker thread.
+	 * 
 	 * The grammar for the File is as follows:
 	 * 
 	 * CONFIGFILE ::= LINE* LINE ::= TITLE LOCATION TITLE::= [.]+ LOCATION::=
@@ -127,6 +129,13 @@ public class Server {
 		serverLog.setText(serverLog.getText()
 				+ "\n Server document models built...");
 	}
+	
+	/**
+	 * Starts the server thread in a SwingWorker
+	 */
+	public void serve(){
+		(new ServerWorker(this)).execute();
+	}
 
 	private void documentize(String title, String location) throws IOException {
 		File f;
@@ -145,43 +154,6 @@ public class Server {
 		}
 	}
 
-	/**
-	 * Starts up the server and listens for new connections
-	 * 
-	 * @throws IOException
-	 */
-	public void serve() throws IOException {
-		while (true) {
-			final Socket socket = serverSocket.accept();
-			sockets.add(socket);
-			Thread thread = null;
-			try {
-				thread = new Thread(new Runnable() {
-					public void run() {
-						try {
-							handleConnection(socket);
-						} catch (IOException e) {
-						}
-					}
-				});
-				thread.start();
-			} catch (Exception e) {
-				try {
-					if (!socket.isClosed()) {
-						socket.close();
-					}
-				} catch (IOException e1) {
-				}
-			} finally {
-				if (thread != null && !thread.isAlive()) {
-					if (socket.isClosed()) {
-						socket.close();
-						sockets.remove(socket);
-					}
-				}
-			}
-		}
-	}
 
 	/**
 	 * Manages the Sockets, BufferedReaders, and PrintWriters. (Rather than have
@@ -192,7 +164,7 @@ public class Server {
 	 * 
 	 * @throws IOException
 	 */
-	private void handleConnection(Socket socket) throws IOException {
+	protected void handleConnection(Socket socket) throws IOException {
 		if (!socket.isClosed()) {
 			if (!ins.containsKey(socket)) {
 				ins.put(socket,
@@ -228,7 +200,7 @@ public class Server {
 	 * @param command
 	 *            the command to be parsed
 	 */
-	private void handleRequest(String command, Socket socket) {
+	protected void handleRequest(String command, Socket socket) {
 		if (command.matches(regex)) {
 			String[] tokens = command.split(" ");
 			if (tokens[0].equals("NEW")) {
@@ -269,7 +241,7 @@ public class Server {
 	 * @param title
 	 *            the title of the document
 	 */
-	private void makeNewDoc(String title) {
+	protected void makeNewDoc(String title) {
 		File f = new File("%"); // Should never exist
 		String lc;
 		do {
@@ -300,7 +272,7 @@ public class Server {
 	 * synchronized in case a user is added in the middle of iterating then he
 	 * won't be given an incomplete list (can happen for a split second).
 	 */
-	private synchronized void updateUsersDocList() {
+	protected synchronized void updateUsersDocList() {
 		String docsString = getDocList();
 		for (Socket socket : sockets) {
 			outs.get(socket).println(docsString);
@@ -319,7 +291,7 @@ public class Server {
 	 * 
 	 * @return all the documents as a string.
 	 */
-	private String getDocList() {
+	protected String getDocList() {
 		StringBuilder documentsString = new StringBuilder();
 		for (int i = 0; i < docs.size(); i++) {
 			/* Design Decision* : Files cannot have '%' in their name */
