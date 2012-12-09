@@ -152,8 +152,8 @@ public class TextEditor extends JFrame {
         private static final long serialVersionUID = -3218760224238810832L;
 
         public void actionPerformed(ActionEvent e){
-	        m.get(DefaultEditorKit.cutAction);
-	        
+	        //m.get(DefaultEditorKit.cutAction);
+	        //DefaultEditorKit.cutAction();
 	        textAreaListener.deleteSelectedText();
 	    }
 	};
