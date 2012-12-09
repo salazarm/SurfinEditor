@@ -238,7 +238,7 @@ public class ServTest {
         
     }
     
-    @Test
+    @Test (timeout = 20000)
     public void RapidTypingTest() throws IOException, InterruptedException{
     	try {
         	File f = new File("serverDocs.cfg");
@@ -306,9 +306,6 @@ public class ServTest {
         // create another document
         p1.println("NEW sampleDoc");
         Thread.sleep(100);
-        
-        // create another document print all documents 
-        assertEquals("0%sampleDoc%1%sampleDoc%", br2.readLine());
         
         // connect to the new document.
         p1.println("CONNECT");
@@ -516,7 +513,73 @@ public class ServTest {
         // handle "INSERT 0 0 b" from p2 ---> "ba".
         // handle "INSERT 0 0 c" from p. ---> "cba"
         assertEquals("cba", br4.readLine());  
+    }
+    
+    @Test (timeout = 20000)
+    public void changingMultiDocu() throws IOException, InterruptedException{
+    	try {
+        	File f = new File("serverDocs.cfg");
+        	f.delete();
+        }catch(Exception e){}
+    	
+		final Server server = new Server(new ServerSocket(1342));
+		server.build();
+    	
+        Thread serv = new Thread(new Runnable() {
+            public void run() {
+				try {
+					server.serve();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+                }
+        });
+        serv.start();
         
-        //assertEquals("cba", br4.readLine());
+    	// client 1 connect
+        Socket s1 = new Socket("localhost", 1342);
+        BufferedReader br1 = new BufferedReader(new InputStreamReader(
+                s1.getInputStream()));
+        PrintWriter p1 = new PrintWriter(s1.getOutputStream(), true);
+        
+        // client 2 connect
+        Socket s2 = new Socket("localhost", 1342);
+        BufferedReader br2 = new BufferedReader(new InputStreamReader(
+                s2.getInputStream()));
+        PrintWriter p2 = new PrintWriter(s2.getOutputStream(), true);
+        
+        // client 3 connect
+        Socket s3 = new Socket("localhost", 1342);
+        BufferedReader br3 = new BufferedReader(new InputStreamReader(
+                s3.getInputStream()));
+        PrintWriter p3 = new PrintWriter(s3.getOutputStream(), true);
+        
+        Thread.sleep(100);
+        
+        p1.println("NEW Doc1");
+        Thread.sleep(100);
+        
+        p1.println("GET 0");
+        p1.println("INSERT 0 0 a");
+        p2.println("NEW Doc2");
+        Thread.sleep(100);
+        
+        p2.println("GET 1");
+        p1.println("INSERT 0 1 b");
+        p2.println("INSERT 1 0 c");
+        p3.println("NEW Doc3");
+        Thread.sleep(100);
+        
+        assertEquals("0%Doc1%", br1.readLine());
+        assertEquals("", br1.readLine());
+        assertEquals("a", br1.readLine());
+        assertEquals("ab", br1.readLine());
+        assertEquals("0%Doc1%", br2.readLine());
+        assertEquals("0%Doc1%1%Doc2%", br2.readLine());
+        assertEquals("", br2.readLine());
+        assertEquals("c", br2.readLine());
+        assertEquals("0%Doc1%", br3.readLine());
+        assertEquals("0%Doc1%1%Doc2%", br3.readLine());
+        assertEquals("0%Doc1%1%Doc2%2%Doc3%", br3.readLine());
     }
 }
