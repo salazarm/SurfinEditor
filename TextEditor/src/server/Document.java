@@ -15,122 +15,143 @@ public class Document {
 	private final String name;
 	private final String location;
 	private final int id;
+
 	/**
-	 * Constructor that makes document with Document Model docModel and Title title.
-	 * @param title the Title of the document
-	 * @param docModel the model for the document.
+	 * Constructor that makes document with Document Model docModel and Title
+	 * title.
+	 * 
+	 * @param title
+	 *            the Title of the document
+	 * @param docModel
+	 *            the model for the document.
 	 */
-	public Document(String title, CopyOnWriteArrayList<String> docModel, String location, int id) {
+	public Document(String title, CopyOnWriteArrayList<String> docModel,
+			String location, int id) {
 		this.docModel = docModel;
 		this.name = title;
 		this.location = location;
 		this.id = id;
-		
-		/* Starts up command listener for document*/
-		Thread t = new Thread(new Runnable(){
+
+		/* Starts up command listener for document */
+		Thread t = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
-				while(true){
-					if(!commandsQueue.isEmpty()){
+				while (true) {
+					if (!commandsQueue.isEmpty()) {
 						String[] currCommand = commandsQueue.remove();
-						if (currCommand[0].equals("insert")){
-							System.out.println("Queue has detected insert of: "+currCommand[2]);
-							insert(Integer.parseInt(currCommand[1]),currCommand[2]);
-						}else if(currCommand[0].equals("remove")){
+						if (currCommand[0].equals("insert")) {
+							System.out.println("Queue has detected insert of: "
+									+ currCommand[2]);
+							insert(Integer.parseInt(currCommand[1]),
+									currCommand[2]);
+						} else if (currCommand[0].equals("remove")) {
 							remove(Integer.parseInt(currCommand[1]));
 						}
 						updateActiveUsers();
 					}
 				}
-				
+
 			}
-		
+
 		});
 		t.start();
 	}
+
 	/**
-	 * Synchronized for good measure 
+	 * Synchronized for good measure
+	 * 
 	 * @param index
 	 */
 	private synchronized void remove(int index) {
-		if (index >= 0 && index <docModel.size())
-			docModel.remove(index);
+		if (index - 1 >= 0 && index - 1 <= docModel.size())
+			docModel.remove(index - 1);
 	}
 
 	private synchronized void insert(int index, String charToAdd) {
-		System.out.println("Inside insert with index: "+index +"and docModelSize: "+docModel.size());
-		if (index >= 0 && index <=docModel.size()){
-			System.out.println("charToAdd: "+charToAdd);
-			docModel.add(index,charToAdd);
+		if (index >= 0 && index <= docModel.size()) {
+			System.out.println("charToAdd: " + charToAdd);
+			docModel.add(index, charToAdd);
 		}
 	}
 
 	/**
-	 * Registers a user to be available to updates by adding the user to the ActiveUsers list.
-	 * @param socket the socket of the user to be added.
+	 * Registers a user to be available to updates by adding the user to the
+	 * ActiveUsers list.
+	 * 
+	 * @param socket
+	 *            the socket of the user to be added.
 	 */
 	public void addActiveUser(Socket socket) {
 		if (!activeClients.contains(socket))
 			activeClients.add(socket);
 	}
-	
+
 	/**
-	 *  Updates all users of changes to the document model.
+	 * Updates all users of changes to the document model.
 	 */
-	public void updateActiveUsers(){
-		String currentDoc = this.toString();
-		for (Socket socket: activeClients){
-			if (!socket.isClosed())
-				Server.outs.get(socket).println(id+"A"+currentDoc);
+	public void updateActiveUsers() {
+		if (!(commandsQueue.size() > 2)) {
+			String currentDoc = this.toString();
+			for (Socket socket : activeClients) {
+				if (!socket.isClosed())
+					Server.outs.get(socket).println(id + "A" + currentDoc);
+			}
 		}
 	}
 
 	/**
 	 * Adds an insert command to this document's queue.
-	 * @param index the position where the character should be inserted
-	 * @param charToInsert the character to insert
+	 * 
+	 * @param index
+	 *            the position where the character should be inserted
+	 * @param charToInsert
+	 *            the character to insert
 	 */
 	public void insertChar(int index, String charToInsert) {
-		commandsQueue.add(new String[]{"insert", ""+index, charToInsert});
+		commandsQueue.add(new String[] { "insert", "" + index, charToInsert });
 		System.out.println("Command Added");
 	}
-	
+
 	/**
 	 * Add a remove command to this document's queue
-	 * @param index the index of the character that should be removed.
+	 * 
+	 * @param index
+	 *            the index of the character that should be removed.
 	 */
 
 	public void removeChar(int index) {
-		commandsQueue.add(new String[]{"remove", ""+index});
+		commandsQueue.add(new String[] { "remove", "" + index });
 	}
-	
+
 	/**
-	 *
+	 * 
 	 * @return the name of this document
 	 */
 	public String getName() {
 		return this.name;
 	}
-	
+
 	/**
 	 * Also updates the file.
-	 * @return String representationg of document (concats all the characters in the document model).
+	 * 
+	 * @return String representationg of document (concats all the characters in
+	 *         the document model).
 	 */
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		StringBuilder docAsString = new StringBuilder();
-		for(String c: docModel){
-			docAsString.append(c+"a");
+		for (String c : docModel) {
+			docAsString.append(c + "a");
 		}
 		String newFile = docAsString.toString();
 		updateFile(newFile);
-		System.out.println("Doc is: "+newFile);
+		System.out.println("Doc is: " + newFile);
 		return newFile;
 	}
-	
-	private void updateFile(String doc){
+
+	private void updateFile(String doc) {
 		File f = new File(location);
 		try {
 			f.delete();

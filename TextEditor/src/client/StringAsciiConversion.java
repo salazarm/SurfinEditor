@@ -7,8 +7,9 @@ public class StringAsciiConversion {
 	 * Converts each individual character in an String in to ASCII Code.
 	 */
 	public static String toAscii(String str){
-		System.out.println("Received: "+str);
-		return str.substring(0,str.length()-2)+" "+(int)str.charAt(str.length()-1);
+		if(str.charAt(0)=='I')
+			return str.substring(0,str.length()-2)+" "+(int)str.charAt(str.length()-1);
+		return str;
 	}
 	
 	/**
