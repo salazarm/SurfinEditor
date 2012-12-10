@@ -17,6 +17,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JOptionPane;
 
+/**
+ * In our design, the Server serve as the central server of the entire process, all of the clients connect
+ * to the server. All the requests are sent to the server, and the server handles the requests that create
+ * a new document and send the entire list of document to all the clients. For the document editing
+ * requests, the server will send the editing commands to the particular document being edited according
+ * to the ID inputed. Also, all the document are stored in the server.
+ */
+
 public class Server {
 	private final CopyOnWriteArrayList<Document> docs = new CopyOnWriteArrayList<Document>();
 	private final String regex = "(NEW [\\s\\S]+)|(DELETE \\d+ \\d+)|(INSERT \\d+ \\d+ [ ]?\\d+)|(GET \\d+)|(CONNECT)";
@@ -42,7 +50,9 @@ public class Server {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		final int port = 1338;
+
+		// 1337 is the port we choose to use.
+		final int port = 1337;
 		try {
 			ServerSocket serverSocket = new ServerSocket(port);
 			Server server = new Server(serverSocket);
@@ -58,7 +68,7 @@ public class Server {
 	/**
 	 * Reads the location of current existing documents on the server. Files are
 	 * saved line by line in a serverDocs.cfg. Each line has the location of the
-	 * localFile. This rebuilds the server everytime the server starts, so the
+	 * localFile. This rebuilds the server every time the server starts, so the
 	 * server being off does not result in loss of data.
 	 * 
 	 * The grammar for the File is as follows:
@@ -144,7 +154,7 @@ public class Server {
 
 	/**
 	 * Manages the Sockets, BufferedReaders, and PrintWriters. (Rather than have
-	 * individual methods handle thse themselves).
+	 * individual methods handle these themselves).
 	 * 
 	 * @param socket
 	 *            The socket the current connection is coming from
@@ -182,6 +192,8 @@ public class Server {
 	 * ::= [.]+ DELETE ::= "DELETE" ID INDEX INSERT ::= "INSERT" ID INDEX
 	 * ASCIICODE GET ::= "GET" ID ID ::= \\d+ INDEX ::= \\d+ ASCIICODE ::= \\d+
 	 * CONNECT ::= "CONNECT"
+	 * 
+	 * handle the request sent from the clients. 
 	 * 
 	 * @param command
 	 *            the command to be parsed

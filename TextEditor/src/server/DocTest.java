@@ -1,6 +1,10 @@
 package server;
 
 import static org.junit.Assert.*;
+
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.junit.Test;
 
@@ -13,31 +17,31 @@ public class DocTest {
 	
 	@Test
 	public void BasicFuntionTest() throws InterruptedException{
-		Document doc = new Document("samplefiles", new CopyOnWriteArrayList<String>(), "2000", 0);
+		Document doc = new Document("samplefiles", new CopyOnWriteArrayList<String>(), "1000samplefiles1000", 0);
 		assertEquals("samplefiles", doc.getName());
 		
 		// Check insert function.
-		doc.insertChar(0, "a");
-		Thread.sleep(10);
-		assertEquals("a", doc.toString());
+		doc.insertChar(0, "60");
+		Thread.sleep(25);
+		assertEquals("60a", doc.toString());
 		
-		doc.insertChar(0, "b");
-		Thread.sleep(10);
-		assertEquals("ba", doc.toString());
+		doc.insertChar(0, "100");
+		Thread.sleep(25);
+		assertEquals("100a60a", doc.toString());
 		
 		// Check remove function.
 		doc.removeChar(0);
-		Thread.sleep(10);
-		assertEquals("a", doc.toString());
+		Thread.sleep(25);
+		assertEquals("60a", doc.toString());
 		
 		// Check series of commands.
-		doc.insertChar(1, "c");
-		doc.insertChar(2, "d");
-		doc.insertChar(3, "e");
-		doc.insertChar(4, "f");
+		doc.insertChar(1, "10");
+		doc.insertChar(2, "20");
+		doc.insertChar(3, "30");
+		doc.insertChar(4, "40");
 		doc.removeChar(3);
-		doc.insertChar(4, "g");
-		Thread.sleep(10);
-		assertEquals("acdfg", doc.toString());
+		doc.insertChar(4, "50");
+		Thread.sleep(50);
+		assertEquals("60a10a20a40a50a", doc.toString());
 	}
 }

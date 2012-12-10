@@ -162,7 +162,8 @@ public class ServerDocumentListLoader {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					int id = docList.getSelectedIndex();
-					TextEditor editor = new TextEditor(out, id);
+					String title = (String) docsList.getElementAt(id);
+					TextEditor editor = new TextEditor(out, id, title);
 					ClientLoader.textEditorMap.put("" + id, editor);
 					ClientLoader.count += 1;
 					mainFrame.setVisible(false);
