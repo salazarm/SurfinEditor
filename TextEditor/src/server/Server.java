@@ -26,7 +26,7 @@ public class Server {
 	private List<Socket> sockets = new ArrayList<Socket>();
 	private static Random randomGenerator = new Random();
 	private final Map<String, Socket> identityMap = new ConcurrentHashMap<String, Socket>();
-	private Integer users;
+	private Integer users = 0;
 
 	public Server(ServerSocket serverSocket) {
 		this.serverSocket = serverSocket;

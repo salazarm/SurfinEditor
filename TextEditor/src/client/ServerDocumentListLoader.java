@@ -48,7 +48,7 @@ public class ServerDocumentListLoader {
 	private JPanel mainPanel = new JPanel();
 	protected final BufferedReader in;
 	protected final PrintWriter out;
-	private final diff_match_patch dmp = new diff_match_patch();
+	//private final diff_match_patch dmp = new diff_match_patch();
 
 	ServerDocumentListLoader(Socket socket) throws IOException {
 		this.in = new BufferedReader(new InputStreamReader(
@@ -59,7 +59,6 @@ public class ServerDocumentListLoader {
 
 	protected void sendMessage(String docToSend) {
 		docToSend = StringAsciiConversion.toAscii(docToSend);
-		//ClientLoader.textEditorMap.get(docToSend.split(" ")[1]).activeCommands += 1;
 		out.println(docToSend);
 	}
 

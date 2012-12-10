@@ -2,6 +2,9 @@ package client;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -152,8 +155,9 @@ public class TextEditor extends JFrame {
         private static final long serialVersionUID = -3218760224238810832L;
 
         public void actionPerformed(ActionEvent e){
-	        //m.get(DefaultEditorKit.cutAction);
-	        //DefaultEditorKit.cutAction();
+        	StringSelection selection = new StringSelection(textAreaListener.getSelectedText());
+        	Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        	clipboard.setContents(selection, selection);
 	        textAreaListener.deleteSelectedText();
 	    }
 	};
