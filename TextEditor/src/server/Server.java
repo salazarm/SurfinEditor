@@ -255,7 +255,7 @@ public class Server {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		docs.add(new Document(title, new CopyOnWriteArrayList<String>(), lc,
+		docs.add(new Document(title, new CopyOnWriteArrayList<String>(), "documents\\" +lc,
 				docs.size()));
 		updateUsersDocList(); // Updates all users of the new file being added.
 	}
