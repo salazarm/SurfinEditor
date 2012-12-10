@@ -11,7 +11,6 @@ import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.swing.JFrame;
-import javax.swing.JTextArea;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
@@ -144,35 +143,15 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 						 * selection.
 						 */
 						if (text_selected) {
-							int tempCaretPos = caretPos;
-							int tempCMark = cMark;
-
 							StringSelection selection = new StringSelection(
 									getSelectedText());
+							
 							Clipboard clipboard = Toolkit.getDefaultToolkit()
 									.getSystemClipboard();
+							
 							clipboard.setContents(selection, selection);
+							
 							deleteSelectedText();
-							JTextArea document = ClientLoader.textEditorMap
-									.get("" + id).document;
-							String newText;
-
-							try {
-								newText = document.getText(0,
-										Math.min(tempCaretPos, tempCMark));
-							} catch (BadLocationException e) {
-								newText = "";
-							}
-
-							try {
-								newText.concat(document.getText(
-										Math.max(tempCaretPos, tempCMark),
-										document.getText().length()));
-							} catch (BadLocationException e) {
-								e.printStackTrace();
-							}
-
-							document.setText(newText);
 						} else {
 							// if no text is selected during a cut command,
 							// nothing happens.
@@ -207,19 +186,19 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 
 			int tempCaretPos = caretPos_ctrl_down;
 			int tempCMark = cMark_ctrl_down;
-			int startingPos = Math.min(tempCaretPos, tempCMark);
+			int startingPos = Math.min(tempCaretPos, tempCMark)+1;
 
 			for (int i = 0; i < getSelectedText().length(); i++)
 				ClientLoader.sdl
 						.sendMessage("DELETE " + id + " " + startingPos);
 
-			int j = startingPos - 1;
+			int j = startingPos;
 			for (int i = 0; i < (clipBoardString.length()); i++) {
 				singularInsert(String.valueOf(clipBoardString.charAt(i)), j);
 			}
 
 		} else {
-			int j = caretPos - 2;
+			int j = caretPos;
 			for (int i = 0; i < clipBoardString.length(); i++) {
 				singularInsert(String.valueOf(clipBoardString.charAt(i)), j);
 				j++;
@@ -303,7 +282,6 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 		int startingPos = Math.min(tempCar, tempCMark);
 		for (int i = 0; i < getSelectedText().length(); i++)
 			ClientLoader.sdl.sendMessage("DELETE " + id + " " + startingPos);
-
 	}
 
 	/**
@@ -317,19 +295,18 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 		int startingPos = Math.min(tempCar3, tempCMark3);
 		for (int i = 0; i < getSelectedText().length(); i++)
 			ClientLoader.sdl.sendMessage("DELETE " + id + " " + startingPos);
-
 		ClientLoader.sdl.sendMessage("INSERT " + id + " " + startingPos + " "
 				+ r);
 	}
 
 	public void singularInsert(String insertString, int index) {
-		ClientLoader.sdl.sendMessage("INSERT " + id + " " + index + " "
+		ClientLoader.sdl.sendMessage("INSERT " + id + " " + (index) + " "
 				+ insertString);
 	}
 
 	public void singularDelete() {
-		ClientLoader.sdl.sendMessage("DELETE" + " " + String.valueOf(id) + " "
-				+ String.valueOf(caretPos));
+		ClientLoader.sdl.sendMessage("DELETE " + String.valueOf(id) + " "
+				+ (caretPos-1));
 	}
 
 	/**

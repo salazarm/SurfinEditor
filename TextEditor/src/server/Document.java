@@ -64,10 +64,10 @@ public class Document {
 	private synchronized void remove(int index) {
 		if (index - 1 >= 0 && index - 1 <= docModel.size())
 			try{
-				docModel.remove(index - 1);
+				docModel.remove(index);
 			}catch (ArrayIndexOutOfBoundsException e){
-				while(commandsQueue.size()!=0){}
-				updateActiveUsers();
+				if (commandsQueue.size()==0)
+					updateActiveUsers();
 			}
 	}
 
