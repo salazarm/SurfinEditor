@@ -37,6 +37,10 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 	protected int cMark;
 	protected int curr_KeyCode;
 	protected boolean text_selected;
+	protected boolean ctrl_down;
+	protected int cMark_ctrl_down;
+	protected int caretPos_ctrl_down;
+	protected boolean text_selected_ctrl_down;
 
 	/**
 	 * Constructor for the JTextAreaListen. Implements the JTextAreaListen for
@@ -83,8 +87,18 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 					singularInsert("\\n", caretPos);
 				}
 			}
+			
+			else if (curr_KeyCode == 17){
+			    ctrl_down = true;
+			    caretPos_ctrl_down = caretPos;
+			    cMark_ctrl_down = cMark;
+			    text_selected_ctrl_down = text_selected;
+			}
 
 		} else if (evID == KeyEvent.KEY_RELEASED) {
+		    if(ev.getKeyCode() == 17){
+		        ctrl_down = false;
+		    }
 
 		} else if (evID == KeyEvent.KEY_TYPED) {
 			char kc = ev.getKeyChar();
@@ -176,6 +190,7 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 								deleteSelectedText();
 							}
 						} else {
+						    //
 							pasteOverwrite();
 						}
 					}
@@ -192,9 +207,10 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 	 */
 	public void pasteOverwrite() {
 		String clipBoardString = getClipboardContents();
-		if (text_selected) {
-			int tempCaretPos = caretPos;
-			int tempCMark = cMark;
+		if (text_selected_ctrl_down) {
+		    
+			int tempCaretPos = caretPos_ctrl_down;
+			int tempCMark = cMark_ctrl_down;
 			int startingPos = Math.min(tempCaretPos, tempCMark);
 			deleteSelectedText();
 			JTextArea document = ClientLoader.textEditorMap.get("" + id).document;
