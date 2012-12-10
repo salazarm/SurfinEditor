@@ -330,6 +330,63 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 			text_selected = true;
 		}
 	}
+	
+	public void cutButton(){
+        if (text_selected) {
+            int tempCar = caretPos;
+            int tempCMark = cMark;
+            int startingPos = Math.min(tempCar, tempCMark);
+            for (int i = 0; i < Math.abs(tempCar-tempCMark); i++)
+                delete(startingPos+1);
+        } else {
+            // if no text is selected during a cut command,
+            // nothing happens.
+        }
+	}
+	
+	public void pasteButton(){
+	 // Somehow send the contents of the clipboard one at a
+        // time.
+        String clipBoardString = getClipboardContents();
+        if (clipBoardString.equals("")) {
+            if (text_selected) {
+                //deleteSelectedText();
+                int tempCar = caretPos;
+                int tempCMark = cMark;
+
+                int startingPos = Math.min(tempCar, tempCMark);
+                for (int i = 0; i < getSelectedText_KP().length(); i++)
+                    delete(startingPos+1);
+            }
+        } 
+        else {
+            //
+             String clipBoardString1 = getClipboardContents();
+                if (text_selected) {
+
+                    int tempCaretPos = caretPos;
+                    int tempCMark = cMark;
+                    int startingPos = Math.min(tempCaretPos, tempCMark);
+                    
+                    for (int i = 0; i < tempCaretPos-tempCMark; i++)
+                        delete(startingPos+1);
+
+                    int j = startingPos;
+                    for (int i = 0; i < (clipBoardString1.length()); i++) {
+                        insert(String.valueOf(clipBoardString1.charAt(i)), j);
+                        j++;
+                    }
+
+                } else {
+                    int j = caretPos;
+                    for (int i = 0; i < clipBoardString1.length(); i++) {
+                        insert(String.valueOf(clipBoardString1.charAt(i)), j);
+                        j++;
+                    }
+                }
+            
+        }
+	}
 
 	public String getSelectedText() {
 		if (caretPos != cMark) {

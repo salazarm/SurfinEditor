@@ -157,7 +157,7 @@ public class TextEditor extends JFrame {
         	StringSelection selection = new StringSelection(textAreaListener.getSelectedText());
         	Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         	clipboard.setContents(selection, selection);
-	        textAreaListener.deleteSelectedText();
+	        textAreaListener.cutButton();
 	    }
 	};
     Action Paste = new AbstractAction("Paste", new ImageIcon("paste.png")){
@@ -165,7 +165,7 @@ public class TextEditor extends JFrame {
 
         public void actionPerformed(ActionEvent e){
             m.get(DefaultEditorKit.pasteAction);
-            textAreaListener.paste();
+            textAreaListener.pasteButton();
         }
     };
 }
