@@ -35,7 +35,6 @@ public class Server {
 	private void getDoc(int ID, Socket socket) {
 		docs.get(ID).addActiveUser(socket);
 		outs.get(socket).println(ID + "A" + docs.get(ID).toString());
-		sockets.remove(socket);
 	}
 
 	/**
@@ -198,12 +197,6 @@ public class Server {
 			} else if (tokens[0].equals("CONNECT")) {
 				if (!sockets.contains(socket))
 					sockets.add(socket);
-				if (!identityMap.containsValue(socket)) {
-					synchronized (users) {
-						users += 1;
-						identityMap.put("" + users, socket);
-					}
-				}
 				outs.get(socket).println(getDocList());
 			} else if (tokens[0].equals("INSERT")) {
 				String ch = tokens[3];
