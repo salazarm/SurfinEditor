@@ -53,7 +53,7 @@ public class ServTest {
 		} catch (Exception e) {
 		}
 
-		final Server server = new Server(new ServerSocket(1337));
+		final Server server = new Server(new ServerSocket(1336));
 		server.build();
 
 		Thread serv = new Thread(new Runnable() {
@@ -69,19 +69,19 @@ public class ServTest {
 		serv.start();
 
 		// client 1 connect
-		Socket s1 = new Socket("localhost", 1337);
+		Socket s1 = new Socket("localhost", 1336);
 		BufferedReader br1 = new BufferedReader(new InputStreamReader(
 				s1.getInputStream()));
 		PrintWriter p1 = new PrintWriter(s1.getOutputStream(), true);
 
 		// client 2 connect
-		Socket s2 = new Socket("localhost", 1337);
+		Socket s2 = new Socket("localhost", 1336);
 		BufferedReader br2 = new BufferedReader(new InputStreamReader(
 				s2.getInputStream()));
 		PrintWriter p2 = new PrintWriter(s2.getOutputStream(), true);
 
 		// client 3 connect
-		Socket s3 = new Socket("localhost", 1337);
+		Socket s3 = new Socket("localhost", 1336);
 		BufferedReader br3 = new BufferedReader(new InputStreamReader(
 				s3.getInputStream()));
 		PrintWriter p3 = new PrintWriter(s3.getOutputStream(), true);
@@ -120,7 +120,9 @@ public class ServTest {
 
 		// clients get the documents just created.
 		p1.println("GET 0");
+		Thread.sleep(10);
 		p2.println("GET 0");
+		Thread.sleep(10);
 		p3.println("GET 0");
 
 		// get command will create an empty line since the file is a new file
@@ -221,7 +223,7 @@ public class ServTest {
 
 		// create document and wait for the create time lag.
 		p1.println("NEW sampleDoc");
-		Thread.sleep(100);
+		Thread.sleep(150);
 
 		// connect to the document.
 		p1.println("CONNECT");
@@ -266,7 +268,7 @@ public class ServTest {
 
 		// create another document
 		p1.println("NEW sampleDoc");
-		Thread.sleep(100);
+		Thread.sleep(150);
 
 		// connect to the new document.
 		p1.println("CONNECT");
@@ -285,7 +287,7 @@ public class ServTest {
 		p1.println("INSERT 1 9 9");
 		p1.println("INSERT 1 10 10");
 
-		Thread.sleep(500);
+		Thread.sleep(750);
 
 		p2.println("CONNECT");
 		p2.println("GET 1");
@@ -334,19 +336,19 @@ public class ServTest {
 
 		// create document and wait for the create time lag.
 		p1.println("NEW sampleDoc");
-		Thread.sleep(100);
+		Thread.sleep(150);
 
 		p2.println("GET 0");
 
 		// client 1 insert
 		p1.println("INSERT 0 0 15");
 		// Ensure that "INSERT 0 0 a" get to the server first.
-		Thread.sleep(10);
+		Thread.sleep(25);
 		// client 2 insert
 		p2.println("INSERT 0 0 30");
 
 		// server handle time
-		Thread.sleep(100);
+		Thread.sleep(150);
 
 		// client 3 connect
 		Socket s3 = new Socket("localhost", 1339);
@@ -398,23 +400,26 @@ public class ServTest {
 		PrintWriter p2 = new PrintWriter(s2.getOutputStream(), true);
 
 		// waiting for the clients to be started.
-		Thread.sleep(100);
+		Thread.sleep(150);
 
 		// create document and wait for the create time lag.
 		p1.println("NEW sampleDoc");
-		Thread.sleep(100);
+		Thread.sleep(150);
 
 		p2.println("GET 0");
 
 		// client 1 insert
 		p1.println("INSERT 0 0 60");
 		// Ensure that "INSERT 0 0 a" get to the server first.
-		Thread.sleep(10);
+		// This is only needed for the test cases since I need to ensure which message
+		// reach the server first. but in really, which one reaches the reserver first 
+		// is not a concern since the server will just handle one request at a time.
+		Thread.sleep(25);
 		// client 2 insert
 		p2.println("INSERT 0 1 120");
 
 		// server handle time
-		Thread.sleep(100);
+		Thread.sleep(150);
 
 		// client 3 connect
 		Socket s3 = new Socket("localhost", 1340);
@@ -471,11 +476,11 @@ public class ServTest {
 		PrintWriter p3 = new PrintWriter(s3.getOutputStream(), true);
 
 		// waiting for the clients to be started.
-		Thread.sleep(200);
+		Thread.sleep(250);
 
 		// create document and wait for the create time lag.
 		p1.println("NEW sampleDoc");
-		Thread.sleep(100);
+		Thread.sleep(150);
 
 		p2.println("GET 0");
 		p3.println("GET 0");
@@ -483,14 +488,17 @@ public class ServTest {
 		// client 1 insert
 		p1.println("INSERT 0 0 30");
 		// Ensure that "INSERT 0 0 a" get to the server first.
-		Thread.sleep(10);
+		// This is only needed for the test cases since I need to ensure which message
+		// reach the server first. but in really, which one reaches the reserver first 
+		// is not a concern since the server will just handle one request at a time.
+		Thread.sleep(25);
 		// client 2 insert
 		p2.println("INSERT 0 0 60");
-		Thread.sleep(10);
+		Thread.sleep(25);
 		p3.println("INSERT 0 0 90");
 
 		// server handle time
-		Thread.sleep(100);
+		Thread.sleep(150);
 
 		// client 3 connect
 		Socket s4 = new Socket("localhost", 1341);
@@ -554,18 +562,18 @@ public class ServTest {
 		PrintWriter p3 = new PrintWriter(s3.getOutputStream(), true);
 		
 		// Wating for the clients to connect ot the server
-		Thread.sleep(100);
+		Thread.sleep(150);
 		
 		// Client 1 create the first document.
 		p1.println("NEW Doc1");
-		Thread.sleep(200);
+		Thread.sleep(150);
 		
 		// Client 1 get the first document and edit the document while Client 2 create
 		// the second document.
 		p1.println("GET 0");
 		p1.println("INSERT 0 0 33");
 		p2.println("NEW Doc2");
-		Thread.sleep(200);
+		Thread.sleep(250);
 		
 		// Client 1 edit the first document while Client 2 get and edit the second 
 		// document while the Client 3 create the third document.
@@ -573,7 +581,7 @@ public class ServTest {
 		p1.println("INSERT 0 1 67");
 		p2.println("INSERT 1 0 100");
 		p3.println("NEW Doc3");
-		Thread.sleep(200);
+		Thread.sleep(250);
 		
 		// Check all the message being pass behave normal.
 		assertEquals("0%Doc1%", br1.readLine());
