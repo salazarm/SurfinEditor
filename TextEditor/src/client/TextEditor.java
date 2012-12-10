@@ -154,6 +154,7 @@ public class TextEditor extends JFrame {
         private static final long serialVersionUID = -3218760224238810832L;
 
         public void actionPerformed(ActionEvent e){
+        	System.out.println(textAreaListener.getSelectedText());
         	StringSelection selection = new StringSelection(textAreaListener.getSelectedText());
         	Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         	clipboard.setContents(selection, selection);
