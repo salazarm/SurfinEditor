@@ -26,11 +26,10 @@ public class TextEditor extends JFrame {
 
 	private static final long serialVersionUID = 5991470239888613993L;
 	protected final JTextArea document = new JTextArea(20, 120);
-	private String currentFile = "Untitled";
 	protected final JTextAreaListen textAreaListener;
 	//protected int activeCommands = 0;
 
-	public TextEditor(final PrintWriter out, final int id) {
+	public TextEditor(final PrintWriter out, final int id, String title) {
 		this.textAreaListener = new JTextAreaListen(out, id);
 		out.println("GET " + id);
 		document.setFont(new Font("Monospaced", Font.PLAIN, 12));
@@ -82,7 +81,7 @@ public class TextEditor extends JFrame {
 		document.addKeyListener(textAreaListener);
 		document.addCaretListener(textAreaListener);
 
-		setTitle(currentFile);
+		setTitle(title);
 		setVisible(true);
 		this.addWindowListener(new WindowListener(){
 

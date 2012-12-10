@@ -75,7 +75,7 @@ public class Document {
 	 * @param index
 	 */
 	private synchronized void remove(int index) {
-		if (index - 1 >= 0 && index - 1 <= docModel.size())
+		if (index >= 0 && index <= docModel.size())
 			try{
 				docModel.remove(index);
 			}catch (ArrayIndexOutOfBoundsException e){
