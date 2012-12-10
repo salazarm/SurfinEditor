@@ -41,8 +41,6 @@ public class Document {
 					if (!commandsQueue.isEmpty()) {
 						String[] currCommand = commandsQueue.remove();
 						if (currCommand[0].equals("insert")) {
-							System.out.println("Queue has detected insert of: "
-									+ currCommand[2]);
 							insert(Integer.parseInt(currCommand[1]),
 									currCommand[2]);
 						} else if (currCommand[0].equals("remove")) {
@@ -75,7 +73,6 @@ public class Document {
 
 	private synchronized void insert(int index, String charToAdd) {
 		if (index >= 0 && index <= docModel.size()) {
-			System.out.println("charToAdd: " + charToAdd);
 			docModel.add(index, charToAdd);
 		}
 	}
@@ -159,7 +156,8 @@ public class Document {
 	private void updateFile(String doc) {
 		File f = new File(location);
 		try {
-			f.delete();
+			if(f.exists())
+				f.delete();
 			f.createNewFile();
 			PrintWriter fileOut = new PrintWriter(new FileWriter(f));
 			fileOut.println(doc);

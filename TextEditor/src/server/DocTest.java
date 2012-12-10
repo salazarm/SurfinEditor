@@ -13,7 +13,7 @@ public class DocTest {
 	
 	@Test
 	public void BasicFuntionTest() throws InterruptedException{
-		Document doc = new Document("samplefiles", new CopyOnWriteArrayList<Character>(), "2000", 0);
+		Document doc = new Document("samplefiles", new CopyOnWriteArrayList<String>(), "2000", 0);
 		assertEquals("samplefiles", doc.getName());
 		
 		// Check insert function.

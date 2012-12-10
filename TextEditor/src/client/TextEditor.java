@@ -166,7 +166,7 @@ public class TextEditor extends JFrame {
 
         public void actionPerformed(ActionEvent e){
             m.get(DefaultEditorKit.pasteAction);
-            textAreaListener.pasteOverwrite();
+            textAreaListener.paste();
         }
     };
 }

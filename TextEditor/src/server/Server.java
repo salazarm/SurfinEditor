@@ -25,8 +25,6 @@ public class Server {
 	protected static Map<Socket, PrintWriter> outs = new ConcurrentHashMap<Socket, PrintWriter>();
 	private List<Socket> sockets = new ArrayList<Socket>();
 	private static Random randomGenerator = new Random();
-	private final Map<String, Socket> identityMap = new ConcurrentHashMap<String, Socket>();
-	private Integer users = 0;
 
 	public Server(ServerSocket serverSocket) {
 		this.serverSocket = serverSocket;
@@ -35,6 +33,7 @@ public class Server {
 	private void getDoc(int ID, Socket socket) {
 		docs.get(ID).addActiveUser(socket);
 		outs.get(socket).println(ID + "A" + docs.get(ID).toString());
+		sockets.remove(socket);
 	}
 
 	/**
