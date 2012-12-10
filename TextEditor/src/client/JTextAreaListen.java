@@ -70,6 +70,7 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 		// KEY_PRESSED, KEY_RELEASED, and KEY_TYPED
 		if (evID == KeyEvent.KEY_PRESSED) {
 			curr_KeyCode = ev.getKeyCode();
+			//System.out.println(curr_KeyCode);
 			caretPos_KP = caretPos;
             cMark_KP = cMark;
             text_selected_KP = !(caretPos_KP == cMark_KP);
@@ -97,8 +98,9 @@ public class JTextAreaListen extends JFrame implements KeyListener,
                     int tempCMark = cMark;
 
                     int startingPos = Math.min(tempCar, tempCMark);
-                    for (int i = 0; i < getSelectedText().length(); i++)
-                        delete(startingPos);
+                    for (int i = 0; i < getSelectedText().length(); i++){
+                        delete(startingPos+1);
+                    }
 					insert("\\n", startingPos);
 				} else {
 					insert("\\n", caretPos);
@@ -110,6 +112,23 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 				caretPos_ctrl_down = caretPos;
 				cMark_ctrl_down = cMark;
 				text_selected_ctrl_down = text_selected;
+			}
+			//The keyCode 9 refers to "Tab" which is typically not detected by KeyListeners in Java.
+			else if (curr_KeyCode == 9){
+			    if(text_selected){
+			        int tempCar = caretPos;
+			        int tempCMark = cMark;
+			        
+			        int startingPos = Math.min(tempCar, tempCMark);
+			        for (int i = 0; i < getSelectedText().length(); i++){
+			            delete(startingPos + 1);
+			            
+			        }
+			        insert(" ", startingPos);
+			    }
+			    else{
+			        insert(" ", caretPos);
+			    }
 			}
 			
 			
@@ -301,11 +320,13 @@ public class JTextAreaListen extends JFrame implements KeyListener,
     public void insert(String insertString, int index) {
         ClientLoader.sdl.sendMessage("INSERT " + id + " " + (index) + " "
                 + insertString);
+
     }
     
 	public void delete(int index){
 	    ClientLoader.sdl.sendMessage("DELETE " + String.valueOf(id) + " "
                 + index);
+
 	}
 	
 
