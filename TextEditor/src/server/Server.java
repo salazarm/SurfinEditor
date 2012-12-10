@@ -174,7 +174,6 @@ public class Server {
 			try {
 				for (String line = in.readLine(); line != null; line = in
 						.readLine()) {
-					System.out.println("Server Received: " + line);
 					handleRequest(line, socket);
 				}
 			} finally {
@@ -212,7 +211,6 @@ public class Server {
 			} else if (tokens[0].equals("INSERT")) {
 				String ch = tokens[3];
 				int id = Integer.parseInt(tokens[1]);
-				System.out.println("ch: " + ch);
 				if (tokens[3].equals(""))
 					ch = tokens[4];
 				if (id < docs.size())

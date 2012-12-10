@@ -1,11 +1,9 @@
 package server;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.junit.Test;
 
 public class DocTest {
@@ -30,7 +28,7 @@ public class DocTest {
 		assertEquals("100a60a", doc.toString());
 		
 		// Check remove function.
-		doc.removeChar(0);
+		doc.removeChar(1);
 		Thread.sleep(25);
 		assertEquals("60a", doc.toString());
 		

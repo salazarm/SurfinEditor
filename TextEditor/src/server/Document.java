@@ -5,7 +5,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -77,7 +76,7 @@ public class Document {
 	private synchronized void remove(int index) {
 		if (index >= 0 && index <= docModel.size())
 			try{
-				docModel.remove(index);
+				docModel.remove(index-1);
 			}catch (ArrayIndexOutOfBoundsException e){
 				if (commandsQueue.size()==0)
 					updateActiveUsers();
