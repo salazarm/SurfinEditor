@@ -106,8 +106,9 @@ public class Server {
 			BufferedReader fileIn = new BufferedReader(new FileReader(f));
 			for (String line = fileIn.readLine(); line != null; line = fileIn
 					.readLine()) {
-				for (int i = 0; i < line.length(); i++)
-					docModel.add("" + line.charAt(i));
+				String[] tokens = line.split("a");
+				for (int i = 0; i < tokens.length; i++)
+					docModel.add(tokens[i]);
 			}
 			fileIn.close();
 			docs.add(new Document(title, docModel, location, docs.size()));

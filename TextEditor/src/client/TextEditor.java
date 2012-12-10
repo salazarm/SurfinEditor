@@ -74,7 +74,7 @@ public class TextEditor extends JFrame {
 		paste.setText(null);
 		paste.setIcon(new ImageIcon("paste.png"));
 
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.pack();
 
 		// add JTextAreaListen to the document. Do this only once, not twice.

@@ -6,7 +6,7 @@ package server;
  * <ul>
  * <li>	<b>command</b> - Either <b> Command.CommandType.INSERT </b> or <b> Command.CommandType.DELETE </b></li>
  * <li> <b>index</b> - The index of where the user intended to remove an element in his client document model.</li>
- * <li> <b>characterToInsert</b> <i>(Only for INSERT commands)</i>  - The character to be inserted at <b> index></b>
+ * <li> <b>characterToInsert</b> <i>(Only for INSERT commands)</i>  - The character to be inserted at <b> index></b></li>
  * </ul>
  * @author Marco Salazar
  *
@@ -19,7 +19,7 @@ public class Command {
 	
 	/**
 	 * INSERT for insert
-	 * DELTE for delete
+	 * DELETE for delete
 	 * @author Marco Salazar
 	 *
 	 */
