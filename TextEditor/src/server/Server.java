@@ -42,7 +42,7 @@ public class Server {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		final int port = 1337;
+		final int port = 1338;
 		try {
 			ServerSocket serverSocket = new ServerSocket(port);
 			Server server = new Server(serverSocket);
