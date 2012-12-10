@@ -20,12 +20,11 @@ public class Command {
 	/**
 	 * INSERT for insert
 	 * DELTE for delete
-	 * RETAIN for retain (currently not being used).
 	 * @author Marco Salazar
 	 *
 	 */
 	public static enum CommandType {
-		INSERT, DELETE, RETAIN;
+		INSERT, DELETE;
 	}
 
 	Command(String[] command) {
@@ -45,6 +44,7 @@ public class Command {
 			this.isInsert = true;
 		}
 	}
+	
 	@Override
 	public String toString(){
 		return ""+this.command+" "+this.index+" "+((isInsert)? this.characterToInsert : "");

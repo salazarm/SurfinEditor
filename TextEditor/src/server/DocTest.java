@@ -1,6 +1,10 @@
 package server;
 
 import static org.junit.Assert.*;
+
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.junit.Test;
 
@@ -13,7 +17,7 @@ public class DocTest {
 	
 	@Test
 	public void BasicFuntionTest() throws InterruptedException{
-		Document doc = new Document("samplefiles", new CopyOnWriteArrayList<String>(), "2000", 0);
+		Document doc = new Document("samplefiles", new CopyOnWriteArrayList<String>(), "1000samplefiles1000", 0);
 		assertEquals("samplefiles", doc.getName());
 		
 		// Check insert function.

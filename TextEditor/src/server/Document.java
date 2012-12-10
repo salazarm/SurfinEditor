@@ -5,8 +5,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+/**
+ * The Document class handle the request to this particular document and send out the entire document after
+ * handling a request. The document stores the Clients currently editing this particular document and the 
+ * model of the document on its own. The messages being send to the clients are the entire updated document
+ * along with the ID of the document for identification.
+ */
 
 public class Document {
 	private final CopyOnWriteArrayList<Socket> activeClients = new CopyOnWriteArrayList<Socket>();
@@ -21,9 +29,14 @@ public class Document {
 	 * title.
 	 * 
 	 * @param title
-	 *            the Title of the document
+	 *            the Title of the document form the user.
 	 * @param docModel
-	 *            the model for the document.
+	 *            the model for the document. (While creating a new document, this is empty
+	 * @param location
+	 * 			  the location of the document which is a String consist of number randomly generated +
+	 * 			  title + number randomly generated.
+	 * @param id
+	 * 			  ID of the document
 	 */
 	public Document(String title, CopyOnWriteArrayList<String> docModel,
 			String location, int id) {
@@ -139,10 +152,10 @@ public class Document {
 	/**
 	 * Also updates the file.
 	 * 
-	 * @return String representationg of document (concats all the characters in
+	 * @return String representation of document (concats all the characters in
 	 *         the document model).
 	 */
-
+	
 	@Override
 	public String toString() {
 		StringBuilder docAsStringtoSend = new StringBuilder();
