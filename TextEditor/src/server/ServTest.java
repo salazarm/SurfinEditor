@@ -552,23 +552,30 @@ public class ServTest {
 		BufferedReader br3 = new BufferedReader(new InputStreamReader(
 				s3.getInputStream()));
 		PrintWriter p3 = new PrintWriter(s3.getOutputStream(), true);
-
+		
+		// Wating for the clients to connect ot the server
 		Thread.sleep(100);
-
+		
+		// Client 1 create the first document.
 		p1.println("NEW Doc1");
-		Thread.sleep(100);
-
+		Thread.sleep(200);
+		
+		// Client 1 get the first document and edit the document while Client 2 create
+		// the second document.
 		p1.println("GET 0");
 		p1.println("INSERT 0 0 33");
 		p2.println("NEW Doc2");
-		Thread.sleep(100);
-
+		Thread.sleep(200);
+		
+		// Client 1 edit the first document while Client 2 get and edit the second 
+		// document while the Client 3 create the third document.
 		p2.println("GET 1");
 		p1.println("INSERT 0 1 67");
 		p2.println("INSERT 1 0 100");
 		p3.println("NEW Doc3");
-		Thread.sleep(100);
-
+		Thread.sleep(200);
+		
+		// Check all the message being pass behave normal.
 		assertEquals("0%Doc1%", br1.readLine());
 		assertEquals("0A", br1.readLine());
 		assertEquals("0A33a", br1.readLine());
