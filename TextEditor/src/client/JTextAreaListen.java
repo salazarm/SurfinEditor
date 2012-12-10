@@ -39,6 +39,11 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 	protected int cMark_ctrl_down;
 	protected int caretPos_ctrl_down;
 	protected boolean text_selected_ctrl_down;
+	
+	
+	protected boolean text_selected_KP;
+	protected int cMark_KP;
+	protected int caretPos_KP;
 
 	/**
 	 * Constructor for the JTextAreaListen. Implements the JTextAreaListen for
@@ -65,14 +70,22 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 		// KEY_PRESSED, KEY_RELEASED, and KEY_TYPED
 		if (evID == KeyEvent.KEY_PRESSED) {
 			curr_KeyCode = ev.getKeyCode();
+			caretPos_KP = caretPos;
+            cMark_KP = cMark;
+            text_selected_KP = !(caretPos_KP == cMark_KP);
 			// the keyCode 8 refers to "delete".
 			if (curr_KeyCode == 8) {
 				// We wish to handle deletes during the KEY_PRESSED event,
 				// because the selected text is preserved in this event.
 				if (text_selected) {
-					deleteSelectedText();
+				    int tempCar = caretPos;
+                    int tempCMark = cMark;
+
+                    int startingPos = Math.min(tempCar, tempCMark);
+                    for (int i = 0; i < getSelectedText().length(); i++)
+                        delete(startingPos+1);
 				} else {
-					singularDelete();
+					delete(caretPos);
 				}
 			}
 			// The keyCode 10 refers to "ENTER", indicating a line break.
@@ -80,9 +93,15 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 				// For selected text, we want to send deletes and replace it
 				// with a line break.
 				if (text_selected) {
-					replaceSelectedText("\\n");
+				    int tempCar = caretPos;
+                    int tempCMark = cMark;
+
+                    int startingPos = Math.min(tempCar, tempCMark);
+                    for (int i = 0; i < getSelectedText().length(); i++)
+                        delete(startingPos);
+					insert("\\n", startingPos);
 				} else {
-					singularInsert("\\n", caretPos);
+					insert("\\n", caretPos);
 				}
 			}
 
@@ -92,6 +111,10 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 				cMark_ctrl_down = cMark;
 				text_selected_ctrl_down = text_selected;
 			}
+			
+			
+			
+			
 
 		} else if (evID == KeyEvent.KEY_RELEASED) {
 			if (ev.getKeyCode() == 17) {
@@ -112,10 +135,16 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 						charString.toUpperCase();
 					}
 					if (text_selected) {
-						replaceSelectedText(charString);
+	                    int tempCar = caretPos_KP;
+	                    int tempCMark = cMark_KP;
 
+	                    int startingPos = Math.min(tempCar, tempCMark);
+	                    for (int i = 0; i < getSelectedText_KP().length(); i++)
+	                        delete(startingPos+1);
+	                    insert("\\n", startingPos);
+	                    
 					} else {
-						singularInsert(charString, caretPos);
+						insert(charString, caretPos);
 					}
 				} else {
 					// JOptionPane.showMessageDialog(null,
@@ -142,16 +171,22 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 						 * send messages to delete each character in the
 						 * selection.
 						 */
-						if (text_selected) {
+						if (text_selected_KP) {
 							StringSelection selection = new StringSelection(
-									getSelectedText());
+									getSelectedText_KP());
 							
 							Clipboard clipboard = Toolkit.getDefaultToolkit()
 									.getSystemClipboard();
 							
 							clipboard.setContents(selection, selection);
 							
-							deleteSelectedText();
+							//deleteSelectedText();
+							int tempCar = caretPos_KP;
+					        int tempCMark = cMark_KP;
+
+					        int startingPos = Math.min(tempCar, tempCMark);
+					        for (int i = 0; i < getSelectedText_KP().length(); i++)
+					            delete(startingPos+1);
 						} else {
 							// if no text is selected during a cut command,
 							// nothing happens.
@@ -161,12 +196,41 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 						// time.
 						String clipBoardString = getClipboardContents();
 						if (clipBoardString.equals("")) {
-							if (text_selected) {
-								deleteSelectedText();
+							if (text_selected_KP) {
+								//deleteSelectedText();
+							    int tempCar = caretPos_KP;
+						        int tempCMark = cMark_KP;
+
+						        int startingPos = Math.min(tempCar, tempCMark);
+						        for (int i = 0; i < getSelectedText_KP().length(); i++)
+						            delete(startingPos+1);
 							}
 						} else {
 							//
-							paste();
+						     String clipBoardString1 = getClipboardContents();
+						        if (text_selected_KP) {
+
+						            int tempCaretPos = caretPos_KP;
+						            int tempCMark = cMark_KP;
+						            int startingPos = Math.min(tempCaretPos, tempCMark)+1;
+
+						            for (int i = 0; i < getSelectedText_KP().length(); i++)
+						                delete(startingPos+1);
+
+						            int j = startingPos;
+						            for (int i = 0; i < (clipBoardString1.length()); i++) {
+						                insert(String.valueOf(clipBoardString1.charAt(i)), j);
+						                j++;
+						            }
+
+						        } else {
+						            int j = caretPos_KP;
+						            for (int i = 0; i < clipBoardString1.length(); i++) {
+						                insert(String.valueOf(clipBoardString1.charAt(i)), j);
+						                j++;
+						            }
+						        }
+							
 						}
 					}
 
@@ -189,8 +253,7 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 			int startingPos = Math.min(tempCaretPos, tempCMark)+1;
 
 			for (int i = 0; i < getSelectedText().length(); i++)
-				ClientLoader.sdl
-						.sendMessage("DELETE " + id + " " + startingPos);
+				delete(startingPos);
 
 			int j = startingPos;
 			for (int i = 0; i < (clipBoardString.length()); i++) {
@@ -303,11 +366,23 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 		ClientLoader.sdl.sendMessage("INSERT " + id + " " + (index) + " "
 				+ insertString);
 	}
+	
+	
+    public void insert(String insertString, int index) {
+        ClientLoader.sdl.sendMessage("INSERT " + id + " " + (index) + " "
+                + insertString);
+    }
+    
+	public void delete(int index){
+	    ClientLoader.sdl.sendMessage("DELETE " + String.valueOf(id) + " "
+                + index);
+	}
 
 	public void singularDelete() {
 		ClientLoader.sdl.sendMessage("DELETE " + String.valueOf(id) + " "
 				+ (caretPos-1));
 	}
+	
 
 	/**
 	 * The caretUpdate method is a method of CaretListener, and it will occur at
@@ -346,5 +421,20 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 		}
 		return "";
 	}
-
+	
+    public String getSelectedText_KP() {
+        if (caretPos_KP != cMark_KP) {
+            try {
+                String toReturn = ClientLoader.textEditorMap.get("" + id).document
+                        .getText(
+                                Math.min(caretPos_KP, cMark_KP),
+                                Math.max(caretPos_KP, cMark_KP)
+                                        - Math.min(caretPos_KP, cMark_KP));
+                return toReturn;
+            } catch (BadLocationException e) {
+                return "";
+            }
+        }
+        return "";
+    }
 }
