@@ -105,12 +105,10 @@ public class Document {
 	 * Updates all users of changes to the document model.
 	 */
 	public void updateActiveUsers() {
-		if ((commandsQueue.size() ==0)) {
-			String currentDoc = this.toString();
-			for (Socket socket : activeClients) {
-				if (!socket.isClosed())
-					Server.outs.get(socket).println(id + "A" + currentDoc);
-			}
+		String currentDoc = this.toString();
+		for (Socket socket : activeClients) {
+			if (!socket.isClosed())
+				Server.outs.get(socket).println(id + "A" + currentDoc);
 		}
 	}
 

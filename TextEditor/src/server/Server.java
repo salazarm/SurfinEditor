@@ -208,7 +208,7 @@ public class Server {
 			} else if (tokens[0].equals("CONNECT")) {
 				if (!sockets.contains(socket))
 					sockets.add(socket);
-				outs.get(socket).println(getDocList());
+					outs.get(socket).println(getDocList());
 			} else if (tokens[0].equals("INSERT")) {
 				String ch = tokens[3];
 				int id = Integer.parseInt(tokens[1]);

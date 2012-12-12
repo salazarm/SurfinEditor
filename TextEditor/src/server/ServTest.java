@@ -39,7 +39,7 @@ import org.junit.Test;
  */
 
 public class ServTest {
-
+	
 	/**
 	 * Test the basic functions of the server using the textClientDemo. NEW
 	 * INSERT DELETE GET CONNECT and the combination of them.

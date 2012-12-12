@@ -18,13 +18,14 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 public class ClientLoader {
 	private JFrame mainFrame = new JFrame();
 	private final ImageIcon logo = new ImageIcon("surfinEditor.png");
 	private final String Default_PORT = "1337";
 	private final String Default_HOST = "127.0.0.1";
-	
+
 	/** used to keep track of open JFrames **/
 	protected static final Map<String, TextEditor> textEditorMap = new HashMap<String, TextEditor>();
 	protected static int count = 0;
@@ -91,7 +92,6 @@ public class ClientLoader {
 				}
 			}
 		});
-		
 
 		loginButton.setText("Start surfin' the con-curren(t)-seas!");
 		loginPanel.add(loginButton);
