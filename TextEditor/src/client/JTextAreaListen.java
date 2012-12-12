@@ -70,7 +70,6 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 		// KEY_PRESSED, KEY_RELEASED, and KEY_TYPED
 		if (evID == KeyEvent.KEY_PRESSED) {
 			curr_KeyCode = ev.getKeyCode();
-			//System.out.println(curr_KeyCode);
 			caretPos_KP = caretPos;
             cMark_KP = cMark;
             text_selected_KP = !(caretPos_KP == cMark_KP);
@@ -96,7 +95,6 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 				if (text_selected) {
 				    int tempCar = caretPos;
                     int tempCMark = cMark;
-
                     int startingPos = Math.min(tempCar, tempCMark);
                     for (int i = 0; i < getSelectedText().length(); i++){
                         delete(startingPos+1);
@@ -106,7 +104,7 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 					insert("\\n", caretPos);
 				}
 			}
-
+			//The keyCode 17 refers to the Ctrl button
 			else if (curr_KeyCode == 17) {
 				ctrl_down = true;
 				caretPos_ctrl_down = caretPos;
@@ -122,7 +120,6 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 			        int startingPos = Math.min(tempCar, tempCMark);
 			        for (int i = 0; i < getSelectedText().length(); i++){
 			            delete(startingPos + 1);
-			            
 			        }
 			        insert(" ", startingPos);
 			    }
@@ -134,12 +131,13 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 			
 			
 			
-
+			//we are interested in knowing when the ctrl button is released (keyCode = 17)
 		} else if (evID == KeyEvent.KEY_RELEASED) {
 			if (ev.getKeyCode() == 17) {
 				ctrl_down = false;
 			}
 
+			//keyTyped events typically refer to characters generated in teh textEditor
 		} else if (evID == KeyEvent.KEY_TYPED) {
 			char kc = ev.getKeyChar();
 
@@ -166,9 +164,7 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 						insert(charString, caretPos);
 					}
 				} else {
-					// JOptionPane.showMessageDialog(null,
-					// "Control is disabled.",
-					// "Error", JOptionPane.ERROR_MESSAGE);
+
 					/*
 					 * We care about the Cut and Paste commands, because they
 					 * affect the contents of the document in a way that the
@@ -192,7 +188,6 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 						 */
 						if (text_selected_KP) {
 							
-							//deleteSelectedText();
 							int tempCar = caretPos_KP;
 					        int tempCMark = cMark_KP;
 
@@ -209,7 +204,6 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 						String clipBoardString = getClipboardContents();
 						if (clipBoardString.equals("")) {
 							if (text_selected_KP) {
-								//deleteSelectedText();
 							    int tempCar = caretPos_KP;
 						        int tempCMark = cMark_KP;
 
@@ -218,7 +212,6 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 						            delete(startingPos+1);
 							}
 						} else {
-							//
 						     String clipBoardString1 = getClipboardContents();
 						        if (text_selected_KP) {
 
@@ -316,13 +309,23 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 		keyEventHandler(ev);
 	}
 
-		
+	/**
+	 * The insert method sends an insert message to the server's command queue. It corresponds
+	 * to the grammar given in the server code.	
+	 * @param insertString
+	 * @param index
+	 */
     public void insert(String insertString, int index) {
         ClientLoader.sdl.sendMessage("INSERT " + id + " " + (index) + " "
                 + insertString);
 
     }
     
+    /**
+     * The delete method sends a delete message to the server's command queue. It corresponds to the
+     * grammar given in the server code.
+     * @param index
+     */
 	public void delete(int index){
 	    ClientLoader.sdl.sendMessage("DELETE " + String.valueOf(id) + " "
                 + index);
@@ -352,7 +355,12 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 		}
 	}
 	
+	/**
+	 * The cutButton method is activated when someone presses the Cut button on the text editor in order to cut text.
+	 * It is an alternative to ctrl+x, and is a nice feature.
+	 */
 	public void cutButton(){
+	    //send delete commands to the server for the selected text
         if (text_selected) {
             int tempCar = caretPos;
             int tempCMark = cMark;
@@ -365,13 +373,17 @@ public class JTextAreaListen extends JFrame implements KeyListener,
         }
 	}
 	
+	
+	/**
+	 * The pasteButton method is activated when someone presses the Paste button on the text editor in order to paste text.
+	 * It is an alternative to ctrl+v, and is a nice feature.
+	 */
 	public void pasteButton(){
-	 // Somehow send the contents of the clipboard one at a
+	 // send the contents of the clipboard one at a
         // time.
         String clipBoardString = getClipboardContents();
         if (clipBoardString.equals("")) {
             if (text_selected) {
-                //deleteSelectedText();
                 int tempCar = caretPos;
                 int tempCMark = cMark;
 
@@ -381,7 +393,6 @@ public class JTextAreaListen extends JFrame implements KeyListener,
             }
         } 
         else {
-            //
              String clipBoardString1 = getClipboardContents();
                 if (text_selected) {
 
@@ -409,6 +420,11 @@ public class JTextAreaListen extends JFrame implements KeyListener,
         }
 	}
 
+	/**
+	 * The getSelectedText method is an internal method that we use to get the
+	 * text that is currently highlighted (text between the dot and mark)
+	 * @return String
+	 */
 	public String getSelectedText() {
 		if (caretPos != cMark) {
 			try {
@@ -425,6 +441,12 @@ public class JTextAreaListen extends JFrame implements KeyListener,
 		return "";
 	}
 	
+	/**
+	 * The getSelectedText_KP method performs the same function as the getSelectedText method, but at a different time.
+	 * It uses the caretPosition and Mark Position from the time when the key was pressed, rather than the
+	 * last time the key was typed. This is important for a few special action characters.
+	 * @return String
+	 */
     public String getSelectedText_KP() {
         if (caretPos_KP != cMark_KP) {
             try {

@@ -3,6 +3,13 @@ package server;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
+/**
+ * This tests the validity of the commandQueue. We test whether it identifies commands correctly.  We also test if the
+ * commandQueue correctly handles critical queue operations.
+ * @author e3m3r,mpan,salazarm
+ *
+ */
+
 public class CommandQueueTest {
 	
 	@Test
