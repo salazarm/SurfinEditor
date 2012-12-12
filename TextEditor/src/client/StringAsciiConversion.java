@@ -21,7 +21,6 @@ public class StringAsciiConversion {
 	 * Converts each individual ASCII Code into String.
 	 */
 	public static String asciiToString(String str) {
-		//System.out.println("asciiToString: " + str);
 		String[] asciiArray = str.split("a");
 		String text = "";
 		for (String s : asciiArray) {
@@ -31,7 +30,6 @@ public class StringAsciiConversion {
 				text += c;
 			}
 		}
-		//System.out.println("AfterAsciiCodeToString: " + text);
 		return text;
 	}
 }
