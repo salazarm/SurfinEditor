@@ -12,6 +12,14 @@ public class GUIListenerTest {
 	 * number for port". When the server is correctly set up, and the host and port are correctly input, the client
 	 * should be successfully connect to the server and the ServerDocumentListLoader should start running.
 	 * 
-	 * ServerDocumentListLoader 
+	 * ServerDocumentListLoader, as mentioned before, is tested in the java file named SerDocListLoaderTest.
+	 * 
+	 * The last the GUI the users will encounter is the TextEditor; this is where the concurrent editing take 
+	 * place. First, test the basic functions of the textEditor with only one client: insert, delete, copy, cut, 
+	 * paste, control-c, control-x, control v, open, and quit. Then test the concurrent editing with two clients 
+	 * (basically, open up two clients and the same document. Test whether the document is update to another user 
+	 * simply by doing the basic function listed before. Then, type (or do other basic functions) at the same time!
+	 * Then, test whether editing another file affect the original file. Finally, type insanely fast on both of 
+	 * them!!!
 	 */
 }
