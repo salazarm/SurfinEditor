@@ -4,7 +4,8 @@ import java.util.regex.Pattern;
 
 public class StringAsciiConversion {
 	/**
-	 * Converts each individual character in an String in to ASCII Code.
+	 * Transforms a command into a command with
+	 * the insert having ASCII code for the server to read.
 	 */
 	public static String toAscii(String str) {
 		if ('\\' == str.charAt(str.length() - 2)
@@ -18,7 +19,8 @@ public class StringAsciiConversion {
 	}
 
 	/**
-	 * Converts each individual ASCII Code into String.
+	 * Converts the document string return by the server into text
+	 * from ASCII code.
 	 */
 	public static String asciiToString(String str) {
 		String[] asciiArray = str.split("a");

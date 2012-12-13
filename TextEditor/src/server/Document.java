@@ -13,6 +13,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * handling a request. The document stores the Clients currently editing this particular document and the 
  * model of the document on its own. The messages being send to the clients are the entire updated document
  * along with the ID of the document for identification.
+ * 
+ * Synchronization argument:
+ * Each document has a queue and only 1 command is handled at a time hence it is not possible for multiple
+ * commands to interfere with each other. This might be "slow" but it is the easiest way we could find to
+ * synchronize the document. This also makes it easy to make sure that users get updated in the correct order
+ * that updates occur.
  */
 
 public class Document {

@@ -1,14 +1,10 @@
 package client;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
-
-import java.io.BufferedReader;
+import static org.junit.Assert.assertTrue;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;

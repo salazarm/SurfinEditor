@@ -37,9 +37,9 @@ public class DocTest {
 		doc.insertChar(2, "20");
 		doc.insertChar(3, "30");
 		doc.insertChar(4, "40");
-		doc.removeChar(3);
+		doc.removeChar(3); // when we remove on the server we automatically remove 1 less 
 		doc.insertChar(4, "50");
 		Thread.sleep(50);
-		assertEquals("60a10a20a40a50a", doc.toString());
+		assertEquals("60a10a30a40a50a", doc.toString());
 	}
 }

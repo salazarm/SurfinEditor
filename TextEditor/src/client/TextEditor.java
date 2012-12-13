@@ -27,8 +27,7 @@ public class TextEditor extends JFrame {
 	private static final long serialVersionUID = 5991470239888613993L;
 	protected final JTextArea document = new JTextArea(20, 120);
 	protected final JTextAreaListen textAreaListener;
-	//protected int activeCommands = 0;
-
+	
 	public TextEditor(final PrintWriter out, final int id, String title) {
 		this.textAreaListener = new JTextAreaListen(out, id);
 		out.println("GET " + id);
@@ -107,28 +106,13 @@ public class TextEditor extends JFrame {
 			}
 
 			@Override
-			public void windowDeactivated(WindowEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
+			public void windowDeactivated(WindowEvent arg0) {}
 			@Override
-			public void windowDeiconified(WindowEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
+			public void windowDeiconified(WindowEvent arg0) {	}
 			@Override
-			public void windowIconified(WindowEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
+			public void windowIconified(WindowEvent arg0) {}
 			@Override
-			public void windowOpened(WindowEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void windowOpened(WindowEvent arg0) {}
 		
 		});
 	}
@@ -148,9 +132,8 @@ public class TextEditor extends JFrame {
 		}
 	};
 	ActionMap m = document.getActionMap();
-	//Action Cut = m.get(DefaultEditorKit.cutAction);
+
 	Action Copy = m.get(DefaultEditorKit.copyAction);
-	//Action Paste = m.get(DefaultEditorKit.pasteAction);
 	
 	Action Cut = new AbstractAction("Cut", new ImageIcon("cut.png")){
         private static final long serialVersionUID = -3218760224238810832L;

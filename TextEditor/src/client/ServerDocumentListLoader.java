@@ -125,7 +125,6 @@ public class ServerDocumentListLoader {
 									String docInAsciiText = StringAsciiConversion
 											.asciiToString(docAsAsciiCode);
 									synchronized (document) {
-										//System.out.println(docInAsciiText);
 										int carPos = editor.document.getCaret().getDot();
 										int temp;
 										if (docInAsciiText.substring(0,carPos).equals(editor.document.getText().substring(0,carPos)))
@@ -134,19 +133,20 @@ public class ServerDocumentListLoader {
 											temp = carPos+1;
 										else
 											temp = carPos-1;
-										//String doc = (String) dmp.patch_apply(dmp.patch_make(editor.document.getText(),docInAsciiText), docInAsciiText)[0];
-										
 										if (!editor.textAreaListener.text_selected){
 											document.setText(docInAsciiText);
-										    document.setCaretPosition(temp);
-										    
+										    document.setCaretPosition(temp);    
 										}
+										/**
+										 * We know there is an error thrown here if we attempt to put the 
+										 * caret position too high but the default behavior is to set it to 
+										 * the max which is what we want.
+										 */
 										else if(editor.textAreaListener.text_selected){
 											int dotbefore = document.getCaret().getDot();
 											document.setText(docInAsciiText);	
 										    document.getCaret().moveDot(dotbefore);
 										}
-										
 									}
 								}
 							} else {
