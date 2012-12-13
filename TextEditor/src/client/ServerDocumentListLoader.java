@@ -48,7 +48,8 @@ public class ServerDocumentListLoader {
 	private JPanel mainPanel = new JPanel();
 	protected final BufferedReader in;
 	protected final PrintWriter out;
-	//private final diff_match_patch dmp = new diff_match_patch();
+
+	// private final diff_match_patch dmp = new diff_match_patch();
 
 	ServerDocumentListLoader(Socket socket) throws IOException {
 		this.in = new BufferedReader(new InputStreamReader(
@@ -116,45 +117,50 @@ public class ServerDocumentListLoader {
 							if (ClientLoader.textEditorMap.containsKey(id)) {
 								TextEditor editor = ClientLoader.textEditorMap
 										.get(id);
-								//editor.activeCommands -= 1;
-								//if (editor.activeCommands == -1) {
-									JTextArea document = editor.document;
+								// editor.activeCommands -= 1;
+								// if (editor.activeCommands == -1) {
+								JTextArea document = editor.document;
 
-									String docAsAsciiCode = line.substring(id
-											.length() + 1);
-									String docInAsciiText = StringAsciiConversion
-											.asciiToString(docAsAsciiCode);
-									synchronized(editor.document.getCaret()){
-										int carPos = editor.document.getCaret().getDot();
-										int temp;
-										if (docInAsciiText.substring(0,carPos).equals(editor.document.getText().substring(0,carPos)))
-											temp = carPos;
-										else if(docInAsciiText.length() > editor.document.getText().length())
-											temp = carPos+1;
-										else
-											temp = carPos-1;
-										if (!editor.textAreaListener.text_selected){
-											document.setText(docInAsciiText);
-										    document.setCaretPosition(temp);    
-										}
-										/**
-										 * We know there is an error thrown here if we attempt to put the 
-										 * caret position too high but the default behavior is to set it to 
-										 * the max which is a
-										 */
-										else if(editor.textAreaListener.text_selected){
-											int dotbefore = document.getCaret().getDot();
-											document.setText(docInAsciiText);	
-										    document.getCaret().moveDot(dotbefore);
-										}
-									}
+								String docAsAsciiCode = line.substring(id
+										.length() + 1);
+								String docInAsciiText = StringAsciiConversion
+										.asciiToString(docAsAsciiCode);
+								int carPos = editor.document.getCaret()
+										.getDot();
+								int temp;
+								if (docInAsciiText.substring(0, carPos).equals(
+										editor.document.getText().substring(0,
+												carPos)))
+									temp = carPos;
+								else if (docInAsciiText.length() > editor.document
+										.getText().length())
+									temp = carPos + 1;
+								else
+									temp = carPos - 1;
+								if (!editor.textAreaListener.text_selected) {
+									document.setText(docInAsciiText);
+									document.setCaretPosition(temp);
 								}
-							} else {
-								System.out.println("REGEX DIDN'T MATCH ON: "
-										+ line);
+								/**
+								 * We know there is an error thrown here if we
+								 * attempt to put the caret position too high
+								 * but the default behavior is to set it to the
+								 * max which is a
+								 */
+								else if (editor.textAreaListener.text_selected) {
+									int dotbefore = document.getCaret()
+											.getDot();
+									document.setText(docInAsciiText);
+									document.getCaret().moveDot(dotbefore);
+								}
+
 							}
+						} else {
+							System.out
+									.println("REGEX DIDN'T MATCH ON: " + line);
 						}
-					//}
+					}
+					// }
 				}
 			}
 		}).execute();

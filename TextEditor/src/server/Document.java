@@ -9,16 +9,17 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * The Document class handle the request to this particular document and send out the entire document after
- * handling a request. The document stores the Clients currently editing this particular document and the 
- * model of the document on its own. The messages being send to the clients are the entire updated document
- * along with the ID of the document for identification.
+ * The Document class handle the request to this particular document and send
+ * out the entire document after handling a request. The document stores the
+ * Clients currently editing this particular document and the model of the
+ * document on its own. The messages being send to the clients are the entire
+ * updated document along with the ID of the document for identification.
  * 
- * Synchronization argument:
- * Each document has a queue and only 1 command is handled at a time hence it is not possible for multiple
- * commands to interfere with each other. This might be "slow" but it is the easiest way we could find to
- * synchronize the document. This also makes it easy to make sure that users get updated in the correct order
- * that updates occur.
+ * Synchronization argument: Each document has a queue and only 1 command is
+ * handled at a time hence it is not possible for multiple commands to interfere
+ * with each other. This might be "slow" but it is the easiest way we could find
+ * to synchronize the document. This also makes it easy to make sure that users
+ * get updated in the correct order that updates occur.
  */
 
 public class Document {
@@ -36,12 +37,13 @@ public class Document {
 	 * @param title
 	 *            the Title of the document form the user.
 	 * @param docModel
-	 *            the model for the document. (While creating a new document, this is empty
+	 *            the model for the document. (While creating a new document,
+	 *            this is empty
 	 * @param location
-	 * 			  the location of the document which is a String consist of number randomly generated +
-	 * 			  title + number randomly generated.
+	 *            the location of the document which is a String consist of
+	 *            number randomly generated + title + number randomly generated.
 	 * @param id
-	 * 			  ID of the document
+	 *            ID of the document
 	 */
 	public Document(String title, CopyOnWriteArrayList<String> docModel,
 			String location, int id) {
@@ -81,10 +83,10 @@ public class Document {
 	 */
 	private synchronized void remove(int index) {
 		if (index >= 0 && index <= docModel.size())
-			try{
-				docModel.remove(index-1);
-			}catch (ArrayIndexOutOfBoundsException e){
-				if (commandsQueue.size()==0)
+			try {
+				docModel.remove(index - 1);
+			} catch (ArrayIndexOutOfBoundsException e) {
+				if (commandsQueue.size() == 0)
 					updateActiveUsers();
 			}
 	}
@@ -111,10 +113,12 @@ public class Document {
 	 * Updates all users of changes to the document model.
 	 */
 	public void updateActiveUsers() {
-		String currentDoc = this.toString();
-		for (Socket socket : activeClients) {
-			if (!socket.isClosed())
-				Server.outs.get(socket).println(id + "A" + currentDoc);
+		if (commandsQueue.isEmpty()) {
+			String currentDoc = this.toString();
+			for (Socket socket : activeClients) {
+				if (!socket.isClosed())
+					Server.outs.get(socket).println(id + "A" + currentDoc);
+			}
 		}
 	}
 
@@ -155,12 +159,12 @@ public class Document {
 	 * @return String representation of document (concats all the characters in
 	 *         the document model).
 	 */
-	
+
 	@Override
 	public String toString() {
 		StringBuilder docAsStringtoSend = new StringBuilder();
 		for (String c : docModel) {
-			if(!c.equals("a")){
+			if (!c.equals("a")) {
 				docAsStringtoSend.append(c + "a");
 			}
 		}
@@ -172,14 +176,14 @@ public class Document {
 	private synchronized void updateFile(String doc) {
 		File f = new File(location);
 		try {
-			if(f.exists())
+			if (f.exists())
 				f.delete();
 			f.createNewFile();
 			PrintWriter fileOut = new PrintWriter(new FileWriter(f));
 			fileOut.println(doc);
 			fileOut.close();
 		} catch (IOException e) {
-			//ignore
+			// ignore
 		}
 	}
 }
