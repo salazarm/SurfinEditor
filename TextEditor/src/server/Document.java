@@ -163,7 +163,7 @@ public class Document {
 		return newFile;
 	}
 
-	private void updateFile(String doc) {
+	private synchronized void updateFile(String doc) {
 		File f = new File(location);
 		try {
 			if(f.exists())
@@ -173,7 +173,7 @@ public class Document {
 			fileOut.println(doc);
 			fileOut.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			//ignore
 		}
 	}
 }

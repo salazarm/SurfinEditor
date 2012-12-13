@@ -158,11 +158,11 @@ public class ClientLoader {
 	 * @param args
 	 */
 	public static void main(String args[]) {
-//		try {
-//			UIManager
-//					.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
-//		} catch (Exception e) {
-//		}
+		try {
+			UIManager
+					.setLookAndFeel("com.seaglasslookandfeel.SeaGlassLookAndFeel");
+		} catch (Exception e) {
+		}
 		(new ClientLoader()).makeGUI();
 	}
 }
