@@ -124,7 +124,7 @@ public class ServerDocumentListLoader {
 											.length() + 1);
 									String docInAsciiText = StringAsciiConversion
 											.asciiToString(docAsAsciiCode);
-									synchronized (document) {
+									synchronized(editor.document.getCaret()){
 										int carPos = editor.document.getCaret().getDot();
 										int temp;
 										if (docInAsciiText.substring(0,carPos).equals(editor.document.getText().substring(0,carPos)))
@@ -140,7 +140,7 @@ public class ServerDocumentListLoader {
 										/**
 										 * We know there is an error thrown here if we attempt to put the 
 										 * caret position too high but the default behavior is to set it to 
-										 * the max which is what we want.
+										 * the max which is a
 										 */
 										else if(editor.textAreaListener.text_selected){
 											int dotbefore = document.getCaret().getDot();
