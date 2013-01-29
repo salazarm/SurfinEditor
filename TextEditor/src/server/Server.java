@@ -16,6 +16,7 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /**
  * In our design, the Server serve as the central server of the entire process, all of the clients connect
@@ -33,7 +34,7 @@ public class Server {
 	protected static Map<Socket, PrintWriter> outs = new ConcurrentHashMap<Socket, PrintWriter>();
 	private List<Socket> sockets = new ArrayList<Socket>();
 	private static Random randomGenerator = new Random();
-
+	
 	public Server(ServerSocket serverSocket) {
 		this.serverSocket = serverSocket;
 	}
@@ -294,4 +295,5 @@ public class Server {
 		}
 		return documentsString.toString();
 	}
+
 }
