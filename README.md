@@ -1,4 +1,4 @@
 SurfinEditor
 ============
 
-Surf'n Editor
+A concurrent text editor.
